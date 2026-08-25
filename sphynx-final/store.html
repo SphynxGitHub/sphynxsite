@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates & Courses | Sphynx Automation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="store.css">
+<style>
+  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: 1rem 2rem; position: sticky; top: 64px; z-index: 50; }
+  .filter-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+  .filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .83rem; font-weight: 600; padding: .4rem 1rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
+  .filter-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
+  .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .product-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; }
+  .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(11,31,58,.1); }
+  .product-card.hidden { display: none; }
+  .product-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--bg); }
+  .product-img-placeholder { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, var(--blue-light), var(--accent-light)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+  .product-body { padding: 1.4rem; flex: 1; display: flex; flex-direction: column; }
+  .product-cat { margin-bottom: .6rem; }
+  .product-body h3 { font-size: 1rem; font-weight: 700; color: var(--navy); line-height: 1.4; margin-bottom: .6rem; }
+  .product-desc { font-size: .85rem; color: var(--muted); line-height: 1.6; flex: 1; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: auto; }
+  .product-price { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); }
+  .purchased-badge { display: flex; align-items: center; gap: 5px; font-size: .82rem; font-weight: 700; color: var(--green); }
+  .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+  .search-wrap { margin-left: auto; }
+  .search-wrap input { padding: .4rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 200px; }
+  .search-wrap input:focus { border-color: var(--blue); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2147733204/settings_images/3AWlHv0sQ5mNQO1BaIOw_Sphynx_Logo_Final_BlackandBlue_LONG-01.png" alt="Sphynx Automation"></a>
+    <ul class="nav-links">
+      <li><a href="/store.html" class="active">Store</a></li>
+      <li><a href="/dashboard.html">My Courses</a></li>
+      <li><a href="/index.html">Main Site</a></li>
+    </ul>
+    <div class="nav-user" id="navUser">
+      <a href="/login.html" class="btn-sm btn-ghost-sm">Log In</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-tag">Templates & Courses</div>
+    <h1>Automation tools built for financial advisors</h1>
+    <p>Zapier integrations, JotForm templates, training courses, and email campaign templates — all ready to deploy.</p>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-inner">
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="Integration">Integrations</button>
+    <button class="filter-btn" data-cat="JotForm">JotForm</button>
+    <button class="filter-btn" data-cat="Training">Training</button>
+    <button class="filter-btn" data-cat="Email Campaign">Email Campaigns</button>
+    <button class="filter-btn" data-cat="Zapier">Zapier</button>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search products...">
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="alertBanner"></div>
+  <div id="productsGrid" class="products-grid">
+    <div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">⏳</div>
+      <h3>Loading products...</h3>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, getUser, getUserPurchases } from '/lib/supabase.js';
+
+const STRIPE_KEY = '__NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY__';
+let stripe;
+let currentUser = null;
+let userPurchases = [];
+let allProducts = [];
+
+async function init() {
+  stripe = Stripe(STRIPE_KEY);
+  currentUser = await getUser();
+
+  if (currentUser) {
+    document.getElementById('navUser').innerHTML = `
+      <span>${currentUser.email}</span>
+      <a href="/dashboard.html" class="btn-sm btn-ghost-sm">My Courses</a>
+      <button class="btn-sm btn-ghost-sm" onclick="signOut()">Sign Out</button>`;
+    userPurchases = (await getUserPurchases(currentUser.id)).map(p => p.product_id);
+  }
+
+  await loadProducts();
+
+  // filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterProducts();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', filterProducts);
+}
+
+async function loadProducts() {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('active', true)
+    .order('category')
+    .order('sort_order');
+
+  if (error || !data?.length) {
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">📦</div>
+        <h3>No products yet</h3>
+        <p>Check back soon or visit our main site.</p>
+      </div>`;
+    return;
+  }
+
+  allProducts = data;
+  renderProducts(data);
+}
+
+function renderProducts(products) {
+  // group by category
+  const grouped = {};
+  products.forEach(p => {
+    if (!grouped[p.category]) grouped[p.category] = [];
+    grouped[p.category].push(p);
+  });
+
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+
+  if (!products.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>No results</h3><p>Try a different search or filter.</p></div>`;
+    return;
+  }
+
+  Object.entries(grouped).forEach(([cat, items]) => {
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.style.gridColumn = '1 / -1';
+    label.textContent = cat;
+    grid.appendChild(label);
+
+    items.forEach(p => {
+      const owned = userPurchases.includes(p.id);
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.dataset.cat = p.category;
+      card.dataset.name = p.name.toLowerCase();
+      card.innerHTML = `
+        ${p.image_url
+          ? `<img class="product-img" src="${p.image_url}" alt="${p.name}" loading="lazy">`
+          : `<div class="product-img-placeholder">${categoryEmoji(p.category)}</div>`}
+        <div class="product-body">
+          <div class="product-cat"><span class="badge ${categoryBadge(p.category)}">${p.category}</span></div>
+          <h3>${p.name}</h3>
+          <p class="product-desc">${p.description}</p>
+          <div class="product-footer">
+            <div class="product-price">$${(p.price / 100).toFixed(2)}</div>
+            ${owned
+              ? `<div class="purchased-badge">✓ Purchased <a href="/course.html?id=${p.id}" class="btn btn-outline" style="padding:.4rem .9rem;font-size:.82rem;margin-left:.5rem">Open →</a></div>`
+              : `<button class="btn btn-primary" onclick="checkout('${p.stripe_price_id}', '${p.id}')">Buy Now</button>`}
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  });
+}
+
+function filterProducts() {
+  const cat = document.querySelector('.filter-btn.active').dataset.cat;
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = allProducts.filter(p =>
+    (cat === 'all' || p.category === cat) &&
+    (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
+  );
+  renderProducts(filtered);
+}
+
+async function checkout(stripePriceId, productId) {
+  if (!currentUser) {
+    sessionStorage.setItem('postLoginProductId', productId);
+    window.location.href = '/login.html?redirect=store';
+    return;
+  }
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Loading...';
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId: stripePriceId, productId, userId: currentUser.id, email: currentUser.email })
+    });
+    const { sessionId, error } = await res.json();
+    if (error) throw new Error(error);
+    await stripe.redirectToCheckout({ sessionId });
+  } catch (err) {
+    showAlert('error', 'Something went wrong: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Buy Now';
+  }
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+  window.location.reload();
+}
+
+function showAlert(type, msg) {
+  document.getElementById('alertBanner').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => document.getElementById('alertBanner').innerHTML = '', 5000);
+}
+
+function categoryEmoji(cat) {
+  const map = { 'Integration': '🔗', 'JotForm': '📋', 'Training': '🎓', 'Email Campaign': '✉️', 'Zapier': '⚡' };
+  return map[cat] || '📦';
+}
+function categoryBadge(cat) {
+  const map = { 'Integration': 'badge-navy', 'JotForm': 'badge-blue', 'Training': 'badge-teal', 'Email Campaign': 'badge-green', 'Zapier': 'badge-blue' };
+  return map[cat] || 'badge-navy';
+}
+
+window.checkout = checkout;
+window.signOut = signOut;
+
+// Check for successful payment return
+const params = new URLSearchParams(window.location.search);
+if (params.get('success')) showAlert('success', '🎉 Purchase successful! Check your email and visit My Courses to access your content.');
+if (params.get('cancelled')) showAlert('info', 'Checkout was cancelled — no charge was made.');
+
+init();
+</script>
+<script src="https://js.stripe.com/v3/"></script>
+</body>
+</html>
