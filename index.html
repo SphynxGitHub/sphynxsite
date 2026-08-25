@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Advisor Automation | Save 10+ Hours Weekly | Sphynx</title>
+<meta name="description" content="Financial advisor automation solutions: automate client onboarding, data entry and compliance for your RIA. 300+ advisors served. Free automation audit.">
+<style>
+  .hero { background: var(--navy); color: white; padding: 6rem 2rem 5rem; position: relative; overflow: hidden; }
+  .hero::before { content:''; position:absolute; top:-200px; right:-200px; width:600px; height:600px; background:radial-gradient(circle,rgba(0,194,168,.15) 0%,transparent 70%); pointer-events:none; }
+  .hero::after { content:''; position:absolute; bottom:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle,rgba(26,86,219,.2) 0%,transparent 70%); pointer-events:none; }
+  .hero-inner { max-width:1100px; margin:0 auto; position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
+  .hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(0,194,168,.15); border:1px solid rgba(0,194,168,.4); color:#4dd9c8; font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:.35rem .85rem; border-radius:100px; margin-bottom:1.5rem; }
+  .hero h1 { font-family:'DM Serif Display',serif; font-size:clamp(2.2rem,4vw,3.4rem); line-height:1.15; margin-bottom:1.25rem; color:white; }
+  .hero h1 em { font-style:italic; color:var(--accent); }
+  .hero p { font-size:1.1rem; color:rgba(255,255,255,.72); margin-bottom:2rem; line-height:1.7; }
+  .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+  .btn-ghost { background:rgba(255,255,255,.08); color:white; font-weight:500; font-size:.95rem; padding:.85rem 1.75rem; border-radius:10px; border:1px solid rgba(255,255,255,.2); text-decoration:none; transition:background .2s; display:inline-block; }
+  .btn-ghost:hover { background:rgba(255,255,255,.14); }
+  .hero-stats { display:flex; gap:2rem; margin-top:2.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,.1); }
+  .stat-num { font-family:'DM Serif Display',serif; font-size:2rem; color:white; line-height:1; }
+  .stat-label { font-size:.8rem; color:rgba(255,255,255,.5); margin-top:2px; }
+  .hero-visual { display:flex; flex-direction:column; gap:1rem; }
+  .workflow-card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:1.25rem 1.5rem; display:flex; align-items:center; gap:1rem; transition:transform .3s; }
+  .workflow-card:hover { transform:translateX(6px); }
+  .workflow-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.2rem; }
+  .icon-teal { background:rgba(0,194,168,.2); }
+  .icon-blue { background:rgba(26,86,219,.3); }
+  .icon-purple { background:rgba(139,92,246,.2); }
+  .workflow-text strong { display:block; font-size:.95rem; color:white; font-weight:600; }
+  .workflow-text span { font-size:.8rem; color:rgba(255,255,255,.5); }
+
+  .tools-bar { background:var(--bg); border-bottom:1px solid var(--border); padding:2rem; text-align:center; }
+  .tools-bar p { font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:1.25rem; }
+  .tools-logos { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem 1.5rem; max-width:900px; margin:0 auto; }
+  .tool-pill { background:white; border:1px solid var(--border); border-radius:100px; padding:.4rem 1rem; font-size:.83rem; font-weight:600; color:var(--muted); }
+
+  .services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem; }
+  .service-card { background:white; border:1px solid var(--border); border-radius:16px; padding:2rem; position:relative; overflow:hidden; transition:transform .3s,box-shadow .3s; }
+  .service-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(11,31,58,.1); }
+  .service-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .card-teal::before { background:var(--accent); }
+  .card-blue::before { background:var(--blue); }
+  .card-navy::before { background:var(--navy); }
+  .service-num { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--border); line-height:1; margin-bottom:1rem; }
+  .service-card h3 { font-size:1.1rem; font-weight:700; color:var(--navy); margin-bottom:.75rem; }
+  .service-card p { font-size:.9rem; color:var(--muted); line-height:1.65; margin-bottom:1.5rem; }
+  .service-link { font-size:.88rem; font-weight:700; color:var(--blue); text-decoration:none; display:inline-flex; align-items:center; gap:5px; transition:gap .2s; }
+  .service-link:hover { gap:10px; }
+
+  .about-section { background:var(--bg); }
+  .about-grid { display:grid; grid-template-columns:1fr 1.1fr; gap:5rem; align-items:center; }
+  .about-img { width:100%; border-radius:20px; aspect-ratio:4/5; object-fit:cover; }
+  .about-img-wrap { position:relative; }
+  .about-badge { position:absolute; top:1.5rem; right:-1rem; background:var(--navy); color:white; padding:.75rem 1.25rem; border-radius:12px; font-size:.85rem; font-weight:600; text-align:center; line-height:1.4; }
+  .about-badge strong { display:block; font-size:1.4rem; font-family:'DM Serif Display',serif; }
+  .about-content p { font-size:1rem; color:var(--muted); line-height:1.75; margin-bottom:1.25rem; }
+  .cert-badges { display:flex; gap:1rem; margin-top:2rem; flex-wrap:wrap; }
+  .cert { background:white; border:1px solid var(--border); border-radius:10px; padding:.6rem 1rem; font-size:.82rem; font-weight:700; color:var(--navy); }
+
+  .testimonials-section { background:var(--navy); color:white; }
+  .testimonials-section .section-heading { color:white; }
+  .testimonials-section .section-tag { color:var(--accent); }
+  .testimonials-section .section-sub { color:rgba(255,255,255,.6); }
+  .testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3rem; }
+  .testimonial-card { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:1.75rem; }
+  .stars { color:#fbbf24; font-size:.85rem; margin-bottom:1rem; letter-spacing:2px; }
+  .testimonial-card p { font-size:.92rem; color:rgba(255,255,255,.78); line-height:1.7; margin-bottom:1.25rem; font-style:italic; }
+  .reviewer { font-weight:700; font-size:.88rem; color:rgba(255,255,255,.5); }
+
+  .course-section { background:var(--blue-light); }
+  .course-inner { max-width:680px; margin:0 auto; text-align:center; }
+  .course-inner p { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.7; }
+  .email-form { display:flex; gap:.75rem; max-width:480px; margin:0 auto; }
+  .email-form input { flex:1; padding:.85rem 1.25rem; border:1.5px solid var(--border); border-radius:10px; font-family:'Outfit',sans-serif; font-size:.95rem; background:white; color:var(--text); outline:none; }
+  .email-form input:focus { border-color:var(--blue); }
+  .email-form button { background:var(--blue); color:white; border:none; padding:.85rem 1.5rem; border-radius:10px; font-family:'Outfit',sans-serif; font-weight:700; font-size:.95rem; cursor:pointer; white-space:nowrap; }
+  .email-form button:hover { background:#1446b8; }
+
+  @media(max-width:900px){
+    .hero-inner { grid-template-columns:1fr; }
+    .hero-visual { display:none; }
+    .services-grid,.testimonials-grid { grid-template-columns:1fr; }
+    .about-grid { grid-template-columns:1fr; }
+    .email-form { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">✦ Certified Zapier &amp; Mailchimp Experts</div>
+      <h1>Automation Solutions That Save Financial Advisors <em>10+ Hours</em> Weekly</h1>
+      <p>We help financial advisors, planners, and RIAs eliminate administrative busywork by seamlessly connecting the systems you already use.</p>
+      <div class="hero-btns">
+        <a href="contact.html" class="btn-primary">Book Free Audit →</a>
+        <a href="services.html" class="btn-ghost">Explore Services</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">300+</div><div class="stat-label">Advisors Served</div></div>
+        <div class="stat"><div class="stat-num">10–15h</div><div class="stat-label">Saved Per Week</div></div>
+        <div class="stat"><div class="stat-num">5x</div><div class="stat-label">Business Growth</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="workflow-card"><div class="workflow-icon icon-teal">📋</div><div class="workflow-text"><strong>Client Onboarding</strong><span>Automated intake → CRM in seconds</span></div></div>
+      <div class="workflow-card"><div class="workflow-icon icon-blue">📊</div><div class="workflow-text"><strong>Compliance &amp; Data Entry</strong><span>Zero manual re-keying</span></div></div>
+      <div class="workflow-card"><div class="workflow-icon icon-purple">📅</div><div class="workflow-text"><strong>Meeting Follow-ups</strong><span>Notes filed, tasks logged automatically</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="tools-bar">
+  <p>Tools we automate</p>
+  <div class="tools-logos">
+    <span class="tool-pill">Zapier</span><span class="tool-pill">Wealthbox</span><span class="tool-pill">Redtail</span><span class="tool-pill">JotForm</span><span class="tool-pill">PreciseFP</span><span class="tool-pill">AdvicePay</span><span class="tool-pill">Calendly</span><span class="tool-pill">ActiveCampaign</span><span class="tool-pill">Google Workspace</span><span class="tool-pill">Microsoft 365</span><span class="tool-pill">Hubly</span><span class="tool-pill">MailerLite</span><span class="tool-pill">Thyme AI</span><span class="tool-pill">Process Street</span>
+  </div>
+</div>
+
+<section id="services">
+  <div class="section-inner">
+    <div class="section-tag">Choose your path</div>
+    <h2 class="section-heading">The service that best fits your needs</h2>
+    <p class="section-sub">Whether you want to DIY, learn with guidance, or hand it off entirely — we have a solution for you.</p>
+    <div class="services-grid">
+      <div class="service-card card-teal">
+        <div class="service-num">01</div>
+        <h3>Templates &amp; Courses</h3>
+        <p>Tech-savvy and prefer to build it yourself? Start with our proven templates and step-by-step courses. Perfect for advisors who want to master automation and build at their own pace.</p>
+        <a href="https://www.sphynxautomation.com/store" class="service-link">View Templates &amp; Courses →</a>
+      </div>
+      <div class="service-card card-blue">
+        <div class="service-num">02</div>
+        <h3>1:1 Technology Coaching</h3>
+        <p>Stuck on a specific integration or workflow? Our coaching helps you overcome roadblocks and master tools like Zapier, Calendly, and CRM integrations — with personalized guidance.</p>
+        <a href="https://www.sphynxautomation.com/coaching-call" class="service-link">Book a Coaching Session →</a>
+      </div>
+      <div class="service-card card-navy">
+        <div class="service-num">03</div>
+        <h3>White Glove Automation</h3>
+        <p>No time to deal with technology? Let us be your automation concierge. We implement seamless integrations between all your tools so you can focus entirely on serving clients.</p>
+        <a href="services.html#white-glove" class="service-link">Learn About White Glove →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about-section">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-img-wrap">
+        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2147733204/settings_images/9HtZANgpSFyK6ghepmsg_Arielle392-3.jpg" alt="Arielle Minicozzi, Founder &amp; CEO of Sphynx Automation" class="about-img">
+        <div class="about-badge"><strong>2017</strong>Founded by an<br>RIA owner</div>
+      </div>
+      <div class="about-content">
+        <div class="section-tag">The Sphynx Story</div>
+        <h2 class="section-heading">Built by an advisor, for advisors</h2>
+        <p>When Arielle Minicozzi started her RIA in 2017, she didn't intend to build a technology company. But in her quest to streamline her practice, she discovered other financial advisors needed the same automation tools she was creating.</p>
+        <p>She realized that by helping people who help people, she could make an exponentially greater difference than serving clients one-on-one. That vision — and passion for the 'automagical' — has guided Sphynx ever since.</p>
+        <p>Today, Sphynx has served 300+ advisors and continues to grow, driven by that same mission: give financial advisors back the time they deserve.</p>
+        <div class="cert-badges">
+          <div class="cert">⚡ Certified Zapier Expert</div>
+          <div class="cert">✉️ Mailchimp Expert Partner</div>
+        </div>
+        <br>
+        <a href="about.html" class="service-link">Meet the team →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <div class="section-inner">
+    <div class="section-tag">Client Reviews</div>
+    <h2 class="section-heading">Advisors love working with us</h2>
+    <p class="section-sub">Real results from real financial advisors and RIAs.</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p>"Sphynx automated my note-filing, tasks log, and follow-up process. I probably save 10 to 15 minutes per client meeting now and my clients receive better service between meetings."</p><div class="reviewer">— Ian B., Solo Financial Planner</div></div>
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p>"Absolutely brilliant when it comes to problem solving and making your business run more efficiently. Within minutes, they found a solution through Zapier and their seasoned expertise."</p><div class="reviewer">— Colin T.</div></div>
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p>"They completely automated my business using Zapier which has single-handedly grown my business 5x! I will be a Zapier member forever because of the work that Sphynx Automation did."</p><div class="reviewer">— Carter C.</div></div>
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p>"Took the time to understand our needs and was very efficient. I would recommend their services to anyone looking to improve their automation processes and enhance their client experience."</p><div class="reviewer">— Jirayr K.</div></div>
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p>"Helped me automate my business both externally and internally. This has saved so much time, money and frustration. Being able to customize automation as my business grows is priceless."</p><div class="reviewer">— Anna M.</div></div>
+      <div class="testimonial-card" style="background:rgba(0,194,168,.08);border-color:rgba(0,194,168,.3);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1rem;padding:2rem;">
+        <div style="font-family:'DM Serif Display',serif;font-size:2.5rem;color:white;">300+</div>
+        <div style="font-size:.9rem;color:rgba(255,255,255,.6);">Financial advisors served and counting</div>
+        <a href="contact.html" class="btn-primary">Join them →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="course-section">
+  <div class="section-inner">
+    <div class="course-inner">
+      <div class="section-tag">Free Resource</div>
+      <h2 class="section-heading">Start automating in 21 days — free</h2>
+      <p>Sign up for our free 21-day automation mini course and receive systematization tips, workflow inspiration, and automation strategies designed specifically for financial advisors and RIAs.</p>
+      <form class="email-form" onsubmit="return false;">
+        <input type="email" placeholder="Your email address">
+        <button type="submit">Sign Me Up</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="/includes.js"></script>
+</body>
+</html>

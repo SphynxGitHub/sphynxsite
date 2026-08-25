@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us | Sphynx Automation</title>
+<meta name="description" content="Meet the Sphynx Automation team — automation experts for financial advisors, RIAs, attorneys, and service-based businesses.">
+<style>
+  .team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:3rem; }
+  .team-card { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; text-align:center; transition:transform .3s,box-shadow .3s; }
+  .team-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(11,31,58,.1); }
+  .team-photo { width:100%; aspect-ratio:1; object-fit:cover; object-position:top; }
+  .team-info { padding:1.5rem; }
+  .team-info h3 { font-size:1.1rem; font-weight:700; color:var(--navy); margin-bottom:.25rem; }
+  .team-info p { font-size:.88rem; color:var(--muted); }
+  .team-divider { width:30px; height:2px; background:var(--accent); margin:.75rem auto; }
+
+  .values-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem; }
+  .value-card { background:var(--bg); border-radius:14px; padding:1.75rem; }
+  .value-icon { font-size:2rem; margin-bottom:1rem; }
+  .value-card h3 { font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:.5rem; }
+  .value-card p { font-size:.88rem; color:var(--muted); line-height:1.65; }
+
+  .faq-section { background:var(--bg); }
+  .faq-list { margin-top:2.5rem; display:flex; flex-direction:column; gap:1rem; }
+  .faq-item { background:white; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .faq-q { padding:1.25rem 1.5rem; font-weight:700; font-size:.95rem; color:var(--navy); cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+  .faq-q::after { content:'＋'; font-size:1.1rem; color:var(--muted); transition:transform .3s; }
+  .faq-item.open .faq-q::after { content:'－'; }
+  .faq-a { display:none; padding:0 1.5rem 1.25rem; font-size:.9rem; color:var(--muted); line-height:1.7; }
+  .faq-item.open .faq-a { display:block; }
+  .faq-a a { color:var(--blue); }
+
+  .affiliates-section { }
+  .affiliates-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:2rem; }
+  .affiliate-card { background:var(--bg); border-radius:12px; padding:1.25rem 1.5rem; }
+  .affiliate-card h4 { font-size:.9rem; font-weight:700; color:var(--navy); margin-bottom:.4rem; }
+  .affiliate-card p { font-size:.83rem; color:var(--muted); line-height:1.6; }
+  .affiliate-card a { color:var(--blue); }
+
+  @media(max-width:900px){ .team-grid,.values-grid { grid-template-columns:1fr; } .affiliates-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Our Team</div>
+    <h1>Automation Experts for Fintech &amp; Service-Based Businesses</h1>
+    <p>Our small business automation team helps financial advisors, attorneys, bookkeepers, and CPAs set up tech and automate workflows to save time and make more money.</p>
+    <a href="contact.html" class="btn-primary">Work With Us →</a>
+  </div>
+</div>
+
+<section>
+  <div class="section-inner">
+    <div class="section-tag">The Team</div>
+    <h2 class="section-heading">Meet the people behind your automation</h2>
+    <p class="section-sub">A small, dedicated team that's obsessed with making your business run on autopilot.</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/afd74f1-d61c-01a5-7ad-821e68c8d_ArielleSquare.jpg" alt="Arielle Minicozzi" class="team-photo">
+        <div class="team-info">
+          <h3>Arielle Minicozzi</h3>
+          <div class="team-divider"></div>
+          <p>Founder &amp; CEO</p>
+        </div>
+      </div>
+      <div class="team-card">
+        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/fc8e6fe-cc84-b210-806-7bbc74bbe3d_6ZINT0AQAGiabvVTtsAg_headshot.jpg" alt="Anthony Schorling" class="team-photo">
+        <div class="team-info">
+          <h3>Anthony Schorling</h3>
+          <div class="team-divider"></div>
+          <p>Communications &amp; Project Manager</p>
+        </div>
+      </div>
+      <div class="team-card">
+        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/a7e7287-27b-ea-53af-278b3d8f4f_Chad_Rixse_Headshot.jpg" alt="Chad Rixse" class="team-photo">
+        <div class="team-info">
+          <h3>Chad Rixse</h3>
+          <div class="team-divider"></div>
+          <p>Automation Specialist</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg);">
+  <div class="section-inner">
+    <div class="section-tag">Our Values</div>
+    <h2 class="section-heading">Why advisors choose Sphynx</h2>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-icon">⚡</div><h3>Built by an Advisor</h3><p>Arielle started her own RIA in 2017 — so we understand your world, your compliance concerns, and exactly what's eating your time.</p></div>
+      <div class="value-card"><div class="value-icon">🔗</div><h3>Deep Integration Expertise</h3><p>We're certified Zapier experts and Mailchimp partners. If your tools can connect, we've probably automated it already.</p></div>
+      <div class="value-card"><div class="value-icon">🏆</div><h3>Outcomes-Focused</h3><p>We don't just set up technology — we measure success by how many hours you get back and how much smoother your practice runs.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="section-inner">
+    <div class="section-tag">FAQ</div>
+    <h2 class="section-heading">Common questions</h2>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q">What does Sphynx Automation do?</div>
+        <div class="faq-a">Our team provides technology consulting and custom automation solutions to help financial advisors save time, make more money, and lead more balanced lives. For an overview, <a href="http://www.sphynxautomation.com/member-spotlight-call">check out this webinar</a>.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What products and services do you offer?</div>
+        <div class="faq-a">We offer three types of products: <a href="services.html#white-glove">customized automation services</a>, <a href="https://www.sphynxautomation.com/coaching-call">hourly technology coaching</a>, and <a href="https://www.sphynxautomation.com/store">DIY automation courses &amp; templates</a>.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What's your process for automation projects?</div>
+        <div class="faq-a">Most engagements take about 4–6 weeks from when pre-work is completed, depending on the scope and our workload. <a href="contact.html">Schedule an intro call</a> and we'll walk you through everything.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How much do your services cost?</div>
+        <div class="faq-a">Coaching is charged by the hour (paid at booking). DIY courses and templates are purchased individually. Automation services are a-la-carte and fully customized — <a href="contact.html">schedule a call</a> to receive a custom proposal. We accept payments via Stripe.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do you provide process reviews?</div>
+        <div class="faq-a">We add the most value in the automation technology arena, so while some process review is involved in each project, it's not our primary focus. We're happy to refer you to our trusted Virtual COO and Virtual Assisting partners for deeper process work.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-inner">
+    <div class="section-tag">Transparency</div>
+    <h2 class="section-heading">Our affiliations</h2>
+    <p class="section-sub">We make tech recommendations based on your needs — which sometimes means tools we have partnerships with. Here's the full list:</p>
+    <div class="affiliates-grid">
+      <div class="affiliate-card"><h4>Thyme AI</h4><p>We have a small equity interest in Thyme, an AI meeting transcription tool built for financial advisors. <a href="https://meetthyme.com/" target="_blank">Learn more</a></p></div>
+      <div class="affiliate-card"><h4>JotForm</h4><p>We earn an extra form credit for each signup made <a href="https://www.jotform.com/?referral=5aFt1U0DJW" target="_blank">using our link</a>.</p></div>
+      <div class="affiliate-card"><h4>Dubsado</h4><p>We receive a discount on our membership — and so will you — for signups made <a href="https://www.dubsado.com/?c=sphynx" target="_blank">using our link</a>.</p></div>
+      <div class="affiliate-card"><h4>Moo.com</h4><p>We earn credit toward a future order, and you'll receive 25% off your first order <a href="https://refer.moo.com/s/sphynxfinancial8" target="_blank">using our link</a>.</p></div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script>
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      item.classList.toggle('open');
+    });
+  });
+</script>
+<script src="/includes.js"></script>
+</body>
+</html>
