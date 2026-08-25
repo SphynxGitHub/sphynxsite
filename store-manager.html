@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Manager | Sphynx</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="store.css">
+<style>
+  body { background: #060f1e; }
+  .manager-nav { background: #060f1e; border-bottom: 1px solid rgba(255,255,255,.08); padding: 0 2rem; }
+  .manager-nav .nav-inner { max-width: 1300px; }
+  .manager-nav a { color: rgba(255,255,255,.6) !important; }
+  .manager-wrap { max-width: 1300px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .manager-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .manager-header h1 { font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: white; }
+  .manager-header p { font-size: .85rem; color: rgba(255,255,255,.5); margin-top: .2rem; }
+
+  /* TABS */
+  .tabs { display: flex; gap: .5rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: .75rem; }
+  .tab-btn { background: none; border: none; font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.4); cursor: pointer; padding: .4rem .85rem; border-radius: 7px; transition: all .2s; }
+  .tab-btn.active { background: rgba(255,255,255,.1); color: white; }
+
+  /* PRODUCTS TABLE */
+  .products-table { width: 100%; border-collapse: collapse; }
+  .products-table th { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); padding: .75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .products-table td { padding: .9rem 1rem; border-bottom: 1px solid rgba(255,255,255,.05); vertical-align: middle; }
+  .products-table tr:hover td { background: rgba(255,255,255,.03); }
+  .product-name-cell { display: flex; align-items: center; gap: .85rem; }
+  .product-thumb { width: 48px; height: 36px; border-radius: 6px; object-fit: cover; background: rgba(255,255,255,.1); flex-shrink: 0; }
+  .product-thumb-placeholder { width: 48px; height: 36px; border-radius: 6px; background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .td-name { font-size: .9rem; font-weight: 600; color: white; }
+  .td-sub { font-size: .75rem; color: rgba(255,255,255,.4); margin-top: 1px; }
+  .td-price { font-size: .95rem; font-weight: 700; color: white; }
+  .td-cat { }
+  .action-btns { display: flex; gap: .5rem; }
+  .action-btn { background: rgba(255,255,255,.07); border: none; color: rgba(255,255,255,.6); font-size: .8rem; font-weight: 600; padding: .35rem .75rem; border-radius: 6px; cursor: pointer; transition: all .2s; }
+  .action-btn:hover { background: rgba(255,255,255,.14); color: white; }
+  .action-btn.danger:hover { background: rgba(220,38,38,.25); color: #fca5a5; }
+  .toggle-btn { width: 42px; height: 24px; border-radius: 100px; border: none; cursor: pointer; position: relative; transition: background .2s; }
+  .toggle-btn.on { background: var(--accent); }
+  .toggle-btn.off { background: rgba(255,255,255,.15); }
+  .toggle-btn::after { content: ''; position: absolute; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: left .2s; }
+  .toggle-btn.on::after { left: 21px; }
+  .toggle-btn.off::after { left: 3px; }
+  .table-wrap { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; overflow: hidden; overflow-x: auto; }
+
+  /* PRODUCT FORM */
+  .form-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 2rem; }
+  .form-card .form-group label { color: rgba(255,255,255,.7); }
+  .form-card input, .form-card select, .form-card textarea { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: white; }
+  .form-card input::placeholder, .form-card textarea::placeholder { color: rgba(255,255,255,.25); }
+  .form-card input:focus, .form-card select:focus, .form-card textarea:focus { border-color: var(--accent); }
+  .form-card select option { background: #1a2744; color: white; }
+  .form-section-title { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 1.75rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.08); }
+  .lessons-list { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1rem; }
+  .lesson-form-item { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 1rem; }
+  .lesson-form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .85rem; font-size: .85rem; font-weight: 700; color: rgba(255,255,255,.7); }
+
+  /* STATS CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .stat-tile { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 1.25rem; }
+  .stat-tile .val { font-family: 'DM Serif Display', serif; font-size: 2rem; color: white; line-height: 1; }
+  .stat-tile .lbl { font-size: .78rem; color: rgba(255,255,255,.4); margin-top: .3rem; }
+
+  /* LOGIN GATE */
+  .login-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .login-gate-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 2.5rem; width: 100%; max-width: 380px; text-align: center; }
+  .login-gate-card h2 { font-family: 'DM Serif Display', serif; color: white; margin-bottom: .5rem; }
+  .login-gate-card p { font-size: .88rem; color: rgba(255,255,255,.5); margin-bottom: 1.5rem; }
+  .login-gate-card input { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); color: white; }
+  .login-gate-card input::placeholder { color: rgba(255,255,255,.3); }
+
+  @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div id="loginGate" class="login-gate">
+  <div class="login-gate-card">
+    <div style="font-size:2rem;margin-bottom:1rem">🔐</div>
+    <h2>Store Manager</h2>
+    <p>Enter your manager password to access the admin panel.</p>
+    <div class="form-group"><input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"></div>
+    <button class="btn btn-primary btn-full" onclick="checkPw()">Enter</button>
+    <div id="pwError" style="color:#fca5a5;font-size:.82rem;margin-top:.75rem"></div>
+  </div>
+</div>
+
+<!-- MANAGER UI -->
+<div id="managerUI" style="display:none">
+<nav class="manager-nav">
+  <div class="nav-inner">
+    <a href="/store.html" class="nav-logo"><img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2147733204/settings_images/3AWlHv0sQ5mNQO1BaIOw_Sphynx_Logo_Final_BlackandBlue_LONG-01.png" alt="Sphynx" style="filter:brightness(0) invert(1);height:28px"></a>
+    <ul class="nav-links">
+      <li><a href="/store.html">← View Store</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="manager-wrap">
+  <div class="manager-header">
+    <div>
+      <h1>Store Manager</h1>
+      <p>Manage products, lessons, and pricing — synced to Stripe automatically.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('products')">Products</button>
+    <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
+    <button class="tab-btn" onclick="switchTab('customers')">Customers</button>
+  </div>
+
+  <!-- PRODUCTS TAB -->
+  <div id="tab-products">
+    <div id="alertBanner" style="margin-bottom:1rem"></div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stripe ID</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productsTableBody">
+          <tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading products...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="tab-analytics" style="display:none">
+    <div class="stats-grid" id="analyticsStats">
+      <div class="stat-tile"><div class="val" id="statRevenue">—</div><div class="lbl">Total Revenue</div></div>
+      <div class="stat-tile"><div class="val" id="statOrders">—</div><div class="lbl">Total Orders</div></div>
+      <div class="stat-tile"><div class="val" id="statCustomers">—</div><div class="lbl">Customers</div></div>
+      <div class="stat-tile"><div class="val" id="statProducts">—</div><div class="lbl">Active Products</div></div>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Product</th><th>Sales</th><th>Revenue</th></tr></thead>
+        <tbody id="analyticsTableBody"><tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS TAB -->
+  <div id="tab-customers" style="display:none">
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Email</th><th>Purchased</th><th>Date</th></tr></thead>
+        <tbody id="customersTableBody"><tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal" style="max-width:640px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white" id="modalTitle">Add Product</h2>
+      <button class="modal-close" onclick="closeModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <input type="hidden" id="editProductId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" id="fName" placeholder="e.g. JotForm Basics Training Course">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="fCategory">
+            <option value="Integration">Integration</option>
+            <option value="JotForm">JotForm</option>
+            <option value="Training">Training</option>
+            <option value="Email Campaign">Email Campaign</option>
+            <option value="Zapier">Zapier</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="fDesc" placeholder="What's included in this product?"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (USD)</label>
+          <input type="number" id="fPrice" placeholder="147.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label>Sort Order</label>
+          <input type="number" id="fSort" placeholder="1" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Product Image URL</label>
+        <input type="url" id="fImage" placeholder="https://...">
+      </div>
+
+      <div class="form-section-title">Stripe (auto-created on save)</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Stripe Product ID <span style="color:rgba(255,255,255,.3);font-weight:400">(auto-filled)</span></label>
+          <input type="text" id="fStripeProductId" placeholder="prod_..." readonly style="opacity:.6">
+        </div>
+        <div class="form-group">
+          <label>Stripe Price ID <span style="color:rgba(255,255,255,.3);font-weight:400">(auto-filled)</span></label>
+          <input type="text" id="fStripePriceId" placeholder="price_..." readonly style="opacity:.6">
+        </div>
+      </div>
+
+      <div class="form-section-title">Lessons</div>
+      <div id="lessonsList" class="lessons-list"></div>
+      <button class="btn btn-outline btn-full" onclick="addLesson()" style="margin-bottom:1.5rem">+ Add Lesson</button>
+
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1rem">
+        <button class="btn btn-outline" onclick="closeModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn" onclick="saveProduct()">Save & Sync to Stripe</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase } from '/lib/supabase.js';
+
+const MANAGER_PW = '__NEXT_PUBLIC_MANAGER_PASSWORD__';
+
+// PASSWORD GATE
+window.checkPw = function() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === MANAGER_PW) {
+    sessionStorage.setItem('mgr_auth', '1');
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('managerUI').style.display = 'block';
+    initManager();
+  } else {
+    document.getElementById('pwError').textContent = 'Incorrect password.';
+  }
+};
+
+if (sessionStorage.getItem('mgr_auth') === '1') {
+  document.getElementById('loginGate').style.display = 'none';
+  document.getElementById('managerUI').style.display = 'block';
+  initManager();
+}
+
+let products = [];
+let editingLessons = [];
+
+async function initManager() {
+  await loadProducts();
+  await loadAnalytics();
+  await loadCustomers();
+}
+
+async function loadProducts() {
+  const { data } = await supabase.from('products').select('*').order('category').order('sort_order');
+  products = data || [];
+  renderProductsTable();
+}
+
+function renderProductsTable() {
+  const tbody = document.getElementById('productsTableBody');
+  if (!products.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No products yet. Add your first one!</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = products.map(p => `
+    <tr>
+      <td>
+        <div class="product-name-cell">
+          ${p.image_url ? `<img class="product-thumb" src="${p.image_url}" alt="">` : `<div class="product-thumb-placeholder">📦</div>`}
+          <div><div class="td-name">${p.name}</div><div class="td-sub">${p.lesson_count || 0} lessons</div></div>
+        </div>
+      </td>
+      <td><span class="badge badge-blue">${p.category}</span></td>
+      <td class="td-price">$${(p.price / 100).toFixed(2)}</td>
+      <td><span style="font-size:.75rem;color:rgba(255,255,255,.35);font-family:monospace">${p.stripe_price_id || '—'}</span></td>
+      <td><button class="toggle-btn ${p.active ? 'on' : 'off'}" onclick="toggleActive('${p.id}', ${p.active})"></button></td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="editProduct('${p.id}')">Edit</button>
+          <button class="action-btn danger" onclick="deleteProduct('${p.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function loadAnalytics() {
+  const { data: purchases } = await supabase.from('purchases').select('product_id, amount_paid, user_id, products(name)');
+  if (!purchases) return;
+
+  const totalRevenue = purchases.reduce((s, p) => s + (p.amount_paid || 0), 0);
+  const uniqueCustomers = new Set(purchases.map(p => p.user_id)).size;
+  const activeProducts = products.filter(p => p.active).length;
+
+  document.getElementById('statRevenue').textContent = '$' + (totalRevenue / 100).toFixed(0);
+  document.getElementById('statOrders').textContent = purchases.length;
+  document.getElementById('statCustomers').textContent = uniqueCustomers;
+  document.getElementById('statProducts').textContent = activeProducts;
+
+  const byProduct = {};
+  purchases.forEach(p => {
+    const name = p.products?.name || p.product_id;
+    if (!byProduct[name]) byProduct[name] = { count: 0, revenue: 0 };
+    byProduct[name].count++;
+    byProduct[name].revenue += (p.amount_paid || 0);
+  });
+  document.getElementById('analyticsTableBody').innerHTML = Object.entries(byProduct)
+    .sort((a, b) => b[1].revenue - a[1].revenue)
+    .map(([name, d]) => `<tr>
+      <td style="color:white">${name}</td>
+      <td style="color:rgba(255,255,255,.6)">${d.count}</td>
+      <td style="color:var(--accent);font-weight:700">$${(d.revenue / 100).toFixed(2)}</td>
+    </tr>`).join('');
+}
+
+async function loadCustomers() {
+  const { data } = await supabase.from('purchases').select('user_id, purchased_at, products(name)').order('purchased_at', { ascending: false });
+  const { data: users } = await supabase.from('profiles').select('id, email');
+  const userMap = Object.fromEntries((users || []).map(u => [u.id, u.email]));
+  document.getElementById('customersTableBody').innerHTML = (data || []).map(p => `<tr>
+    <td style="color:white">${userMap[p.user_id] || p.user_id}</td>
+    <td style="color:rgba(255,255,255,.6)">${p.products?.name || '—'}</td>
+    <td style="color:rgba(255,255,255,.4)">${new Date(p.purchased_at).toLocaleDateString()}</td>
+  </tr>`).join('') || `<tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No customers yet.</td></tr>`;
+}
+
+window.switchTab = function(tab) {
+  ['products', 'analytics', 'customers'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', ['products','analytics','customers'][i] === tab));
+  });
+};
+
+window.openModal = function(productId = null) {
+  editingLessons = [];
+  document.getElementById('editProductId').value = '';
+  document.getElementById('fName').value = '';
+  document.getElementById('fCategory').value = 'JotForm';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fPrice').value = '';
+  document.getElementById('fSort').value = '';
+  document.getElementById('fImage').value = '';
+  document.getElementById('fStripeProductId').value = '';
+  document.getElementById('fStripePriceId').value = '';
+  document.getElementById('modalTitle').textContent = 'Add Product';
+  renderLessonsForm();
+  document.getElementById('productModal').classList.add('open');
+};
+
+window.editProduct = async function(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const { data: lessons } = await supabase.from('lessons').select('*').eq('product_id', id).order('sort_order');
+  editingLessons = lessons || [];
+  document.getElementById('editProductId').value = p.id;
+  document.getElementById('fName').value = p.name;
+  document.getElementById('fCategory').value = p.category;
+  document.getElementById('fDesc').value = p.description;
+  document.getElementById('fPrice').value = (p.price / 100).toFixed(2);
+  document.getElementById('fSort').value = p.sort_order || 0;
+  document.getElementById('fImage').value = p.image_url || '';
+  document.getElementById('fStripeProductId').value = p.stripe_product_id || '';
+  document.getElementById('fStripePriceId').value = p.stripe_price_id || '';
+  document.getElementById('modalTitle').textContent = 'Edit Product';
+  renderLessonsForm();
+  document.getElementById('productModal').classList.add('open');
+};
+
+window.closeModal = function() {
+  document.getElementById('productModal').classList.remove('open');
+};
+
+function renderLessonsForm() {
+  const list = document.getElementById('lessonsList');
+  list.innerHTML = editingLessons.map((l, i) => `
+    <div class="lesson-form-item">
+      <div class="lesson-form-header">
+        Lesson ${i + 1}
+        <button class="action-btn danger" onclick="removeLesson(${i})">Remove</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Title</label><input type="text" value="${l.title || ''}" onchange="editingLessons[${i}].title=this.value" placeholder="Lesson title"></div>
+        <div class="form-group"><label>Section</label><input type="text" value="${l.section || ''}" onchange="editingLessons[${i}].section=this.value" placeholder="e.g. Getting Started"></div>
+      </div>
+      <div class="form-group"><label>Video URL (YouTube or Vimeo)</label><input type="url" value="${l.video_url || ''}" onchange="editingLessons[${i}].video_url=this.value" placeholder="https://youtube.com/watch?v=..."></div>
+      <div class="form-group"><label>Written Content (HTML ok)</label><textarea onchange="editingLessons[${i}].content=this.value" placeholder="Lesson text content...">${l.content || ''}</textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Download URL</label><input type="url" value="${l.download_url || ''}" onchange="editingLessons[${i}].download_url=this.value" placeholder="https://..."></div>
+        <div class="form-group"><label>Download Label</label><input type="text" value="${l.download_label || ''}" onchange="editingLessons[${i}].download_label=this.value" placeholder="Download the template"></div>
+      </div>
+    </div>`).join('');
+}
+
+window.addLesson = function() {
+  editingLessons.push({ title: '', section: '', video_url: '', content: '', download_url: '', download_label: '', sort_order: editingLessons.length });
+  renderLessonsForm();
+};
+
+window.removeLesson = function(i) {
+  editingLessons.splice(i, 1);
+  renderLessonsForm();
+};
+
+window.saveProduct = async function() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Saving & syncing...';
+
+  const productId = document.getElementById('editProductId').value;
+  const name = document.getElementById('fName').value.trim();
+  const category = document.getElementById('fCategory').value;
+  const description = document.getElementById('fDesc').value.trim();
+  const price = Math.round(parseFloat(document.getElementById('fPrice').value) * 100);
+  const image_url = document.getElementById('fImage').value.trim();
+  const sort_order = parseInt(document.getElementById('fSort').value) || 0;
+
+  if (!name || !price) { showAlert('error', 'Name and price are required.'); btn.disabled = false; btn.textContent = 'Save & Sync to Stripe'; return; }
+
+  try {
+    // Sync to Stripe via our API
+    const stripeRes = await fetch('/api/sync-product', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, name, description, price, image_url,
+        existingStripeProductId: document.getElementById('fStripeProductId').value,
+        existingStripePriceId: document.getElementById('fStripePriceId').value })
+    });
+    const stripeData = await stripeRes.json();
+    if (stripeData.error) throw new Error(stripeData.error);
+
+    const productPayload = {
+      name, category, description, price, image_url, sort_order,
+      stripe_product_id: stripeData.stripeProductId,
+      stripe_price_id: stripeData.stripePriceId,
+      lesson_count: editingLessons.length,
+      active: true
+    };
+
+    let savedProductId = productId;
+    if (productId) {
+      await supabase.from('products').update(productPayload).eq('id', productId);
+    } else {
+      const { data } = await supabase.from('products').insert(productPayload).select().single();
+      savedProductId = data.id;
+    }
+
+    // Save lessons
+    await supabase.from('lessons').delete().eq('product_id', savedProductId);
+    if (editingLessons.length) {
+      await supabase.from('lessons').insert(editingLessons.map((l, i) => ({
+        ...l, product_id: savedProductId, sort_order: i
+      })));
+    }
+
+    showAlert('success', `✓ "${name}" saved and synced to Stripe.`);
+    closeModal();
+    await loadProducts();
+  } catch (err) {
+    showAlert('error', 'Error: ' + err.message);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Save & Sync to Stripe';
+};
+
+window.toggleActive = async function(id, current) {
+  await supabase.from('products').update({ active: !current }).eq('id', id);
+  await fetch('/api/sync-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toggleActive: true, productId: id, active: !current }) });
+  await loadProducts();
+};
+
+window.deleteProduct = async function(id) {
+  if (!confirm('Delete this product? This cannot be undone. The Stripe product will be archived.')) return;
+  await fetch('/api/sync-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deleteProduct: true, productId: id }) });
+  await supabase.from('lessons').delete().eq('product_id', id);
+  await supabase.from('products').delete().eq('id', id);
+  await loadProducts();
+};
+
+function showAlert(type, msg) {
+  const el = document.getElementById('alertBanner');
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => el.innerHTML = '', 6000);
+}
+</script>
+</body>
+</html>
