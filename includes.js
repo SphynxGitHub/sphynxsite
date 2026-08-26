@@ -2,6 +2,12 @@
 // Just add <script src="/includes.js"></script> before </body> on each page
 
 (async function () {
+  // --- FAVICON ---
+  const favicon = document.createElement('link');
+  favicon.rel = 'icon';
+  favicon.type = 'image/png';
+  favicon.href = '/favicon.png';
+  document.head.appendChild(favicon);
   // Determine base path (works on Vercel where all pages are at root)
   const base = '';
 
