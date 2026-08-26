@@ -1,13 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": ".",
-  "redirects": [
-    {
-      "source": "/favicon.ico",
-      "destination": "https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2147733204/settings_images/3AWlHv0sQ5mNQO1BaIOw_Sphynx_Logo_Final_BlackandBlue_LONG-01.png",
-      "permanent": false
-    }
-  ],
   "headers": [
     {
       "source": "/api/(.*)",
