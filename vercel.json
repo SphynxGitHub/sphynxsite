@@ -2,6 +2,12 @@
   "version": 2,
   "headers": [
     {
+      "source": "/(.*).html",
+      "headers": [
+        { "key": "Link", "value": "</favicon.png>; rel=\"icon\"; type=\"image/png\"" }
+      ]
+    },
+    {
       "source": "/api/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
