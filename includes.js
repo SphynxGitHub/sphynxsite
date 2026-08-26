@@ -1,6 +1,12 @@
-// Inject favicon into <head> immediately
-document.head.insertAdjacentHTML('beforeend', '<link rel="icon" type="image/png" href="/favicon.png">');
+// Inject critical styles and favicon into <head> immediately
+document.head.insertAdjacentHTML('beforeend', `
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared.css">
+`);
 
+// Load nav and footer after DOM is ready
 document.addEventListener('DOMContentLoaded', async function () {
   const navPlaceholder = document.getElementById('site-nav');
   if (navPlaceholder) {
