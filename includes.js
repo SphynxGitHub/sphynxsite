@@ -1,14 +1,8 @@
-// includes.js — loads nav and footer into every page automatically
-// Just add <script src="/includes.js"></script> before </body> on each page
+// Add favicon immediately — runs in <head> before browser looks for it
+document.write('<link rel="icon" type="image/png" href="/favicon.png">');
 
-(async function () {
-  // --- FAVICON ---
-  const favicon = document.createElement('link');
-  favicon.rel = 'icon';
-  favicon.type = 'image/png';
-  favicon.href = '/favicon.png';
-  document.head.appendChild(favicon);
-  // Determine base path (works on Vercel where all pages are at root)
+// Load nav and footer after DOM is ready
+document.addEventListener('DOMContentLoaded', async function () {
   const base = '';
 
   // --- NAV ---
@@ -17,7 +11,6 @@
     const res = await fetch(`${base}/nav.html`);
     const html = await res.text();
     navPlaceholder.outerHTML = html;
-    // Highlight current page link
     document.querySelectorAll('nav a').forEach(a => {
       if (a.href === window.location.href ||
           (a.pathname !== '/' && window.location.pathname.startsWith(a.pathname))) {
@@ -33,4 +26,4 @@
     const html = await res.text();
     footerPlaceholder.outerHTML = html;
   }
-})();
+});
