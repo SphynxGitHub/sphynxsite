@@ -19,9 +19,9 @@ body { font-family: 'Outfit', sans-serif; color: var(--text); background: var(--
 
 /* NAV */
 nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0 2rem; }
-.nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 80px; }
 .logo { display: flex; align-items: center; text-decoration: none; }
-.logo img { height: 36px; width: auto; }
+.logo img { height: 56px; width: auto; }
 .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
 .nav-links a { font-size: 0.88rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: var(--navy); }
