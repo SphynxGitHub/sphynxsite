@@ -82,3 +82,15 @@ footer { background: #060f1e; color: rgba(255,255,255,0.5); padding: 3rem 2rem; 
 @media (max-width: 600px) {
   .footer-top { grid-template-columns: 1fr; }
 }
+
+/* Lucide icons */
+.workflow-icon i, .inc-icon i, .value-icon i, .option-icon i {
+  width: 22px; height: 22px; stroke-width: 1.75;
+}
+.workflow-icon i { color: white; }
+.inc-icon i { color: var(--navy); }
+.value-icon i { color: var(--blue); font-size: 1.5rem; }
+.option-icon i { width: 24px; height: 24px; }
+.icon-blue-bg i { color: var(--blue); }
+.icon-teal-bg i { color: var(--accent); }
+.icon-navy-bg i { color: var(--navy); }

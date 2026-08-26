@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="/includes.js"></script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,6 +49,7 @@
   @media(max-width:1050px){ .plans-grid { grid-template-columns:1fr 1fr; } }
   @media(max-width:700px){ .plans-grid,.included-grid,.terms-grid { grid-template-columns:1fr; } }
 </style>
+<script src="/includes.js"></script>
 </head>
 <body>
 <div id="site-nav"></div>
@@ -143,22 +143,22 @@
     <h2 class="section-heading">Everything in every plan</h2>
     <div class="included-grid">
       <div class="included-card">
-        <div class="inc-icon">🔍</div>
+        <div class="inc-icon"><i data-lucide="search"></i></div>
         <h3>Weekly Error Monitoring</h3>
         <p>Sphynx signs up to receive copies of your Zapier error notifications. We review them every week, identify issues, and prioritize what needs to be fixed — so you never have a broken automation running silently in the background.</p>
       </div>
       <div class="included-card">
-        <div class="inc-icon">🛠️</div>
+        <div class="inc-icon"><i data-lucide="tool"></i></div>
         <h3>Maintenance &amp; Update Hours</h3>
         <p>Your allocated hours cover both hands-on maintenance work and check-in meetings. Use them when apps update and break integrations, when you need to add new automations, or whenever your workflows need a tune-up.</p>
       </div>
       <div class="included-card">
-        <div class="inc-icon">📞</div>
+        <div class="inc-icon"><i data-lucide="phone"></i></div>
         <h3>Meeting Time Included</h3>
         <p>Strategy and check-in meetings are drawn from your allocated hours — so you're never paying extra just to talk through what needs to be done. We keep it efficient and focused.</p>
       </div>
       <div class="included-card">
-        <div class="inc-icon">⬆️</div>
+        <div class="inc-icon"><i data-lucide="arrow-up-circle"></i></div>
         <h3>Flexible Overage Hours</h3>
         <p>If you exceed your plan's allotted hours, you can purchase additional time at your tier's discounted rate — or upgrade to a higher tier at any time. You're never stuck or left without support.</p>
       </div>
@@ -174,15 +174,15 @@
     <p class="section-sub">Our maintenance plans cover the tools financial advisors rely on most. Don't see yours? Contact us — if it integrates, we can support it.</p>
     <div class="apps-grid">
       <span class="app-pill">⚡ Zapier</span>
-      <span class="app-pill">📅 Calendly</span>
+      <span class="app-pill"><i data-lucide="calendar" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"></i>Calendly</span>
       <span class="app-pill">✉️ Mailchimp</span>
-      <span class="app-pill">📋 JotForm</span>
+      <span class="app-pill"><i data-lucide="clipboard" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"></i>JotForm</span>
       <span class="app-pill">📧 MailerLite</span>
-      <span class="app-pill">✅ Process Street</span>
-      <span class="app-pill">🗂️ Wealthbox</span>
+      <span class="app-pill"><i data-lucide="check-square" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"></i>Process Street</span>
+      <span class="app-pill"><i data-lucide="database" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"></i>Wealthbox</span>
       <span class="app-pill">🗂️ Redtail</span>
       <span class="app-pill">📊 PreciseFP</span>
-      <span class="app-pill">💳 AdvicePay</span>
+      <span class="app-pill"><i data-lucide="credit-card" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"></i>AdvicePay</span>
       <span class="app-pill">🗓️ Acuity Scheduling</span>
       <span class="app-pill">🤖 Thyme AI</span>
     </div>
@@ -229,4 +229,5 @@
 </section>
 
 <div id="site-footer"></div>
+
 </body></html>
