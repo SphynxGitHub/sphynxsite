@@ -94,3 +94,25 @@ footer { background: #060f1e; color: rgba(255,255,255,0.5); padding: 3rem 2rem; 
 .icon-blue-bg i { color: var(--blue); }
 .icon-teal-bg i { color: var(--accent); }
 .icon-navy-bg i { color: var(--navy); }
+
+/* Hero background SVG */
+.page-hero { position: relative; overflow: hidden; }
+.hero-bg-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Wallpaper & hero background */
+html { background: #f7f9fc; }
+body { background: transparent; position: relative; z-index: 1; }
+.page-hero { position: relative; overflow: hidden; }
+.hero-bg-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Ensure all content sections sit above wallpaper */
+nav, section, footer, .filter-bar, .catalog-controls,
+.blog-layout, .dashboard-grid, .course-layout,
+.contact-layout, .manager-wrap, .estimate-wrap,
+.pricing-intro, .complexity-section, .coach-pricing-inner,
+.pricing-inner, .blog-layout, .container {
+  position: relative;
+  z-index: 1;
+}
