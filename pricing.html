@@ -92,6 +92,22 @@
     .services-grid,.coaching-grid,.maint-grid { grid-template-columns:1fr; }
     .complexity-table { font-size:.8rem; }
   }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .rates-table-wrap { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:1.25rem; }
+  .rates-table-header { background:var(--navy); padding:1rem 1.25rem; display:flex; align-items:center; justify-content:space-between; }
+  .rates-table-header h3 { font-family:'DM Serif Display',serif; font-size:1.1rem; color:white; display:flex; align-items:center; gap:.6rem; }
+  .rates-table-header h3 i { width:18px; height:18px; }
+  .rates-table-header span { font-size:.78rem; color:rgba(255,255,255,.5); }
+  .rate-row { display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:1rem; padding:.75rem 1.25rem; border-bottom:1px solid var(--bg); transition:background .15s; }
+  .rate-row:hover { background:var(--bg); }
+  .rate-row:last-child { border-bottom:none; }
+  .rate-name { font-size:.9rem; color:var(--navy); font-weight:500; }
+  .rate-desc { font-size:.78rem; color:var(--muted); margin-top:2px; }
+  .rate-unit { font-size:.75rem; color:var(--muted); text-align:right; white-space:nowrap; }
+  .rate-price { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--navy); text-align:right; white-space:nowrap; }
+  .rate-error { text-align:center; padding:2rem; color:var(--muted); font-size:.9rem; }
+  .last-updated { font-size:.75rem; color:var(--muted); text-align:right; margin-top:.5rem; }
 </style>
 </head>
 <body>
@@ -109,75 +125,24 @@
   </div>
 </div>
 
-<!-- WHITE GLOVE COMPLEXITY -->
+<!-- WHITE GLOVE COMPONENT PRICING — live from Supabase Portal -->
 <div class="pricing-intro">
   <div class="section-tag">White Glove Automation</div>
-  <h2>Priced by complexity</h2>
-  <p>Each automation workflow is evaluated based on how many tools it connects, how many steps are involved, and how much custom logic is required. You get a fixed quote before we start — no surprises.</p>
+  <h2>Component-based pricing</h2>
+  <p>Every project is quoted by adding up the individual components involved — steps, variables, logic, tools. No packages, no guesswork. You know exactly what you're paying for before we start.</p>
 </div>
 
 <div class="complexity-section">
   <div class="complexity-inner">
-    <table class="complexity-table">
-      <thead>
-        <tr>
-          <th>Complexity tier</th>
-          <th>What it means</th>
-          <th>Typical price range</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="tier-badge tier-1">Simple</span></td>
-          <td>
-            <ul>
-              <li>1–2 step Zap, single trigger and action</li>
-              <li>Two tools connected (e.g. form → CRM)</li>
-              <li>No conditional logic or branching</li>
-              <li>Example: JotForm submission creates Wealthbox contact</li>
-            </ul>
-          </td>
-          <td><div class="price-range">$150 – $400</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">per workflow</div></td>
-        </tr>
-        <tr>
-          <td><span class="tier-badge tier-2">Moderate</span></td>
-          <td>
-            <ul>
-              <li>Multi-step Zap, 2–4 tools connected</li>
-              <li>Basic conditional logic (if/then)</li>
-              <li>Moderate customization required</li>
-              <li>Example: New Calendly booking → CRM task + email + Slack notify</li>
-            </ul>
-          </td>
-          <td><div class="price-range">$400 – $900</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">per workflow</div></td>
-        </tr>
-        <tr>
-          <td><span class="tier-badge tier-3">Complex</span></td>
-          <td>
-            <ul>
-              <li>Multi-path logic, 4+ tools connected</li>
-              <li>Custom filters, formatters, or webhooks</li>
-              <li>Significant setup and testing time</li>
-              <li>Example: Full client onboarding flow with branching by client type</li>
-            </ul>
-          </td>
-          <td><div class="price-range">$900 – $2,500</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">per workflow</div></td>
-        </tr>
-        <tr>
-          <td><span class="tier-badge tier-4">Enterprise</span></td>
-          <td>
-            <ul>
-              <li>Full firm tech stack audit and rebuild</li>
-              <li>Multi-advisor or team-wide setup</li>
-              <li>Custom integrations, API connections</li>
-              <li>Example: Complete automation infrastructure for a 5-advisor RIA</li>
-            </ul>
-          </td>
-          <td><div class="price-range">Custom</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">scoped after discovery</div></td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="table-note"><strong>Most White Glove projects</strong> include 3–8 workflows and run $1,500–$6,000 total. You'll receive a fixed project quote after your discovery call — no hourly surprises. <a href="/estimate.html" style="color:var(--blue);font-weight:600">Use the estimate builder →</a></p>
+    <div id="ratesLoading" style="text-align:center;padding:3rem;color:var(--muted)">
+      <div style="width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 1rem"></div>
+      Loading current rates...
+    </div>
+    <div id="ratesTable" style="display:none"></div>
+    <p class="table-note" id="ratesNote" style="display:none">
+      <strong>Most White Glove projects</strong> include 3–8 workflows. You'll receive a fixed project quote after your discovery call — no hourly surprises.
+      <a href="/estimate.html" style="color:var(--blue);font-weight:600">Use the estimate builder →</a>
+    </p>
   </div>
 </div>
 
@@ -319,5 +284,112 @@
 </section>
 
 <div id="site-footer"></div>
+
+<script type="module">
+const SUPABASE_URL = '__NEXT_PUBLIC_PORTAL_SUPABASE_URL__';
+const SUPABASE_KEY = '__NEXT_PUBLIC_PORTAL_SUPABASE_ANON_KEY__';
+
+const CATEGORY_ICONS = {
+  'zap':'zap','zapier':'zap','step':'zap',
+  'form':'clipboard','jotform':'clipboard',
+  'crm':'database','wealthbox':'database','redtail':'database',
+  'email':'mail','campaign':'mail',
+  'schedul':'calendar','calendar':'calendar',
+  'logic':'git-branch','condition':'git-branch','filter':'git-branch',
+  'variable':'code','format':'code',
+  'integration':'link','tool':'link','connect':'link',
+  'meeting':'video','document':'file-text','doc':'file-text',
+  'billing':'credit-card','payment':'credit-card','advicepay':'credit-card',
+};
+
+function getIcon(name='') {
+  const n = name.toLowerCase();
+  for (const [key, icon] of Object.entries(CATEGORY_ICONS)) {
+    if (n.includes(key)) return icon;
+  }
+  return 'settings';
+}
+
+function fmt(v) {
+  if (v == null) return '—';
+  if (typeof v === 'string' && (v.includes('$') || v === '—')) return v;
+  const n = parseFloat(v);
+  if (!isNaN(n)) return '$' + n.toFixed(2).replace(/\.00$/, '');
+  return v;
+}
+
+function renderRates(rates) {
+  let sections = [];
+  if (Array.isArray(rates)) {
+    const g = {};
+    rates.forEach(r => { const c = r.category || r.section || r.type || 'General'; (g[c]=g[c]||[]).push(r); });
+    sections = Object.entries(g).map(([name,items]) => ({name,items}));
+  } else if (typeof rates === 'object') {
+    sections = Object.entries(rates).map(([name,val]) => ({
+      name,
+      items: Array.isArray(val) ? val : Object.entries(val).map(([k,v]) => ({
+        name: k,
+        price: typeof v==='object' ? (v.price||v.rate||v.amount||v) : v,
+        unit: typeof v==='object' ? (v.unit||v.per||'') : '',
+        description: typeof v==='object' ? (v.description||v.desc||'') : ''
+      }))
+    }));
+  }
+  if (!sections.length) {
+    document.getElementById('ratesLoading').innerHTML = '<div class="rate-error">No rate data found — check the workspace_masters table.</div>';
+    return;
+  }
+  let html = '';
+  sections.forEach(({name, items}) => {
+    const icon = getIcon(name);
+    html += `<div class="rates-table-wrap">
+      <div class="rates-table-header">
+        <h3><i data-lucide="${icon}"></i>${name}</h3>
+        <span>${items.length} item${items.length!==1?'s':''}</span>
+      </div>`;
+    items.forEach(item => {
+      const n = item.name||item.component||item.label||Object.keys(item).find(k=>!['price','rate','unit','per','description','desc','category','section','type'].includes(k))||'';
+      const p = fmt(item.price??item.rate??item.amount??item.cost??item.value);
+      const u = item.unit||item.per||item.unit_label||'';
+      const d = item.description||item.desc||item.notes||'';
+      html += `<div class="rate-row">
+        <div><div class="rate-name">${n}</div>${d?`<div class="rate-desc">${d}</div>`:''}</div>
+        <div class="rate-unit">${u?'per '+u:''}</div>
+        <div class="rate-price">${p}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('ratesTable').innerHTML = html;
+  document.getElementById('ratesLoading').style.display = 'none';
+  document.getElementById('ratesTable').style.display = 'block';
+  document.getElementById('ratesNote').style.display = 'block';
+  document.getElementById('ratesNote').insertAdjacentHTML('beforeend','<div class="last-updated"><i data-lucide="refresh-cw" style="width:11px;height:11px;vertical-align:middle;margin-right:3px"></i>Live rates from Sphynx Portal</div>');
+  if (window.lucide) lucide.createIcons();
+}
+
+async function loadRates() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/workspace_masters?select=rates&limit=1`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    const data = await res.json();
+    if (!data?.length || data[0]?.rates == null) throw new Error('No rates found in workspace_masters');
+    const rates = typeof data[0].rates === 'string' ? JSON.parse(data[0].rates) : data[0].rates;
+    renderRates(rates);
+  } catch(err) {
+    document.getElementById('ratesLoading').innerHTML = `
+      <div class="rate-error">
+        <i data-lucide="alert-circle" style="width:28px;height:28px;display:block;margin:0 auto .75rem;color:var(--muted)"></i>
+        Could not load rates: ${err.message}<br>
+        <a href="/contact.html" style="color:var(--blue);font-size:.85rem;margin-top:.5rem;display:inline-block">Contact us for current pricing →</a>
+      </div>`;
+    if (window.lucide) lucide.createIcons();
+  }
+}
+
+const t = setInterval(() => { if (window.lucide) { clearInterval(t); loadRates(); } }, 100);
+</script>
 </body>
 </html>
