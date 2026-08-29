@@ -23,7 +23,7 @@ const HERO_BG = `<svg class="hero-bg-svg" viewBox="0 0 1200 340" preserveAspectR
 
 // 3. Wallpaper SVG — V3 edge-hugging scene, edit here to update all pages
 const WALLPAPER = `<svg id="sphynx-wallpaper" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
-  style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible">
+  style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:visible">
   <defs>
     <linearGradient id="wfade" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#f7f9fc" stop-opacity="0"/>
@@ -97,10 +97,12 @@ document.addEventListener('DOMContentLoaded', async function () {
       hero.style.overflow = 'hidden';
       hero.insertAdjacentHTML('afterbegin', HERO_BG);
     }
-
     // Make sure page-hero-inner sits above the bg SVG
     const heroInner = document.querySelector('.page-hero-inner');
     if (heroInner) heroInner.style.position = 'relative';
+    // CRITICAL: nav must always be on top — re-enforce after hero injection
+    const navEl2 = document.querySelector('nav');
+    if (navEl2) navEl2.style.zIndex = '1000';
 
     // Active link highlighting
     document.querySelectorAll('nav a').forEach(a => {
@@ -118,13 +120,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         item.classList.add('open');
       });
       item.addEventListener('mouseleave', function() {
-        timeout = setTimeout(function() { item.classList.remove('open'); }, 200);
+        timeout = setTimeout(function() { item.classList.remove('open'); }, 300);
       });
       var dropdown = item.querySelector('.dropdown');
       if (dropdown) {
         dropdown.addEventListener('mouseenter', function() { clearTimeout(timeout); });
         dropdown.addEventListener('mouseleave', function() {
-          timeout = setTimeout(function() { item.classList.remove('open'); }, 200);
+          timeout = setTimeout(function() { item.classList.remove('open'); }, 300);
         });
       }
     });
