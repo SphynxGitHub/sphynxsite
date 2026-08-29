@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Catalog | Sphynx Automation</title>
+<meta name="description" content="Browse every automation service, QuickStart project, and DIY template Sphynx offers — filterable by type, category, and tool.">
+<script src="/includes.js"></script>
+<style>
+  /* HERO FILTER BAR */
+  .catalog-controls { background:white; border-bottom:1px solid var(--border); padding:1.25rem 2rem; position:sticky; top:68px; z-index:50; }
+  .catalog-controls-inner { max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; }
+  .filter-group { display:flex; gap:.4rem; flex-wrap:wrap; }
+  .filter-divider { width:1px; height:28px; background:var(--border); margin:0 .25rem; align-self:center; }
+  .fc { background:var(--bg); border:1.5px solid var(--border); color:var(--muted); font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; padding:.35rem .85rem; border-radius:100px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .fc:hover { border-color:var(--blue); color:var(--blue); }
+  .fc.active { color:white; }
+  .fc.type-all.active,.fc.type-wg.active { background:var(--navy); border-color:var(--navy); }
+  .fc.type-qs.active { background:#7c3aed; border-color:#7c3aed; }
+  .fc.type-diy.active { background:var(--accent); border-color:var(--accent); color:var(--navy); }
+  .search-wrap { margin-left:auto; }
+  .search-wrap input { padding:.4rem .9rem; border:1.5px solid var(--border); border-radius:100px; font-family:'Outfit',sans-serif; font-size:.82rem; outline:none; width:200px; transition:border-color .2s; }
+  .search-wrap input:focus { border-color:var(--blue); }
+
+  /* CATALOG GRID */
+  .catalog-wrap { max-width:1200px; margin:0 auto; padding:3rem 2rem 5rem; }
+  .catalog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.25rem; }
+  .catalog-card { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition:transform .25s,box-shadow .25s; position:relative; }
+  .catalog-card:hover { transform:translateY(-4px); box-shadow:0 10px 32px rgba(11,31,58,.1); }
+  .catalog-card.hidden { display:none; }
+
+  /* TYPE STRIPE */
+  .type-stripe { height:4px; width:100%; }
+  .stripe-wg { background:var(--navy); }
+  .stripe-qs { background:#7c3aed; }
+  .stripe-diy { background:var(--accent); }
+
+  /* CARD BODY */
+  .cc-body { padding:1.5rem; flex:1; display:flex; flex-direction:column; }
+  .cc-top { display:flex; align-items:flex-start; justify-content:space-between; gap:.75rem; margin-bottom:.75rem; }
+  .cc-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .cc-icon i { width:20px; height:20px; }
+  .icon-navy { background:#e8ecf3; } .icon-navy i { color:var(--navy); }
+  .icon-blue { background:var(--blue-light); } .icon-blue i { color:var(--blue); }
+  .icon-teal { background:var(--accent-light); } .icon-teal i { color:#0a6b5c; }
+  .icon-purple { background:#f0ebff; } .icon-purple i { color:#7c3aed; }
+  .icon-orange { background:#fef3c7; } .icon-orange i { color:#92400e; }
+  .type-badge { font-size:.68rem; font-weight:800; padding:.28rem .7rem; border-radius:100px; text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; }
+  .badge-wg { background:#e8ecf3; color:var(--navy); }
+  .badge-qs { background:#f0ebff; color:#7c3aed; }
+  .badge-diy { background:var(--accent-light); color:#0a6b5c; }
+  .cc-cat { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:.35rem; }
+  .cc-title { font-size:1rem; font-weight:700; color:var(--navy); line-height:1.35; margin-bottom:.5rem; }
+  .cc-desc { font-size:.84rem; color:var(--muted); line-height:1.65; flex:1; margin-bottom:1.1rem; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .cc-tools { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1.1rem; }
+  .tool-pip { font-size:.68rem; font-weight:700; padding:.2rem .55rem; border-radius:100px; background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+  .cc-footer { display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-top:auto; padding-top:.85rem; border-top:1px solid var(--bg); }
+  .cc-price { font-family:'DM Serif Display',serif; font-size:1.3rem; color:var(--navy); }
+  .cc-price .cc-price-sub { font-family:'Outfit',sans-serif; font-size:.72rem; color:var(--muted); font-weight:400; margin-left:2px; }
+  .cc-cta { font-size:.82rem; font-weight:700; padding:.5rem 1rem; border-radius:8px; text-decoration:none; white-space:nowrap; transition:all .2s; }
+  .cta-wg { background:var(--navy); color:white; }
+  .cta-wg:hover { background:#1a3060; }
+  .cta-qs { background:#7c3aed; color:white; }
+  .cta-qs:hover { background:#6d28d9; }
+  .cta-diy { background:var(--accent); color:var(--navy); }
+  .cta-diy:hover { box-shadow:0 4px 12px rgba(0,194,168,.3); }
+
+  /* SECTION LABELS */
+  .section-divider { grid-column:1/-1; display:flex; align-items:center; gap:1rem; margin-top:1rem; }
+  .section-divider h3 { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); white-space:nowrap; }
+  .section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* EMPTY */
+  .empty-state { grid-column:1/-1; text-align:center; padding:4rem 2rem; color:var(--muted); }
+  .empty-state i { width:48px; height:48px; margin:0 auto 1rem; display:block; opacity:.4; }
+
+  /* LEGEND */
+  .legend { display:flex; gap:1.25rem; flex-wrap:wrap; margin-bottom:2rem; }
+  .legend-item { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--muted); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  @media(max-width:768px){
+    .catalog-grid { grid-template-columns:1fr; }
+    .filter-divider { display:none; }
+    .search-wrap { width:100%; }
+    .search-wrap input { width:100%; }
+  }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Service Catalog</div>
+    <h1>Every way we can help you automate</h1>
+    <p>Browse White Glove projects, QuickStart packages, and DIY templates — filtered by what you're looking for. Every item links directly to checkout or a quote request.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="catalog-controls">
+  <div class="catalog-controls-inner">
+    <div class="filter-group">
+      <button class="fc type-all active" data-type="all" onclick="filter()">All</button>
+      <button class="fc type-wg" data-type="wg" onclick="filter()"><i data-lucide="star" style="width:11px;height:11px;display:inline;margin-right:3px"></i>White Glove</button>
+      <button class="fc type-qs" data-type="qs" onclick="filter()"><i data-lucide="zap" style="width:11px;height:11px;display:inline;margin-right:3px"></i>QuickStart</button>
+      <button class="fc type-diy" data-type="diy" onclick="filter()"><i data-lucide="package" style="width:11px;height:11px;display:inline;margin-right:3px"></i>DIY Template</button>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-group">
+      <button class="fc cat-all active" data-cat="all" onclick="filterCat()">All categories</button>
+      <button class="fc" data-cat="onboarding" onclick="filterCat()">Onboarding</button>
+      <button class="fc" data-cat="crm" onclick="filterCat()">CRM</button>
+      <button class="fc" data-cat="meetings" onclick="filterCat()">Meetings</button>
+      <button class="fc" data-cat="email" onclick="filterCat()">Email</button>
+      <button class="fc" data-cat="forms" onclick="filterCat()">Forms</button>
+      <button class="fc" data-cat="compliance" onclick="filterCat()">Compliance</button>
+      <button class="fc" data-cat="training" onclick="filterCat()">Training</button>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search..." oninput="filter()">
+    </div>
+  </div>
+</div>
+
+<div class="catalog-wrap">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>White Glove — done for you by Sphynx</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>QuickStart — pre-built, we set it up for you</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>DIY Template — self-serve, you set it up</div>
+  </div>
+
+  <div class="catalog-grid" id="catalogGrid">
+
+    <!-- ==================== WHITE GLOVE ==================== -->
+    <div class="section-divider" data-section="wg"><h3>White Glove — Done For You</h3></div>
+
+    <div class="catalog-card" data-type="wg" data-cat="onboarding crm">
+      <div class="type-stripe stripe-wg"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-navy"><i data-lucide="user-plus"></i></div>
+          <span class="type-badge badge-wg">White Glove</span>
+        </div>
+        <div class="cc-cat">Onboarding · CRM</div>
+        <div class="cc-title">Full Client Onboarding Flow</div>
+        <div class="cc-desc">Intake form → CRM contact creation → welcome email → task assignment → calendar invite. Fully customized to your firm, CRM, and tools. Zero manual steps.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Wealthbox</span><span class="tool-pip">Zapier</span><span class="tool-pip">Calendly</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">Custom<span class="cc-price-sub">quoted after discovery</span></div>
+          <a href="/estimate.html" class="cc-cta cta-wg">Get Estimate →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="wg" data-cat="meetings crm">
+      <div class="type-stripe stripe-wg"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-navy"><i data-lucide="calendar-check"></i></div>
+          <span class="type-badge badge-wg">White Glove</span>
+        </div>
+        <div class="cc-cat">Meetings · CRM</div>
+        <div class="cc-title">Meeting Prep &amp; Follow-up Automation</div>
+        <div class="cc-desc">24h before meetings: prep summary from CRM sent to advisor. After meeting: notes filed, follow-up email sent to client, tasks created. Fully automated.</div>
+        <div class="cc-tools"><span class="tool-pip">Calendly</span><span class="tool-pip">Wealthbox</span><span class="tool-pip">Gmail</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">Custom<span class="cc-price-sub">quoted after discovery</span></div>
+          <a href="/estimate.html" class="cc-cta cta-wg">Get Estimate →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="wg" data-cat="onboarding compliance">
+      <div class="type-stripe stripe-wg"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-navy"><i data-lucide="folder-check"></i></div>
+          <span class="type-badge badge-wg">White Glove</span>
+        </div>
+        <div class="cc-cat">Onboarding · Compliance</div>
+        <div class="cc-title">Document Collection &amp; Filing</div>
+        <div class="cc-desc">Secure document upload form sent to client. As documents arrive, advisor is notified and files are routed to the correct folder in your storage system automatically.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Google Drive</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">Custom<span class="cc-price-sub">quoted after discovery</span></div>
+          <a href="/estimate.html" class="cc-cta cta-wg">Get Estimate →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="wg" data-cat="email crm">
+      <div class="type-stripe stripe-wg"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-navy"><i data-lucide="mail"></i></div>
+          <span class="type-badge badge-wg">White Glove</span>
+        </div>
+        <div class="cc-cat">Email · CRM</div>
+        <div class="cc-title">Lifecycle Email Campaign Automation</div>
+        <div class="cc-desc">Clients and prospects automatically receive the right emails at the right lifecycle stage — onboarding, annual review, referral asks — triggered by CRM data.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">ActiveCampaign</span><span class="tool-pip">Wealthbox</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">Custom<span class="cc-price-sub">quoted after discovery</span></div>
+          <a href="/estimate.html" class="cc-cta cta-wg">Get Estimate →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="wg" data-cat="compliance crm">
+      <div class="type-stripe stripe-wg"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-navy"><i data-lucide="shield-check"></i></div>
+          <span class="type-badge badge-wg">White Glove</span>
+        </div>
+        <div class="cc-cat">Compliance · CRM</div>
+        <div class="cc-title">Annual Review Workflow</div>
+        <div class="cc-desc">CRM triggers a full review workflow 30 days before each client's anniversary. Scheduling link sent, prep tasks created, post-review follow-up queued automatically.</div>
+        <div class="cc-tools"><span class="tool-pip">Redtail</span><span class="tool-pip">Calendly</span><span class="tool-pip">Zapier</span><span class="tool-pip">Gmail</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">Custom<span class="cc-price-sub">quoted after discovery</span></div>
+          <a href="/estimate.html" class="cc-cta cta-wg">Get Estimate →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="wg" data-cat="onboarding crm">
+      <div class="type-stripe stripe-wg"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-navy"><i data-lucide="credit-card"></i></div>
+          <span class="type-badge badge-wg">White Glove</span>
+        </div>
+        <div class="cc-cat">Onboarding · Billing</div>
+        <div class="cc-title">Billing &amp; Fee Setup Automation</div>
+        <div class="cc-desc">New client agreements trigger fee setup in AdvicePay. Payment confirmations sync back to CRM and kick off the next onboarding step automatically.</div>
+        <div class="cc-tools"><span class="tool-pip">AdvicePay</span><span class="tool-pip">Wealthbox</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">Custom<span class="cc-price-sub">quoted after discovery</span></div>
+          <a href="/estimate.html" class="cc-cta cta-wg">Get Estimate →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== QUICKSTART ==================== -->
+    <div class="section-divider" data-section="qs"><h3>QuickStart — Pre-Built, We Set It Up</h3></div>
+
+    <div class="catalog-card" data-type="qs" data-cat="meetings crm">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="clipboard-list"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">Meetings · CRM</div>
+        <div class="cc-title">Meeting Notes &amp; Tasks to CRM</div>
+        <div class="cc-desc">JotForm for note-taking during client meetings. Assigns tasks, sends meeting summary to attendees, and adds everything directly to your CRM via Zapier.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Zapier</span><span class="tool-pip">Wealthbox</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span id="qs-1">–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/8WYz5mZw/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="compliance crm forms">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="bar-chart-2"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">Compliance · CRM · Forms</div>
+        <div class="cc-title">Risk Tolerance Questionnaire + IPS to CRM</div>
+        <div class="cc-desc">13-question risk tolerance form based on Grable &amp; Lytton's template. Auto-calculates risk score and band, prefills Investment Policy Statement, syncs to CRM.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Zapier</span><span class="tool-pip">Wealthbox</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/rMpW226L/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="onboarding crm forms">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="user-check"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">Onboarding · CRM · Forms</div>
+        <div class="cc-title">Client Profile Questionnaire to CRM</div>
+        <div class="cc-desc">Comprehensive intake form capturing personal, family, financial, and estate data. All submitted data flows directly into the correct CRM fields automatically.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Zapier</span><span class="tool-pip">Wealthbox</span><span class="tool-pip">Redtail</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/VawF7ZGz/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="crm">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="file-text"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">CRM</div>
+        <div class="cc-title">Bulk Client Notes Form to CRM</div>
+        <div class="cc-desc">Enter a note once, set parameters (tag, activity type), and Zapier applies it to all matching CRM contacts automatically. Great for compliance notices and grandfathered pricing.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Zapier</span><span class="tool-pip">Wealthbox</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/2ZKn2zFq/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="onboarding compliance forms">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="list-checks"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">Onboarding · Compliance</div>
+        <div class="cc-title">Documentation Needs List Generator</div>
+        <div class="cc-desc">Client answers questions about their financial situation; a customized document checklist is automatically generated and sent. Perfect for annual reviews and onboarding.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/MoFhFoQm/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="crm meetings">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="link"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">CRM · Meetings</div>
+        <div class="cc-title">Sync Wealthbox Contacts to Scheduled Events</div>
+        <div class="cc-desc">Zapier automatically links calendar events to their corresponding Wealthbox contacts — filling the gap left by the native integration. Creates contacts if they don't exist.</div>
+        <div class="cc-tools"><span class="tool-pip">Wealthbox</span><span class="tool-pip">Zapier</span><span class="tool-pip">Google Calendar</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/zjuRibDh/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="crm compliance">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="bell"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">CRM · Compliance</div>
+        <div class="cc-title">Redtail Daily Task Digest</div>
+        <div class="cc-desc">Automated daily email digest of upcoming Redtail tasks and events, including due dates, contacts, descriptions, and direct links into Redtail. Keeps nothing off your radar.</div>
+        <div class="cc-tools"><span class="tool-pip">Redtail</span><span class="tool-pip">Zapier</span><span class="tool-pip">Gmail</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/3zDkJAgM/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="qs" data-cat="crm">
+      <div class="type-stripe stripe-qs"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-purple"><i data-lucide="send"></i></div>
+          <span class="type-badge badge-qs">QuickStart</span>
+        </div>
+        <div class="cc-cat">Business Development</div>
+        <div class="cc-title">Send a Referral Form</div>
+        <div class="cc-desc">Send this JotForm to clients to request referrals. Pre-set professional referral message with mapped sender/recipient data. Easy to brand and customize.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$<span>–</span><span class="cc-price-sub">QuickStart</span></div>
+          <a href="https://www.sphynxautomation.com/offers/UTSBHpVB/checkout" class="cc-cta cta-qs" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DIY TEMPLATES ==================== -->
+    <div class="section-divider" data-section="diy"><h3>DIY Templates &amp; Courses — Self-Serve</h3></div>
+
+    <!-- JotForm Templates -->
+    <div class="catalog-card" data-type="diy" data-cat="forms onboarding">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="clipboard"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Forms · Onboarding</div>
+        <div class="cc-title">Schwab Client Profile Questionnaire</div>
+        <div class="cc-desc">JotForm template for gathering client data needed to prefill Schwab account paperwork — income, assets, beneficiaries, trusted contacts. Includes training videos.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span><span class="tool-pip">Schwab</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$800<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/resource_redirect/landing_pages/2150069935" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="meetings forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="edit-3"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Meetings · Forms</div>
+        <div class="cc-title">Meeting Notes &amp; Tasks Form</div>
+        <div class="cc-desc">Pre-formatted JotForm for client meetings. Sends meeting summary to client and advisor on submit. Can be linked to CRM via Zapier (not included). Includes training.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$300<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/resource_redirect/landing_pages/2147809009" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="share-2"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Business Development · Forms</div>
+        <div class="cc-title">Send a Referral Form</div>
+        <div class="cc-desc">JotForm template that streamlines the referral process. Pre-set template requiring minimal input to send a professional referral email. Includes training.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$300<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/resource_redirect/landing_pages/2148223473" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="onboarding compliance forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="file-search"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Onboarding · Compliance</div>
+        <div class="cc-title">Documentation Needs List Generator</div>
+        <div class="cc-desc">Questionnaire that auto-generates a customized document checklist based on the client's financial situation. Self-contained — no Zapier needed. Includes training.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$550<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/resource_redirect/landing_pages/2148223426" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="onboarding forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="search"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Onboarding · Forms</div>
+        <div class="cc-title">Preliminary Questionnaire</div>
+        <div class="cc-desc">Easy-to-follow prospect intake form. Pre-screen potential clients and gather data to foster meaningful first conversations. Includes training.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$200<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/resource_redirect/landing_pages/2148223161" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="compliance forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="trending-up"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Compliance · Forms</div>
+        <div class="cc-title">Retirement Readiness Calculator</div>
+        <div class="cc-desc">JotForm that estimates client retirement readiness and suggests corrective action if they're off track. Includes training on setup and customization.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$550<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/resource_redirect/landing_pages/2147738102" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zapier Templates -->
+    <div class="catalog-card" data-type="diy" data-cat="crm">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="database"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">CRM · Zapier</div>
+        <div class="cc-title">Custom Wealthbox–Zapier Integration</div>
+        <div class="cc-desc">Expands native Wealthbox–Zapier integration. Triggers: completed tasks, workflow steps, new/updated contacts/tags. Actions: find, create, update contacts, tasks, events, opportunities.</div>
+        <div class="cc-tools"><span class="tool-pip">Wealthbox</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$500<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/bMieaUMT" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="crm">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="database"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">CRM · Zapier</div>
+        <div class="cc-title">Custom Redtail–Zapier Integration (v5)</div>
+        <div class="cc-desc">Expands native Redtail–Zapier integration. Triggers: contact birthday, upcoming review date. Actions: find contacts, complete workflow steps, update activities, create workflows.</div>
+        <div class="cc-tools"><span class="tool-pip">Redtail</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$500<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/oHTMCsBD" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="crm email">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-teal"><i data-lucide="arrow-right-circle"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">CRM · Email</div>
+        <div class="cc-title">Add Redtail Contacts to ActiveCampaign</div>
+        <div class="cc-desc">Sync new Redtail contact records to ActiveCampaign automatically. Template with written instructions — no video training. Simple to deploy.</div>
+        <div class="cc-tools"><span class="tool-pip">Redtail</span><span class="tool-pip">ActiveCampaign</span><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$100<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/iKPwG7aW" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Campaign Templates -->
+    <div class="catalog-card" data-type="diy" data-cat="email onboarding">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="mail-open"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Onboarding</div>
+        <div class="cc-title">eMoney Onboarding Email Campaign</div>
+        <div class="cc-desc">4-email onboarding campaign covering: next steps summary, account linking, document upload to vault, and mobile portal access — all with eMoney-specific screenshots.</div>
+        <div class="cc-tools"><span class="tool-pip">eMoney</span><span class="tool-pip">Mailchimp</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$50<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/gyx8JTco" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email onboarding">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="mail-open"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Onboarding</div>
+        <div class="cc-title">Right Capital Onboarding Email Campaign</div>
+        <div class="cc-desc">4-email onboarding campaign: next steps, account linking, document vault upload, and mobile access — with Right Capital-specific screenshots.</div>
+        <div class="cc-tools"><span class="tool-pip">Right Capital</span><span class="tool-pip">Mailchimp</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$50<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/FfuUHvL8" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email onboarding">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="mail-open"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Onboarding</div>
+        <div class="cc-title">Money Guide Pro Onboarding Email Campaign</div>
+        <div class="cc-desc">3-email onboarding campaign covering next steps, account linking, and document framework — customizable since MGP lacks a vault feature.</div>
+        <div class="cc-tools"><span class="tool-pip">Money Guide Pro</span><span class="tool-pip">Mailchimp</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$25<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/qFNHg8Vr" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email onboarding">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="mail-open"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Onboarding</div>
+        <div class="cc-title">Advizr / Orion Planning Onboarding Campaign</div>
+        <div class="cc-desc">4-email onboarding campaign for Advizr/Orion Planning: next steps, account linking, document vault, and mobile app access with screenshots.</div>
+        <div class="cc-tools"><span class="tool-pip">Advizr</span><span class="tool-pip">Orion</span><span class="tool-pip">Mailchimp</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$50<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/Eq9peuRP" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="trending-up"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Client Education</div>
+        <div class="cc-title">Investment Principles Drip Campaign</div>
+        <div class="cc-desc">4 educational emails covering risk tolerance, asset allocation, stocks vs. bonds, and active vs. passive investing. Ready to drop into your email platform.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">MailerLite</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$60<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/q6bAtPbC" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="home"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Client Education</div>
+        <div class="cc-title">Retirement Readiness Drip Campaign</div>
+        <div class="cc-desc">4 emails: retirement lifestyle planning, gathering pre-retirement documents, evaluating assets and budget, and addressing income opportunities.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">MailerLite</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$60<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/cLfxTCj8" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="graduation-cap"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Client Education</div>
+        <div class="cc-title">Saving for College Drip Campaign</div>
+        <div class="cc-desc">3 emails covering the rising cost of college, 529 plans and alternative savings vehicles, and non-traditional education routes.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">MailerLite</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$54<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/mbJzEVzd" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="briefcase"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Client Education</div>
+        <div class="cc-title">Starting a Business Drip Campaign</div>
+        <div class="cc-desc">5 emails: defining a niche, setting up an entity, tracking expenses, choosing technology, and cost-effective marketing for new business owners.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">MailerLite</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$65<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/SWZ38tQQ" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="dollar-sign"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Client Education</div>
+        <div class="cc-title">Student Loan Drip Campaign</div>
+        <div class="cc-desc">5 emails covering loan statistics, federal vs. private loans, income-driven repayment, forgiveness programs, and money-saving strategies.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">MailerLite</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$65<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/UEopCjqB" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="email compliance">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-orange"><i data-lucide="receipt"></i></div>
+          <span class="type-badge badge-diy">DIY Template</span>
+        </div>
+        <div class="cc-cat">Email · Client Education</div>
+        <div class="cc-title">Tax Planning Drip Campaign</div>
+        <div class="cc-desc">4 emails: tax planning for homeowners, student loans, tax-smart savings accounts, and filing tips and tricks. Great for year-end client outreach.</div>
+        <div class="cc-tools"><span class="tool-pip">Mailchimp</span><span class="tool-pip">MailerLite</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$60<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/7rXXaVjT" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Training Courses -->
+    <div class="catalog-card" data-type="diy" data-cat="training">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-blue"><i data-lucide="play-circle"></i></div>
+          <span class="type-badge badge-diy">DIY Course</span>
+        </div>
+        <div class="cc-cat">Training · Zapier</div>
+        <div class="cc-title">Zapier for Financial Advisors — Full Bundle</div>
+        <div class="cc-desc">3-part course covering Beginner, Intermediate, and Advanced Zapier — tailored to financial advisor workflows. Includes additional resources and real-world examples.</div>
+        <div class="cc-tools"><span class="tool-pip">Zapier</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$383<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/nxA4wFtm" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="training forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-blue"><i data-lucide="play-circle"></i></div>
+          <span class="type-badge badge-diy">DIY Course</span>
+        </div>
+        <div class="cc-cat">Training · JotForm</div>
+        <div class="cc-title">JotForm Essentials Bundle (All 3 Courses)</div>
+        <div class="cc-desc">All three JotForm courses in one bundle — save 20%. Covers basics, confirmation emails/PDFs, and advanced features like conditional logic, data passing, and calculations.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$347<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/3PYCjKyF" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="training forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-blue"><i data-lucide="book-open"></i></div>
+          <span class="type-badge badge-diy">DIY Course</span>
+        </div>
+        <div class="cc-cat">Training · JotForm</div>
+        <div class="cc-title">JotForm Basics Course</div>
+        <div class="cc-desc">Create and customize a simple online questionnaire to collect prospect or client data. Two-part course for beginners.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$147<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/yqwQLzuf" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="training forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-blue"><i data-lucide="book-open"></i></div>
+          <span class="type-badge badge-diy">DIY Course</span>
+        </div>
+        <div class="cc-cat">Training · JotForm</div>
+        <div class="cc-title">JotForm Intermediate Course</div>
+        <div class="cc-desc">Learn to create and customize confirmation emails and PDF outputs in JotForm. Ideal for advisors who have the basics down and want to go further.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$147<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/bMrqs6Ln" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="catalog-card" data-type="diy" data-cat="training forms">
+      <div class="type-stripe stripe-diy"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon icon-blue"><i data-lucide="book-open"></i></div>
+          <span class="type-badge badge-diy">DIY Course</span>
+        </div>
+        <div class="cc-cat">Training · JotForm</div>
+        <div class="cc-title">JotForm Advanced Course</div>
+        <div class="cc-desc">Master conditional logic, passing data between form links, and calculations. Build truly intelligent forms that adapt to client responses.</div>
+        <div class="cc-tools"><span class="tool-pip">JotForm</span></div>
+        <div class="cc-footer">
+          <div class="cc-price">$147<span class="cc-price-sub">one-time</span></div>
+          <a href="https://www.sphynxautomation.com/offers/Mb9oVQgn" class="cc-cta cta-diy" target="_blank">Buy Now →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state hidden" id="emptyState">
+      <i data-lucide="search"></i>
+      <h3 style="font-size:1.1rem;color:var(--navy);margin-bottom:.5rem">No results found</h3>
+      <p style="font-size:.9rem">Try adjusting your filters or search term.</p>
+    </div>
+
+  </div><!-- end catalog-grid -->
+</div>
+
+<!-- CTA STRIP -->
+<section style="background:var(--navy);padding:4rem 2rem;text-align:center">
+  <div style="max-width:700px;margin:0 auto">
+    <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);color:white;margin-bottom:1rem">Not sure where to start?</h2>
+    <p style="color:rgba(255,255,255,.65);font-size:1rem;margin-bottom:2rem;line-height:1.7">Use the estimate builder to map out your automation idea, or book a free 20-minute intro call and we'll help you find the right fit.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="/estimate.html" class="btn-primary">Build Your Estimate →</a>
+      <a href="/contact.html" style="background:rgba(255,255,255,.1);color:white;padding:.85rem 1.75rem;border-radius:10px;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,.2)">Book a Free Call</a>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+let activeType = 'all', activeCat = 'all';
+
+function filter() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cards = document.querySelectorAll('.catalog-card');
+  let visible = 0;
+
+  cards.forEach(card => {
+    const type = card.dataset.type || '';
+    const cats = card.dataset.cat || '';
+    const text = card.textContent.toLowerCase();
+    const typeMatch = activeType === 'all' || type === activeType;
+    const catMatch = activeCat === 'all' || cats.includes(activeCat);
+    const searchMatch = !q || text.includes(q);
+    const show = typeMatch && catMatch && searchMatch;
+    card.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  // Show/hide section dividers
+  document.querySelectorAll('.section-divider').forEach(div => {
+    const section = div.dataset.section;
+    const hasVisible = [...cards].some(c =>
+      !c.classList.contains('hidden') && c.dataset.type === section
+    );
+    div.classList.toggle('hidden', !hasVisible && activeType !== 'all');
+  });
+
+  document.getElementById('emptyState').classList.toggle('hidden', visible > 0);
+}
+
+// Type filter buttons
+document.querySelectorAll('[data-type]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeType = btn.dataset.type;
+    filter();
+  });
+});
+
+// Category filter buttons
+document.querySelectorAll('[data-cat]').forEach(btn => {
+  if (!btn.classList.contains('catalog-card') && !btn.classList.contains('section-divider')) {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-group:last-of-type .fc').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      filter();
+    });
+  }
+});
+</script>
+</body>
+</html>

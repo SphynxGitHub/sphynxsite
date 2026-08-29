@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your Estimate | Sphynx Automation</title>
+<meta name="description" content="Map out your automation idea and get a rough estimate before you talk to us. Takes about 3 minutes.">
+<script src="/includes.js"></script>
+<style>
+  .estimate-wrap { max-width:760px; margin:0 auto; padding:3rem 2rem 6rem; }
+
+  /* PROGRESS */
+  .progress-track { display:flex; align-items:center; gap:0; margin-bottom:3rem; }
+  .progress-step { display:flex; flex-direction:column; align-items:center; gap:.35rem; flex:1; position:relative; }
+  .progress-step:not(:last-child)::after { content:''; position:absolute; top:16px; left:50%; width:100%; height:2px; background:var(--border); z-index:0; }
+  .progress-step.done:not(:last-child)::after { background:var(--accent); }
+  .step-circle { width:32px; height:32px; border-radius:50%; border:2px solid var(--border); background:white; display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700; color:var(--muted); position:relative; z-index:1; transition:all .3s; }
+  .progress-step.active .step-circle { border-color:var(--blue); color:var(--blue); background:var(--blue-light); }
+  .progress-step.done .step-circle { border-color:var(--accent); background:var(--accent); color:white; }
+  .step-label { font-size:.7rem; font-weight:600; color:var(--muted); text-align:center; white-space:nowrap; }
+  .progress-step.active .step-label { color:var(--navy); }
+
+  /* PANELS */
+  .panel { display:none; }
+  .panel.active { display:block; animation:fadeIn .3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .panel-heading { margin-bottom:.5rem; }
+  .panel-heading h2 { font-family:'DM Serif Display',serif; font-size:1.75rem; color:var(--navy); margin-bottom:.4rem; }
+  .panel-heading p { font-size:.95rem; color:var(--muted); line-height:1.65; }
+  .panel-nav { display:flex; justify-content:space-between; align-items:center; margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+
+  /* TOOL SELECTOR */
+  .tools-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-top:1.5rem; }
+  .tool-btn { background:white; border:1.5px solid var(--border); border-radius:12px; padding:1rem; text-align:center; cursor:pointer; transition:all .2s; user-select:none; }
+  .tool-btn:hover { border-color:var(--blue); }
+  .tool-btn.selected { border-color:var(--blue); background:var(--blue-light); }
+  .tool-btn .tb-icon { font-size:1.5rem; margin-bottom:.35rem; }
+  .tool-btn .tb-name { font-size:.82rem; font-weight:600; color:var(--navy); }
+  .tool-btn .tb-cat { font-size:.7rem; color:var(--muted); margin-top:.1rem; }
+  .other-tools { margin-top:1rem; }
+  .other-tools label { font-size:.83rem; font-weight:600; color:var(--navy); display:block; margin-bottom:.4rem; }
+
+  /* WORKFLOW BUILDER */
+  .workflow-builder { margin-top:1.5rem; }
+  .wf-step { background:white; border:1px solid var(--border); border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:.75rem; position:relative; }
+  .wf-step-header { display:flex; align-items:center; gap:.75rem; margin-bottom:.85rem; }
+  .wf-step-num { width:28px; height:28px; border-radius:50%; background:var(--navy); color:white; font-weight:700; font-size:.78rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .wf-step-title { font-size:.88rem; font-weight:700; color:var(--navy); }
+  .wf-step-remove { margin-left:auto; background:none; border:none; color:var(--muted); cursor:pointer; font-size:.8rem; padding:2px 6px; border-radius:4px; }
+  .wf-step-remove:hover { color:var(--red); background:#fee2e2; }
+  .wf-connector { text-align:center; color:var(--muted); font-size:1.2rem; margin:.1rem 0; }
+  .add-step-btn { width:100%; border:1.5px dashed var(--border); background:transparent; border-radius:12px; padding:.85rem; font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:600; color:var(--muted); cursor:pointer; transition:all .2s; margin-top:.25rem; display:flex; align-items:center; justify-content:center; gap:.5rem; }
+  .add-step-btn:hover { border-color:var(--blue); color:var(--blue); background:var(--blue-light); }
+
+  /* DETAILS */
+  .details-form { margin-top:1.5rem; display:flex; flex-direction:column; gap:1.25rem; }
+  .field label { display:block; font-size:.83rem; font-weight:700; color:var(--navy); margin-bottom:.4rem; }
+  .field input,.field textarea,.field select { width:100%; padding:.75rem 1rem; border:1.5px solid var(--border); border-radius:10px; font-family:'Outfit',sans-serif; font-size:.93rem; color:var(--text); outline:none; transition:border-color .2s; }
+  .field input:focus,.field textarea:focus,.field select:focus { border-color:var(--blue); }
+  .field textarea { min-height:80px; resize:vertical; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .checkbox-group { display:flex; flex-direction:column; gap:.5rem; margin-top:.35rem; }
+  .checkbox-item { display:flex; align-items:center; gap:.6rem; font-size:.88rem; color:var(--text); cursor:pointer; }
+  .checkbox-item input { width:16px; height:16px; cursor:pointer; accent-color:var(--blue); }
+
+  /* ESTIMATE RESULT */
+  .estimate-result { background:var(--navy); border-radius:20px; padding:2.5rem; color:white; margin-top:1.5rem; text-align:center; }
+  .estimate-result h3 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:white; margin-bottom:.5rem; }
+  .estimate-range { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--accent); line-height:1; margin:1rem 0 .5rem; }
+  .estimate-result .est-note { font-size:.85rem; color:rgba(255,255,255,.6); margin-bottom:1.5rem; line-height:1.6; }
+  .estimate-breakdown { background:rgba(255,255,255,.06); border-radius:12px; padding:1.25rem; margin:1.25rem 0; text-align:left; }
+  .eb-row { display:flex; justify-content:space-between; font-size:.85rem; padding:.4rem 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .eb-row:last-child { border-bottom:none; }
+  .eb-row span { color:rgba(255,255,255,.65); }
+  .eb-row strong { color:white; }
+  .submit-section { margin-top:1.5rem; }
+  .submit-section p { font-size:.88rem; color:rgba(255,255,255,.6); margin-bottom:1.25rem; line-height:1.6; }
+  .submit-fields { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1rem; text-align:left; }
+  .submit-fields input { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:9px; padding:.7rem 1rem; font-family:'Outfit',sans-serif; font-size:.9rem; color:white; outline:none; }
+  .submit-fields input::placeholder { color:rgba(255,255,255,.35); }
+  .submit-fields input:focus { border-color:var(--accent); }
+  .success-state { text-align:center; padding:1.5rem 0; }
+  .success-state .s-icon { font-size:3rem; margin-bottom:1rem; }
+  .success-state h3 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:white; margin-bottom:.75rem; }
+  .success-state p { font-size:.9rem; color:rgba(255,255,255,.65); line-height:1.65; }
+
+  @media(max-width:600px){
+    .tools-grid { grid-template-columns:1fr 1fr; }
+    .row2,.submit-fields { grid-template-columns:1fr; }
+    .step-label { display:none; }
+  }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Estimate Builder</div>
+    <h1>Map your automation, get a ballpark</h1>
+    <p>Tell us what tools you use and walk us through the process you want to automate. Takes about 3 minutes — we'll send you a rough estimate and follow up to refine it.</p>
+  </div>
+</div>
+
+<div class="estimate-wrap">
+
+  <!-- PROGRESS -->
+  <div class="progress-track">
+    <div class="progress-step active" id="ps-1"><div class="step-circle" id="pc-1">1</div><div class="step-label">Your tools</div></div>
+    <div class="progress-step" id="ps-2"><div class="step-circle" id="pc-2">2</div><div class="step-label">Your workflow</div></div>
+    <div class="progress-step" id="ps-3"><div class="step-circle" id="pc-3">3</div><div class="step-label">Details</div></div>
+    <div class="progress-step" id="ps-4"><div class="step-circle" id="pc-4">4</div><div class="step-label">Your estimate</div></div>
+  </div>
+
+  <!-- STEP 1: TOOLS -->
+  <div class="panel active" id="panel-1">
+    <div class="panel-heading">
+      <h2>What tools are you currently using?</h2>
+      <p>Select everything in your current tech stack — even if you're not sure you want to automate it. This helps us understand what's possible.</p>
+    </div>
+    <div class="tools-grid" id="toolsGrid">
+      <!-- CRM -->
+      <div class="tool-btn" data-tool="Wealthbox" data-cat="CRM" onclick="toggleTool(this)"><div class="tb-icon">🗂️</div><div class="tb-name">Wealthbox</div><div class="tb-cat">CRM</div></div>
+      <div class="tool-btn" data-tool="Redtail" data-cat="CRM" onclick="toggleTool(this)"><div class="tb-icon">🗂️</div><div class="tb-name">Redtail</div><div class="tb-cat">CRM</div></div>
+      <div class="tool-btn" data-tool="Salesforce" data-cat="CRM" onclick="toggleTool(this)"><div class="tb-icon">☁️</div><div class="tb-name">Salesforce</div><div class="tb-cat">CRM</div></div>
+      <!-- Scheduling -->
+      <div class="tool-btn" data-tool="Calendly" data-cat="Scheduling" onclick="toggleTool(this)"><div class="tb-icon">📅</div><div class="tb-name">Calendly</div><div class="tb-cat">Scheduling</div></div>
+      <div class="tool-btn" data-tool="Acuity" data-cat="Scheduling" onclick="toggleTool(this)"><div class="tb-icon">📅</div><div class="tb-name">Acuity</div><div class="tb-cat">Scheduling</div></div>
+      <div class="tool-btn" data-tool="GReminders" data-cat="Scheduling" onclick="toggleTool(this)"><div class="tb-icon">🔔</div><div class="tb-name">GReminders</div><div class="tb-cat">Scheduling</div></div>
+      <!-- Forms -->
+      <div class="tool-btn" data-tool="JotForm" data-cat="Forms" onclick="toggleTool(this)"><div class="tb-icon">📋</div><div class="tb-name">JotForm</div><div class="tb-cat">Forms</div></div>
+      <div class="tool-btn" data-tool="PreciseFP" data-cat="Forms" onclick="toggleTool(this)"><div class="tb-icon">📊</div><div class="tb-name">PreciseFP</div><div class="tb-cat">Forms</div></div>
+      <div class="tool-btn" data-tool="Typeform" data-cat="Forms" onclick="toggleTool(this)"><div class="tb-icon">📝</div><div class="tb-name">Typeform</div><div class="tb-cat">Forms</div></div>
+      <!-- Email -->
+      <div class="tool-btn" data-tool="Mailchimp" data-cat="Email" onclick="toggleTool(this)"><div class="tb-icon">✉️</div><div class="tb-name">Mailchimp</div><div class="tb-cat">Email</div></div>
+      <div class="tool-btn" data-tool="MailerLite" data-cat="Email" onclick="toggleTool(this)"><div class="tb-icon">✉️</div><div class="tb-name">MailerLite</div><div class="tb-cat">Email</div></div>
+      <div class="tool-btn" data-tool="ActiveCampaign" data-cat="Email" onclick="toggleTool(this)"><div class="tb-icon">📣</div><div class="tb-name">ActiveCampaign</div><div class="tb-cat">Email</div></div>
+      <!-- Workflow -->
+      <div class="tool-btn" data-tool="Zapier" data-cat="Automation" onclick="toggleTool(this)"><div class="tb-icon">⚡</div><div class="tb-name">Zapier</div><div class="tb-cat">Automation</div></div>
+      <div class="tool-btn" data-tool="Hubly" data-cat="Workflow" onclick="toggleTool(this)"><div class="tb-icon">✅</div><div class="tb-name">Hubly</div><div class="tb-cat">Workflow</div></div>
+      <div class="tool-btn" data-tool="Process Street" data-cat="Workflow" onclick="toggleTool(this)"><div class="tb-icon">📑</div><div class="tb-name">Process Street</div><div class="tb-cat">Workflow</div></div>
+      <!-- Storage -->
+      <div class="tool-btn" data-tool="Google Workspace" data-cat="Office" onclick="toggleTool(this)"><div class="tb-icon">📁</div><div class="tb-name">Google Workspace</div><div class="tb-cat">Office</div></div>
+      <div class="tool-btn" data-tool="Microsoft 365" data-cat="Office" onclick="toggleTool(this)"><div class="tb-icon">💼</div><div class="tb-name">Microsoft 365</div><div class="tb-cat">Office</div></div>
+      <div class="tool-btn" data-tool="Dropbox" data-cat="Storage" onclick="toggleTool(this)"><div class="tb-icon">📦</div><div class="tb-name">Dropbox</div><div class="tb-cat">Storage</div></div>
+      <!-- Billing -->
+      <div class="tool-btn" data-tool="AdvicePay" data-cat="Billing" onclick="toggleTool(this)"><div class="tb-icon">💳</div><div class="tb-name">AdvicePay</div><div class="tb-cat">Billing</div></div>
+      <div class="tool-btn" data-tool="Stripe" data-cat="Billing" onclick="toggleTool(this)"><div class="tb-icon">💳</div><div class="tb-name">Stripe</div><div class="tb-cat">Billing</div></div>
+      <!-- AI / Video -->
+      <div class="tool-btn" data-tool="Thyme AI" data-cat="AI" onclick="toggleTool(this)"><div class="tb-icon">🤖</div><div class="tb-name">Thyme AI</div><div class="tb-cat">AI / Notes</div></div>
+      <div class="tool-btn" data-tool="Zoom" data-cat="Video" onclick="toggleTool(this)"><div class="tb-icon">🎥</div><div class="tb-name">Zoom</div><div class="tb-cat">Video</div></div>
+      <div class="tool-btn" data-tool="Slack" data-cat="Comms" onclick="toggleTool(this)"><div class="tb-icon">💬</div><div class="tb-name">Slack</div><div class="tb-cat">Comms</div></div>
+    </div>
+    <div class="other-tools field" style="margin-top:1.25rem">
+      <label>Any other tools not listed?</label>
+      <input type="text" id="otherTools" placeholder="e.g. RightCapital, Holistiplan, DocuSign...">
+    </div>
+    <div class="panel-nav">
+      <div></div>
+      <button class="btn btn-primary" onclick="goTo(2)">Next: Your workflow →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: WORKFLOW BUILDER -->
+  <div class="panel" id="panel-2">
+    <div class="panel-heading">
+      <h2>Map out your automation</h2>
+      <p>Describe the process you want to automate, step by step. Start with what triggers it, then add what happens next. Don't worry about being too technical — just describe it how you'd explain it to someone on your team.</p>
+    </div>
+    <div class="workflow-builder" id="workflowBuilder"></div>
+    <button class="add-step-btn" onclick="addStep()">
+      <i data-lucide="plus" style="width:16px;height:16px"></i> Add another step
+    </button>
+    <div class="panel-nav">
+      <button class="btn btn-outline" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next: Details →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: DETAILS -->
+  <div class="panel" id="panel-3">
+    <div class="panel-heading">
+      <h2>A few more details</h2>
+      <p>This helps us give you a more accurate estimate and understand what you're working with.</p>
+    </div>
+    <div class="details-form">
+      <div class="field">
+        <label>How would you describe the complexity of this automation?</label>
+        <select id="selfComplexity">
+          <option value="">Not sure</option>
+          <option value="simple">Simple — straightforward, probably just connecting two things</option>
+          <option value="moderate">Moderate — a few steps, maybe some conditions</option>
+          <option value="complex">Complex — multi-step, branching logic, several tools</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Does this automation need any conditional logic?</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" id="cond-ifelse"> Different paths depending on client type or situation (if/then)</label>
+          <label class="checkbox-item"><input type="checkbox" id="cond-filter"> Filter or skip certain records based on criteria</label>
+          <label class="checkbox-item"><input type="checkbox" id="cond-multi"> Multiple triggers (different starting points for same workflow)</label>
+          <label class="checkbox-item"><input type="checkbox" id="cond-none"> No — it's a straight-line process</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>How urgent is this for you?</label>
+        <select id="urgency">
+          <option value="exploring">Just exploring — no rush</option>
+          <option value="soon">Ready to move forward soon</option>
+          <option value="asap">This is a priority — want to get started ASAP</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Anything else we should know?</label>
+        <textarea id="extraNotes" placeholder="e.g. We've tried to set this up before and got stuck... / We have a compliance requirement that... / We already have Zapier but need help..."></textarea>
+      </div>
+    </div>
+    <div class="panel-nav">
+      <button class="btn btn-outline" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="buildEstimate()">See my estimate →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: ESTIMATE -->
+  <div class="panel" id="panel-4">
+    <div class="panel-heading">
+      <h2>Your estimate</h2>
+      <p>Based on your tools and workflow, here's a rough ballpark. We'll refine this together on a call.</p>
+    </div>
+    <div class="estimate-result" id="estimateResult">
+      <h3>Estimated project range</h3>
+      <div class="estimate-range" id="estimateRange">$—</div>
+      <div class="est-note" id="estimateNote"></div>
+      <div class="estimate-breakdown" id="estimateBreakdown"></div>
+      <div class="submit-section" id="submitSection">
+        <p>Submit your estimate to our team and we'll follow up within one business day to refine it and answer any questions.</p>
+        <div class="submit-fields">
+          <input type="text" id="sub-name" placeholder="Your name">
+          <input type="email" id="sub-email" placeholder="Your email">
+          <input type="text" id="sub-firm" placeholder="Firm name">
+          <input type="text" id="sub-phone" placeholder="Phone (optional)">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="submitEstimate()" id="submitBtn">Send my estimate to Sphynx →</button>
+        <div id="submitStatus" style="margin-top:.75rem;font-size:.83rem;color:rgba(255,255,255,.6)"></div>
+      </div>
+      <div class="success-state hidden" id="successState">
+        <div class="s-icon">🎉</div>
+        <h3>We've got it!</h3>
+        <p>Your estimate has been sent to the Sphynx team. We'll reach out within one business day to chat through your workflow and give you a firm quote.</p>
+        <div style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+          <a href="/contact.html" class="btn btn-primary">Book a call now</a>
+          <a href="/white-glove.html" class="btn-white" style="padding:.75rem 1.25rem;border-radius:10px;font-weight:700;font-size:.9rem;text-decoration:none;color:var(--navy);background:white;display:inline-block">See sample workflows</a>
+        </div>
+      </div>
+    </div>
+    <div class="panel-nav" style="border-top:none;padding-top:0;margin-top:1rem">
+      <button class="btn btn-outline" onclick="goTo(3)">← Back</button>
+      <a href="/pricing.html" style="font-size:.85rem;color:var(--blue);font-weight:600;text-decoration:none">View full pricing guide →</a>
+    </div>
+  </div>
+
+</div>
+
+<div id="site-footer"></div>
+
+<script>
+const ZAPIER_URL = '__ZAPIER_ESTIMATE_WEBHOOK_URL__'; // Add your Zapier webhook URL here
+
+let selectedTools = [];
+let workflowSteps = [];
+let stepCount = 0;
+
+// ---- TOOLS ----
+function toggleTool(el) {
+  el.classList.toggle('selected');
+  const tool = el.dataset.tool;
+  if (el.classList.contains('selected')) {
+    if (!selectedTools.includes(tool)) selectedTools.push(tool);
+  } else {
+    selectedTools = selectedTools.filter(t => t !== tool);
+  }
+}
+
+// ---- WORKFLOW STEPS ----
+const stepPrompts = [
+  { label: 'What starts the automation?', placeholder: 'e.g. A new client fills out the onboarding form on my website' },
+  { label: 'What happens next?', placeholder: 'e.g. A new contact is created in Wealthbox with their information' },
+  { label: 'Then what?', placeholder: 'e.g. A welcome email is sent to the client automatically' },
+  { label: 'After that?', placeholder: 'e.g. A task is created in Wealthbox for me to review the account' },
+  { label: 'And then?', placeholder: 'e.g. A calendar invite is sent to schedule the first meeting' },
+];
+
+function addStep(value = '') {
+  const idx = stepCount;
+  const prompt = stepPrompts[Math.min(idx, stepPrompts.length - 1)];
+  const builder = document.getElementById('workflowBuilder');
+
+  if (idx > 0) {
+    const conn = document.createElement('div');
+    conn.className = 'wf-connector';
+    conn.id = `conn-${idx}`;
+    conn.innerHTML = '<i data-lucide="arrow-down" style="width:18px;height:18px;color:var(--muted)"></i>';
+    builder.appendChild(conn);
+    if (window.lucide) lucide.createIcons();
+  }
+
+  const step = document.createElement('div');
+  step.className = 'wf-step';
+  step.id = `wf-step-${idx}`;
+  step.innerHTML = `
+    <div class="wf-step-header">
+      <div class="wf-step-num">${idx + 1}</div>
+      <div class="wf-step-title">${prompt.label}</div>
+      ${idx > 0 ? `<button class="wf-step-remove" onclick="removeStep(${idx})">Remove</button>` : ''}
+    </div>
+    <div class="field">
+      <textarea id="step-${idx}" rows="2" placeholder="${prompt.placeholder}" style="min-height:70px">${value}</textarea>
+    </div>`;
+  builder.appendChild(step);
+  workflowSteps[idx] = '';
+  stepCount++;
+  if (window.lucide) lucide.createIcons();
+}
+
+function removeStep(idx) {
+  document.getElementById(`wf-step-${idx}`)?.remove();
+  document.getElementById(`conn-${idx}`)?.remove();
+}
+
+function getWorkflowSteps() {
+  const steps = [];
+  document.querySelectorAll('[id^="step-"]').forEach((el, i) => {
+    if (el.value.trim()) steps.push({ step: i + 1, description: el.value.trim() });
+  });
+  return steps;
+}
+
+// ---- NAVIGATION ----
+function goTo(n) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${n}`).classList.add('active');
+  for (let i = 1; i <= 4; i++) {
+    const ps = document.getElementById(`ps-${i}`);
+    const pc = document.getElementById(`pc-${i}`);
+    ps.classList.remove('active', 'done');
+    if (i < n) { ps.classList.add('done'); pc.innerHTML = '✓'; }
+    else if (i === n) { ps.classList.add('active'); pc.textContent = i; }
+    else { pc.textContent = i; }
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.lucide) lucide.createIcons();
+}
+
+// ---- ESTIMATE ENGINE ----
+function buildEstimate() {
+  const steps = getWorkflowSteps();
+  const tools = [...selectedTools];
+  const other = document.getElementById('otherTools').value.trim();
+  if (other) other.split(',').forEach(t => tools.push(t.trim()));
+  const complexity = document.getElementById('selfComplexity').value;
+  const hasConditional = document.getElementById('cond-ifelse').checked ||
+    document.getElementById('cond-filter').checked ||
+    document.getElementById('cond-multi').checked;
+  const stepCount = steps.length;
+  const toolCount = tools.length;
+
+  // Scoring
+  let score = 0;
+  score += stepCount * 15;
+  score += toolCount * 10;
+  if (hasConditional) score += 40;
+  if (complexity === 'complex') score += 50;
+  else if (complexity === 'moderate') score += 25;
+
+  let low, high, tier, tierNote;
+  if (score < 50) { low = 150; high = 400; tier = 'Simple'; tierNote = 'This looks like a straightforward 1–2 step automation connecting a couple of tools.'; }
+  else if (score < 100) { low = 400; high = 900; tier = 'Moderate'; tierNote = 'This is a multi-step workflow with a few tools — moderate complexity.'; }
+  else if (score < 180) { low = 900; high = 2500; tier = 'Complex'; tierNote = 'This is a more involved workflow with multiple tools and/or conditional logic.'; }
+  else { low = 2500; high = null; tier = 'Enterprise'; tierNote = 'This sounds like a substantial project — we\'d want to scope it properly on a call.'; }
+
+  const rangeText = high ? `$${low.toLocaleString()} – $${high.toLocaleString()}` : `$${low.toLocaleString()}+`;
+
+  document.getElementById('estimateRange').textContent = rangeText;
+  document.getElementById('estimateNote').textContent = tierNote;
+  document.getElementById('estimateBreakdown').innerHTML = `
+    <div class="eb-row"><span>Complexity tier</span><strong>${tier}</strong></div>
+    <div class="eb-row"><span>Tools involved</span><strong>${toolCount || 'Not specified'}</strong></div>
+    <div class="eb-row"><span>Workflow steps</span><strong>${stepCount || 'Not specified'}</strong></div>
+    <div class="eb-row"><span>Conditional logic</span><strong>${hasConditional ? 'Yes' : 'No'}</strong></div>
+    <div class="eb-row"><span>Estimate type</span><strong>Rough ballpark — final quote after discovery call</strong></div>
+  `;
+
+  goTo(4);
+}
+
+// ---- SUBMIT ----
+async function submitEstimate() {
+  const name = document.getElementById('sub-name').value.trim();
+  const email = document.getElementById('sub-email').value.trim();
+  const firm = document.getElementById('sub-firm').value.trim();
+  const phone = document.getElementById('sub-phone').value.trim();
+  const st = document.getElementById('submitStatus');
+
+  if (!name || !email) { st.textContent = 'Please enter your name and email.'; st.style.color = '#fca5a5'; return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  st.textContent = ''; st.style.color = 'rgba(255,255,255,.6)';
+
+  const steps = getWorkflowSteps();
+  const tools = [...selectedTools];
+  const other = document.getElementById('otherTools').value.trim();
+  if (other) other.split(',').forEach(t => tools.push(t.trim()));
+  const complexity = document.getElementById('selfComplexity').value;
+  const urgency = document.getElementById('urgency').value;
+  const notes = document.getElementById('extraNotes').value.trim();
+  const estimate = document.getElementById('estimateRange').textContent;
+
+  const payload = {
+    name, email, firm, phone,
+    tools: tools.join(', '),
+    workflow: steps.map(s => `Step ${s.step}: ${s.description}`).join('\n'),
+    complexity, urgency, notes,
+    estimate,
+    submitted_at: new Date().toISOString(),
+    source: 'estimate-builder'
+  };
+
+  try {
+    // Send to Zapier (which emails team@ and creates Supabase lead)
+    if (ZAPIER_URL && !ZAPIER_URL.includes('REPLACE')) {
+      await fetch(ZAPIER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+    document.getElementById('submitSection').classList.add('hidden');
+    document.getElementById('successState').classList.remove('hidden');
+  } catch (err) {
+    st.textContent = 'Something went wrong — please email team@sphynxautomation.com directly.';
+    st.style.color = '#fca5a5';
+    btn.disabled = false; btn.textContent = 'Send my estimate to Sphynx →';
+  }
+}
+
+// Init first two workflow steps on load
+addStep();
+addStep();
+</script>
+</body>
+</html>

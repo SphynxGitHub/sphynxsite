@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>White Glove Automation | Sphynx Automation</title>
+<meta name="description" content="Done-for-you automation for financial advisors. Sphynx builds and maintains your entire tech stack so you can focus on clients.">
+<script src="/includes.js"></script>
+<style>
+  .service-detail { padding:5rem 2rem; }
+  .service-detail-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+  .service-detail h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.7rem,3vw,2.4rem); line-height:1.2; color:var(--navy); margin-bottom:1rem; }
+  .service-detail p { font-size:1rem; color:var(--muted); line-height:1.75; margin-bottom:1.25rem; }
+  .feature-list { list-style:none; display:flex; flex-direction:column; gap:.75rem; margin:1.5rem 0 2rem; }
+  .feature-list li { display:flex; align-items:flex-start; gap:.75rem; font-size:.93rem; color:var(--text); }
+  .feature-list li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
+  .service-visual { background:linear-gradient(135deg,#0b1f3a,#0d3d30); border-radius:20px; padding:2.5rem; color:white; }
+  .service-visual h3 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:white; margin-bottom:1.5rem; }
+  .step-list { display:flex; flex-direction:column; gap:1rem; }
+  .step { display:flex; gap:1rem; align-items:flex-start; }
+  .step-num { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.1); color:white; font-weight:700; font-size:.85rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .step-text strong { display:block; font-size:.9rem; color:white; font-weight:600; margin-bottom:2px; }
+  .step-text span { font-size:.82rem; color:rgba(255,255,255,.55); }
+  .criteria-box { background:var(--blue-light); border:1px solid #b5d4f4; border-radius:14px; padding:2rem; margin-top:2rem; }
+  .criteria-box h4 { font-size:.95rem; font-weight:700; color:var(--navy); margin-bottom:1rem; }
+  .criteria-box ul { list-style:none; display:flex; flex-direction:column; gap:.6rem; }
+  .criteria-box ul li { font-size:.88rem; color:var(--muted); padding-left:1.25rem; position:relative; }
+  .criteria-box ul li::before { content:'•'; position:absolute; left:0; color:var(--blue); }
+
+  /* PRICING */
+  .pricing-section { background:var(--bg); padding:5rem 2rem; }
+  .pricing-inner { max-width:900px; margin:0 auto; text-align:center; }
+  .pricing-card-single { background:white; border:1.5px solid var(--border); border-radius:20px; padding:3rem; margin-top:3rem; display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; text-align:left; }
+  .pricing-card-single h3 { font-family:'DM Serif Display',serif; font-size:1.75rem; color:var(--navy); margin-bottom:.75rem; }
+  .pricing-card-single p { font-size:.95rem; color:var(--muted); line-height:1.75; margin-bottom:1.5rem; }
+  .pricing-card-single ul { list-style:none; display:flex; flex-direction:column; gap:.65rem; margin-bottom:1.75rem; }
+  .pricing-card-single ul li { font-size:.88rem; color:var(--text); display:flex; align-items:flex-start; gap:.6rem; }
+  .pricing-card-single ul li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
+  .pricing-visual { background:var(--navy); border-radius:16px; padding:2rem; color:white; }
+  .pricing-visual h4 { font-size:1rem; font-weight:700; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; font-size:.78rem; margin-bottom:1.25rem; }
+  .complexity-row { display:flex; justify-content:space-between; align-items:center; padding:.6rem 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .complexity-row:last-child { border-bottom:none; }
+  .complexity-row span { font-size:.88rem; color:rgba(255,255,255,.7); }
+  .complexity-row strong { font-size:.95rem; color:white; font-weight:700; }
+  .pricing-note { font-size:.8rem; color:rgba(255,255,255,.4); margin-top:1rem; line-height:1.6; }
+
+  /* SAMPLE SERVICES */
+  .samples-section { padding:5rem 2rem; }
+  .samples-inner { max-width:1100px; margin:0 auto; }
+  .samples-filter { display:flex; gap:.5rem; flex-wrap:wrap; margin:2rem 0 2.5rem; }
+  .filter-chip { background:var(--bg); border:1.5px solid var(--border); color:var(--muted); font-family:'Outfit',sans-serif; font-size:.82rem; font-weight:600; padding:.35rem .9rem; border-radius:100px; cursor:pointer; transition:all .2s; }
+  .filter-chip.active { background:var(--navy); border-color:var(--navy); color:white; }
+  .filter-chip:hover:not(.active) { border-color:var(--blue); color:var(--blue); }
+  .samples-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+  .sample-card { background:white; border:1px solid var(--border); border-radius:14px; padding:1.75rem; transition:transform .25s,box-shadow .25s; }
+  .sample-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(11,31,58,.09); }
+  .sample-card.hidden { display:none; }
+  .sample-icon { width:44px; height:44px; border-radius:11px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
+  .sample-icon i { width:22px; height:22px; }
+  .icon-teal { background:var(--accent-light); } .icon-teal i { color:#0a6b5c; }
+  .icon-blue { background:var(--blue-light); } .icon-blue i { color:var(--blue); }
+  .icon-navy { background:#e8ecf3; } .icon-navy i { color:var(--navy); }
+  .icon-purple { background:#f0ebff; } .icon-purple i { color:#7c3aed; }
+  .sample-card h3 { font-size:.98rem; font-weight:700; color:var(--navy); margin-bottom:.5rem; }
+  .sample-card p { font-size:.85rem; color:var(--muted); line-height:1.65; margin-bottom:1rem; }
+  .sample-tools { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .tool-tag { font-size:.72rem; font-weight:700; padding:.22rem .6rem; border-radius:100px; background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+  .sample-cat { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:.5rem; }
+
+  /* CTA */
+  .cta-strip { background:var(--navy); padding:5rem 2rem; text-align:center; }
+  .cta-strip h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,3vw,2.5rem); color:white; margin-bottom:1rem; }
+  .cta-strip p { color:rgba(255,255,255,.65); max-width:500px; margin:0 auto 2rem; font-size:1rem; }
+  .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+  .btn-white { background:white; color:var(--navy); font-weight:700; font-size:.95rem; padding:.85rem 1.75rem; border-radius:10px; text-decoration:none; transition:transform .2s; display:inline-block; }
+  .btn-white:hover { transform:translateY(-2px); }
+
+  @media(max-width:900px){
+    .service-detail-inner,.pricing-card-single { grid-template-columns:1fr; gap:2rem; }
+    .samples-grid { grid-template-columns:1fr 1fr; }
+  }
+  @media(max-width:560px){ .samples-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Done For You</div>
+    <h1>White Glove Automation</h1>
+    <p>You became a financial advisor to help clients — not to spend hours on data entry, paperwork, and follow-up reminders. Let us build and maintain your entire automation stack so you can focus on what matters.</p>
+    <a href="/estimate.html" class="btn-primary">Build Your Estimate →</a>
+  </div>
+</div>
+
+<!-- WHAT WE DO -->
+<section class="service-detail">
+  <div class="service-detail-inner">
+    <div>
+      <div class="section-tag">What's included</div>
+      <h2>Your entire tech stack, connected and automated</h2>
+      <p>We build custom automation solutions that eliminate the administrative tasks eating your time — data entry, paperwork, reminders, follow-ups, and everything in between.</p>
+      <p>Every engagement is fully scoped to your practice, your tools, and your existing workflows. No templates, no shortcuts.</p>
+      <ul class="feature-list">
+        <li>Zaps &amp; automations — certified Zapier experts</li>
+        <li>Scheduling setup — Calendly or Acuity with custom parameters</li>
+        <li>Smart forms &amp; e-sign contracts — compliant and responsive</li>
+        <li>Email campaigns triggered at the right lifecycle stage</li>
+        <li>CRM integration — contacts added automatically</li>
+        <li>Meeting prep, note-filing, and follow-up automation</li>
+        <li>Documentation and compliance workflow automation</li>
+      </ul>
+      <div class="criteria-box">
+        <h4>Is White Glove right for me?</h4>
+        <ul>
+          <li>You have documented processes that are at least 80% complete</li>
+          <li>You've worked with at least 10 clients</li>
+          <li>You have time available with no major upcoming commitments</li>
+          <li>You're ready to invest in lasting efficiency</li>
+        </ul>
+      </div>
+    </div>
+    <div class="service-visual">
+      <h3>Our process</h3>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Discovery Call</strong><span>We learn your workflows, tools, and pain points</span></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Workflow Mapping</strong><span>We document your ideal automated processes</span></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Build &amp; Test</strong><span>We build and rigorously test all automations</span></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Handoff &amp; Training</strong><span>You're live and fully trained in 4–6 weeks</span></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Optional Maintenance</strong><span>Ongoing monitoring so nothing breaks silently</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE SERVICES -->
+<section class="workflows-section" style="background:var(--bg)">
+  <div class="workflows-inner">
+    <div class="section-tag">Sample Services</div>
+    <h2 class="section-heading">What we build for advisors</h2>
+    <p class="section-sub">Every White Glove engagement is custom — but here are some of the most common workflows we build. Browse the full catalog to see QuickStart and DIY options too.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2.5rem">
+      <div class="workflow-example"><div class="we-icon"><i data-lucide="user-plus"></i></div><h3>Client Onboarding</h3><p>Intake form → CRM contact → welcome email → tasks → calendar invite. Fully automated.</p><span class="we-tag">JotForm + Wealthbox + Zapier</span></div>
+      <div class="workflow-example"><div class="we-icon"><i data-lucide="clipboard-check"></i></div><h3>Meeting Prep &amp; Follow-up</h3><p>Pre-meeting CRM summary sent to advisor. Post-meeting: notes filed, follow-up emailed, tasks logged.</p><span class="we-tag">Calendly + Zapier + Wealthbox</span></div>
+      <div class="workflow-example"><div class="we-icon"><i data-lucide="mail"></i></div><h3>Lifecycle Email Campaigns</h3><p>Right email, right client, right time — triggered automatically by CRM lifecycle stage.</p><span class="we-tag">Mailchimp + ActiveCampaign + Zapier</span></div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="/catalog.html" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:.5rem"><i data-lucide="grid" style="width:16px;height:16px"></i> Browse the Full Service Catalog →</a>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:.75rem">Includes White Glove, QuickStart projects, and DIY templates — all in one place</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section">
+  <div class="pricing-inner">
+    <div class="section-tag">Pricing</div>
+    <h2 class="section-heading">Priced by complexity, not by package</h2>
+    <p class="section-sub">We don't do one-size-fits-all pricing. Every project is scoped and quoted based on complexity — the number of steps, tools involved, and customization required. Book an intro call and we'll help you figure out the right fit.</p>
+    <div class="pricing-card-single">
+      <div>
+        <h3>How our pricing works</h3>
+        <p>Each automation is evaluated on its complexity — how many tools it connects, how many steps it involves, and how much customization is needed. Simple Zaps cost less than multi-step, multi-tool workflows.</p>
+        <ul>
+          <li>No hourly billing surprises — you get a fixed quote upfront</li>
+          <li>Scope is agreed before any work begins</li>
+          <li>Add-ons and changes are quoted separately</li>
+          <li>Optional maintenance plans available after launch</li>
+        </ul>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem">
+          <a href="/estimate.html" class="btn btn-primary">Build Your Estimate →</a>
+          <a href="https://drive.google.com/file/d/1qGFf7ytlvRwhCApTjBnjtbaCqLpTzmmk/preview" class="btn btn-outline" target="_blank">View Pricing Sheet</a>
+        </div>
+      </div>
+      <div class="pricing-visual">
+        <h4>Complexity tiers</h4>
+        <div class="complexity-row"><span>Simple (1–2 step Zap)</span><strong>Low</strong></div>
+        <div class="complexity-row"><span>Moderate (multi-step, 1–2 tools)</span><strong>Medium</strong></div>
+        <div class="complexity-row"><span>Complex (multi-tool, conditional logic)</span><strong>High</strong></div>
+        <div class="complexity-row"><span>Enterprise (full stack, team setup)</span><strong>Custom</strong></div>
+        <div class="pricing-note">Exact pricing in the sheet above. Every project gets a fixed quote after the discovery call.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-strip">
+  <h2>Ready to hand off your tech?</h2>
+  <p>Book a free 20-minute intro call and we'll talk through your project and next steps.</p>
+  <div class="cta-btns">
+    <a href="/contact.html" class="btn-primary">Book a Free Intro Call</a>
+    <a href="https://drive.google.com/file/d/1qGFf7ytlvRwhCApTjBnjtbaCqLpTzmmk/preview" class="btn-white" target="_blank">View Pricing Sheet</a>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script>
+document.querySelectorAll('.filter-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    document.querySelectorAll('.sample-card').forEach(card => {
+      const cats = card.dataset.cat || '';
+      card.classList.toggle('hidden', cat !== 'all' && !cats.includes(cat));
+    });
+  });
+});
+</script>
+</body>
+</html>
