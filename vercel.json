@@ -1,12 +1,8 @@
 {
   "version": 2,
+  "buildCommand": "bash build.sh",
+  "outputDirectory": ".",
   "headers": [
-    {
-      "source": "/(.*).html",
-      "headers": [
-        { "key": "Link", "value": "</favicon.png>; rel=\"icon\"; type=\"image/png\"" }
-      ]
-    },
     {
       "source": "/api/(.*)",
       "headers": [
