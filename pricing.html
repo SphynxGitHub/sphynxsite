@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing | Sphynx Automation</title>
+<meta name="description" content="Transparent, complexity-based pricing for financial advisor automation. No packages — every project is scoped and quoted based on what you actually need.">
+<script src="/includes.js"></script>
+<style>
+  .pricing-intro { max-width:700px; margin:0 auto; text-align:center; padding:5rem 2rem 3rem; }
+  .pricing-intro h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,3.5vw,2.6rem); color:var(--navy); margin-bottom:1rem; line-height:1.2; }
+  .pricing-intro p { font-size:1rem; color:var(--muted); line-height:1.75; }
+
+  /* COMPLEXITY TABLE */
+  .complexity-section { padding:0 2rem 5rem; }
+  .complexity-inner { max-width:1000px; margin:0 auto; }
+  .complexity-table { width:100%; border-collapse:collapse; margin-top:2.5rem; background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .complexity-table th { background:var(--navy); color:white; font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:1rem 1.25rem; text-align:left; }
+  .complexity-table th:not(:first-child) { text-align:center; }
+  .complexity-table td { padding:1rem 1.25rem; font-size:.9rem; color:var(--text); border-bottom:1px solid var(--bg); vertical-align:top; }
+  .complexity-table tr:last-child td { border-bottom:none; }
+  .complexity-table td:not(:first-child) { text-align:center; }
+  .complexity-table tr:hover td { background:var(--bg); }
+  .tier-badge { display:inline-block; font-size:.72rem; font-weight:700; padding:.25rem .7rem; border-radius:100px; }
+  .tier-1 { background:#e0faf7; color:#0a6b5c; }
+  .tier-2 { background:#e8f0fe; color:var(--blue); }
+  .tier-3 { background:#faeeda; color:#92400e; }
+  .tier-4 { background:#f0ebff; color:#7c3aed; }
+  .price-range { font-family:'DM Serif Display',serif; font-size:1.1rem; color:var(--navy); }
+  .complexity-table td ul { list-style:none; display:flex; flex-direction:column; gap:.35rem; padding:0; }
+  .complexity-table td ul li { font-size:.83rem; color:var(--muted); padding-left:1rem; position:relative; }
+  .complexity-table td ul li::before { content:'·'; position:absolute; left:0; color:var(--muted); }
+  .table-note { font-size:.82rem; color:var(--muted); margin-top:1.25rem; line-height:1.65; }
+  .table-note strong { color:var(--navy); }
+
+  /* SERVICE TYPES */
+  .services-pricing { background:var(--bg); padding:5rem 2rem; }
+  .services-pricing-inner { max-width:1000px; margin:0 auto; }
+  .services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:2.5rem; }
+  .service-price-card { background:white; border:1px solid var(--border); border-radius:14px; padding:1.75rem; }
+  .service-price-card h3 { font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:.35rem; }
+  .service-price-card .sp-price { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--navy); margin:.5rem 0 .25rem; }
+  .service-price-card .sp-sub { font-size:.78rem; color:var(--muted); margin-bottom:1rem; }
+  .service-price-card ul { list-style:none; display:flex; flex-direction:column; gap:.5rem; }
+  .service-price-card ul li { font-size:.83rem; color:var(--muted); display:flex; align-items:flex-start; gap:.5rem; }
+  .service-price-card ul li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; }
+  .sp-icon { width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
+  .sp-icon i { width:20px; height:20px; }
+
+  /* COACHING PRICING */
+  .coaching-pricing { padding:5rem 2rem; }
+  .coaching-pricing-inner { max-width:1000px; margin:0 auto; }
+  .coaching-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-top:2.5rem; }
+  .coaching-price-card { background:white; border:1.5px solid var(--border); border-radius:14px; padding:2rem; }
+  .coaching-price-card.featured { border-color:var(--blue); }
+  .coaching-price-card h3 { font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:.5rem; }
+  .coaching-price-card .cp-price { font-family:'DM Serif Display',serif; font-size:2.5rem; color:var(--navy); line-height:1; margin:.5rem 0 .25rem; }
+  .coaching-price-card .cp-sub { font-size:.8rem; color:var(--muted); margin-bottom:1.25rem; }
+  .coaching-price-card p { font-size:.88rem; color:var(--muted); line-height:1.65; margin-bottom:1.25rem; }
+  .discount-note { background:var(--accent-light); border:1px solid rgba(0,194,168,.25); border-radius:10px; padding:.85rem 1.1rem; font-size:.83rem; color:#0a6b5c; margin-top:1rem; display:flex; align-items:center; gap:.6rem; }
+  .discount-note i { width:16px; height:16px; flex-shrink:0; }
+
+  /* MAINTENANCE PRICING */
+  .maint-pricing { background:var(--bg); padding:5rem 2rem; }
+  .maint-pricing-inner { max-width:1000px; margin:0 auto; }
+  .maint-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:2.5rem; }
+  .maint-card { background:white; border:1.5px solid var(--border); border-radius:14px; padding:1.5rem; text-align:center; }
+  .maint-card.featured { border-color:var(--blue); }
+  .maint-card .tier-label { font-size:.72rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+  .maint-card .mp-price { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--navy); line-height:1; margin:.35rem 0 .2rem; }
+  .maint-card .mp-sub { font-size:.75rem; color:var(--muted); margin-bottom:1rem; }
+  .maint-card ul { list-style:none; text-align:left; display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.25rem; }
+  .maint-card ul li { font-size:.78rem; color:var(--muted); display:flex; gap:.4rem; }
+  .maint-card ul li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; }
+  .maint-card .overage { font-size:.72rem; color:var(--muted); text-align:center; margin-top:.5rem; }
+
+  /* CTA */
+  .pricing-cta { background:var(--navy); padding:5rem 2rem; text-align:center; }
+  .pricing-cta h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,3vw,2.5rem); color:white; margin-bottom:1rem; }
+  .pricing-cta p { color:rgba(255,255,255,.65); max-width:520px; margin:0 auto 2rem; font-size:1rem; line-height:1.7; }
+  .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+  .btn-white { background:white; color:var(--navy); font-weight:700; font-size:.95rem; padding:.85rem 1.75rem; border-radius:10px; text-decoration:none; transition:transform .2s; display:inline-block; }
+  .btn-white:hover { transform:translateY(-2px); }
+  .btn-teal { background:var(--accent); color:var(--navy); font-weight:700; font-size:.95rem; padding:.85rem 1.75rem; border-radius:10px; text-decoration:none; transition:transform .2s,box-shadow .2s; display:inline-block; }
+  .btn-teal:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,194,168,.35); }
+
+  @media(max-width:900px){
+    .services-grid { grid-template-columns:1fr 1fr; }
+    .coaching-grid,.maint-grid { grid-template-columns:1fr 1fr; }
+  }
+  @media(max-width:560px){
+    .services-grid,.coaching-grid,.maint-grid { grid-template-columns:1fr; }
+    .complexity-table { font-size:.8rem; }
+  }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Pricing</div>
+    <h1>Transparent pricing, scoped to your practice</h1>
+    <p>No packages, no guesswork. Every project is quoted based on what you actually need. Browse our rates below or use the estimate builder to get a ballpark before we talk.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem">
+      <a href="/estimate.html" class="btn-primary">Build Your Estimate →</a>
+      <a href="/contact.html" class="btn-secondary" style="background:rgba(255,255,255,.1);color:white;padding:.85rem 1.75rem;border-radius:10px;text-decoration:none;border:1px solid rgba(255,255,255,.2)">Book a Free Call</a>
+    </div>
+  </div>
+</div>
+
+<!-- WHITE GLOVE COMPLEXITY -->
+<div class="pricing-intro">
+  <div class="section-tag">White Glove Automation</div>
+  <h2>Priced by complexity</h2>
+  <p>Each automation workflow is evaluated based on how many tools it connects, how many steps are involved, and how much custom logic is required. You get a fixed quote before we start — no surprises.</p>
+</div>
+
+<div class="complexity-section">
+  <div class="complexity-inner">
+    <table class="complexity-table">
+      <thead>
+        <tr>
+          <th>Complexity tier</th>
+          <th>What it means</th>
+          <th>Typical price range</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tier-badge tier-1">Simple</span></td>
+          <td>
+            <ul>
+              <li>1–2 step Zap, single trigger and action</li>
+              <li>Two tools connected (e.g. form → CRM)</li>
+              <li>No conditional logic or branching</li>
+              <li>Example: JotForm submission creates Wealthbox contact</li>
+            </ul>
+          </td>
+          <td><div class="price-range">$150 – $400</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">per workflow</div></td>
+        </tr>
+        <tr>
+          <td><span class="tier-badge tier-2">Moderate</span></td>
+          <td>
+            <ul>
+              <li>Multi-step Zap, 2–4 tools connected</li>
+              <li>Basic conditional logic (if/then)</li>
+              <li>Moderate customization required</li>
+              <li>Example: New Calendly booking → CRM task + email + Slack notify</li>
+            </ul>
+          </td>
+          <td><div class="price-range">$400 – $900</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">per workflow</div></td>
+        </tr>
+        <tr>
+          <td><span class="tier-badge tier-3">Complex</span></td>
+          <td>
+            <ul>
+              <li>Multi-path logic, 4+ tools connected</li>
+              <li>Custom filters, formatters, or webhooks</li>
+              <li>Significant setup and testing time</li>
+              <li>Example: Full client onboarding flow with branching by client type</li>
+            </ul>
+          </td>
+          <td><div class="price-range">$900 – $2,500</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">per workflow</div></td>
+        </tr>
+        <tr>
+          <td><span class="tier-badge tier-4">Enterprise</span></td>
+          <td>
+            <ul>
+              <li>Full firm tech stack audit and rebuild</li>
+              <li>Multi-advisor or team-wide setup</li>
+              <li>Custom integrations, API connections</li>
+              <li>Example: Complete automation infrastructure for a 5-advisor RIA</li>
+            </ul>
+          </td>
+          <td><div class="price-range">Custom</div><div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">scoped after discovery</div></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-note"><strong>Most White Glove projects</strong> include 3–8 workflows and run $1,500–$6,000 total. You'll receive a fixed project quote after your discovery call — no hourly surprises. <a href="/estimate.html" style="color:var(--blue);font-weight:600">Use the estimate builder →</a></p>
+  </div>
+</div>
+
+<!-- OTHER SERVICES -->
+<section class="services-pricing">
+  <div class="services-pricing-inner">
+    <div class="section-tag">Other Services</div>
+    <h2 class="section-heading">Templates, courses &amp; more</h2>
+    <div class="services-grid">
+      <div class="service-price-card">
+        <div class="sp-icon" style="background:var(--accent-light)"><i data-lucide="layout-template" style="color:#0a6b5c"></i></div>
+        <h3>Zapier Templates</h3>
+        <div class="sp-price">$47 – $197</div>
+        <div class="sp-sub">One-time purchase</div>
+        <ul>
+          <li>Pre-built, ready-to-deploy Zaps</li>
+          <li>Step-by-step setup guide</li>
+          <li>Built for financial advisors</li>
+        </ul>
+      </div>
+      <div class="service-price-card">
+        <div class="sp-icon" style="background:var(--blue-light)"><i data-lucide="play-circle" style="color:var(--blue)"></i></div>
+        <h3>Online Courses</h3>
+        <div class="sp-price">$97 – $497</div>
+        <div class="sp-sub">One-time purchase</div>
+        <ul>
+          <li>Self-paced video training</li>
+          <li>Lifetime access</li>
+          <li>Templates included</li>
+        </ul>
+      </div>
+      <div class="service-price-card">
+        <div class="sp-icon" style="background:#faeeda"><i data-lucide="package" style="color:#92400e"></i></div>
+        <h3>Bundles</h3>
+        <div class="sp-price">$197 – $697</div>
+        <div class="sp-sub">One-time purchase</div>
+        <ul>
+          <li>Course + template combinations</li>
+          <li>Best value for DIY advisors</li>
+          <li>Covers a full workflow area</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <a href="/store.html" class="btn btn-outline">Browse All Templates &amp; Courses →</a>
+    </div>
+  </div>
+</section>
+
+<!-- COACHING -->
+<section class="coaching-pricing">
+  <div class="coaching-pricing-inner">
+    <div class="section-tag">Technology Coaching</div>
+    <h2 class="section-heading">1:1 coaching sessions</h2>
+    <div class="coaching-grid">
+      <div class="coaching-price-card">
+        <div class="sp-icon" style="background:var(--bg);margin-bottom:.75rem"><i data-lucide="clock" style="color:var(--muted);width:20px;height:20px"></i></div>
+        <h3>30-Minute Session</h3>
+        <div class="cp-price">$150</div>
+        <div class="cp-sub">Paid at booking</div>
+        <p>Focused on one specific problem, integration, or question. Great for quick unblocking.</p>
+        <a href="/coaching.html" class="btn btn-outline btn-full">Book a Session</a>
+      </div>
+      <div class="coaching-price-card featured">
+        <div class="sp-icon" style="background:var(--blue-light);margin-bottom:.75rem"><i data-lucide="clock-4" style="color:var(--blue);width:20px;height:20px"></i></div>
+        <h3>60-Minute Session</h3>
+        <div class="cp-price">$300</div>
+        <div class="cp-sub">Paid at booking</div>
+        <p>Deep-dive on a complete workflow or integration. We build together, live on screen.</p>
+        <a href="/coaching.html" class="btn btn-primary btn-full">Book a Session</a>
+        <div class="discount-note"><i data-lucide="tag"></i> Prepay 5+ hours and save 20%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAINTENANCE -->
+<section class="maint-pricing">
+  <div class="maint-pricing-inner">
+    <div class="section-tag">Ongoing Maintenance</div>
+    <h2 class="section-heading">Annual plans, paid monthly</h2>
+    <p class="section-sub">Weekly Zapier error monitoring plus dedicated hours for fixes, updates, and check-ins.</p>
+    <div class="maint-grid">
+      <div class="maint-card">
+        <div class="tier-label">Tier 1</div>
+        <div class="mp-price">$500<span style="font-size:.9rem;font-family:'Outfit',sans-serif;font-weight:400">/mo</span></div>
+        <div class="mp-sub">$6,000/year · 12 hrs included</div>
+        <ul>
+          <li>Weekly error monitoring</li>
+          <li>12 maintenance hrs/year</li>
+        </ul>
+        <a href="/maintenance.html" class="btn btn-outline btn-full" style="font-size:.82rem">Learn More</a>
+        <div class="overage">Overage: $250/hr</div>
+      </div>
+      <div class="maint-card featured">
+        <div class="tier-label">Tier 2 · Popular</div>
+        <div class="mp-price">$650<span style="font-size:.9rem;font-family:'Outfit',sans-serif;font-weight:400">/mo</span></div>
+        <div class="mp-sub">$7,800/year · 24 hrs included</div>
+        <ul>
+          <li>Weekly error monitoring</li>
+          <li>24 maintenance hrs/year</li>
+        </ul>
+        <a href="/maintenance.html" class="btn btn-primary btn-full" style="font-size:.82rem">Learn More</a>
+        <div class="overage">Overage: $217/hr</div>
+      </div>
+      <div class="maint-card">
+        <div class="tier-label">Tier 3</div>
+        <div class="mp-price">$750<span style="font-size:.9rem;font-family:'Outfit',sans-serif;font-weight:400">/mo</span></div>
+        <div class="mp-sub">$9,000/year · 36 hrs included</div>
+        <ul>
+          <li>Weekly error monitoring</li>
+          <li>36 maintenance hrs/year</li>
+        </ul>
+        <a href="/maintenance.html" class="btn btn-outline btn-full" style="font-size:.82rem">Learn More</a>
+        <div class="overage">Overage: $188/hr</div>
+      </div>
+      <div class="maint-card">
+        <div class="tier-label">Tier 4</div>
+        <div class="mp-price">$800<span style="font-size:.9rem;font-family:'Outfit',sans-serif;font-weight:400">/mo</span></div>
+        <div class="mp-sub">$9,600/year · 48 hrs included</div>
+        <ul>
+          <li>Weekly error monitoring</li>
+          <li>48 maintenance hrs/year</li>
+        </ul>
+        <a href="/maintenance.html" class="btn btn-outline btn-full" style="font-size:.82rem">Learn More</a>
+        <div class="overage">Overage: $160/hr</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing-cta">
+  <h2>Not sure what you need?</h2>
+  <p>Use the estimate builder to scope your project and get a rough range, or book a free intro call and we'll help you figure it out together.</p>
+  <div class="cta-btns">
+    <a href="/estimate.html" class="btn-teal">Build Your Estimate →</a>
+    <a href="/contact.html" class="btn-white">Book a Free Call</a>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+</body>
+</html>
