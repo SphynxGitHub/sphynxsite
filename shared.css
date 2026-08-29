@@ -27,8 +27,10 @@ nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.96)
 .nav-links a:hover { color: var(--navy); }
 .nav-links .has-dropdown { position: relative; }
 .nav-links .has-dropdown > a::after { content: ' ▾'; font-size: 0.7rem; }
-.dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.5rem; min-width: 210px; box-shadow: 0 8px 24px rgba(11,31,58,0.1); z-index: 200; }
+.dropdown { display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 0.5rem 0.5rem; min-width: 220px; box-shadow: 0 8px 24px rgba(11,31,58,0.12); z-index: 200; }
 .has-dropdown.open .dropdown { display: block; }
+/* Invisible bridge — keeps hover active while mouse moves from link to dropdown */
+.has-dropdown.open::after { content: ''; position: absolute; top: 100%; left: -10px; right: -10px; height: 16px; z-index: 199; }
 .dropdown a { display: block; padding: 0.5rem 0.85rem; font-size: 0.85rem; color: var(--muted); border-radius: 6px; white-space: nowrap; }
 .dropdown a:hover { background: var(--bg); color: var(--navy); }
 .nav-cta { background: var(--blue) !important; color: white !important; padding: 0.5rem 1.2rem; border-radius: 8px; }

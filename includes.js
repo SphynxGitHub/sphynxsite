@@ -102,9 +102,30 @@ document.addEventListener('DOMContentLoaded', async function () {
     const heroInner = document.querySelector('.page-hero-inner');
     if (heroInner) heroInner.style.position = 'relative';
 
+    // Active link highlighting
     document.querySelectorAll('nav a').forEach(a => {
       if (a.pathname !== '/' && window.location.pathname.startsWith(a.pathname)) {
         a.classList.add('active');
+      }
+    });
+
+    // Dropdown hover with delay buffer so menu stays open while mouse moves
+    document.querySelectorAll('.has-dropdown').forEach(function(item) {
+      var timeout;
+      item.addEventListener('mouseenter', function() {
+        clearTimeout(timeout);
+        document.querySelectorAll('.has-dropdown').forEach(el => el.classList.remove('open'));
+        item.classList.add('open');
+      });
+      item.addEventListener('mouseleave', function() {
+        timeout = setTimeout(function() { item.classList.remove('open'); }, 200);
+      });
+      var dropdown = item.querySelector('.dropdown');
+      if (dropdown) {
+        dropdown.addEventListener('mouseenter', function() { clearTimeout(timeout); });
+        dropdown.addEventListener('mouseleave', function() {
+          timeout = setTimeout(function() { item.classList.remove('open'); }, 200);
+        });
       }
     });
   }
