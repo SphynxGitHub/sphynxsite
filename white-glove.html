@@ -8,15 +8,13 @@
 <script src="/includes.js"></script>
 <style>
   .service-detail { padding:5rem 2rem; }
-  .service-detail:nth-child(even) { background:var(--bg); }
   .service-detail-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
   .service-detail h2 { font-family:'DM Serif Display',serif; font-size:clamp(1.7rem,3vw,2.4rem); line-height:1.2; color:var(--navy); margin-bottom:1rem; }
   .service-detail p { font-size:1rem; color:var(--muted); line-height:1.75; margin-bottom:1.25rem; }
   .feature-list { list-style:none; display:flex; flex-direction:column; gap:.75rem; margin:1.5rem 0 2rem; }
   .feature-list li { display:flex; align-items:flex-start; gap:.75rem; font-size:.93rem; color:var(--text); }
   .feature-list li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
-  .service-visual { background:var(--navy); border-radius:20px; padding:2.5rem; color:white; }
-  .service-visual-teal { background:linear-gradient(135deg,#0b1f3a,#0d3d30); }
+  .service-visual { background:linear-gradient(135deg,#0b1f3a,#0d3d30); border-radius:20px; padding:2.5rem; color:white; }
   .service-visual h3 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:white; margin-bottom:1.5rem; }
   .step-list { display:flex; flex-direction:column; gap:1rem; }
   .step { display:flex; gap:1rem; align-items:flex-start; }
@@ -31,30 +29,43 @@
 
   /* PRICING */
   .pricing-section { background:var(--bg); padding:5rem 2rem; }
-  .pricing-inner { max-width:1100px; margin:0 auto; }
-  .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:3rem; }
-  .pricing-card { background:white; border:1.5px solid var(--border); border-radius:18px; padding:2rem; position:relative; transition:transform .3s,box-shadow .3s; display:flex; flex-direction:column; }
-  .pricing-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(11,31,58,.1); }
-  .pricing-card.featured { border-color:var(--blue); }
-  .featured-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--blue); color:white; font-size:.72rem; font-weight:700; padding:.28rem .9rem; border-radius:100px; white-space:nowrap; letter-spacing:.06em; text-transform:uppercase; }
-  .pricing-card h3 { font-size:1.05rem; font-weight:700; color:var(--navy); margin-bottom:.75rem; }
-  .price-amount { font-family:'DM Serif Display',serif; font-size:2.75rem; color:var(--navy); line-height:1; margin-bottom:.25rem; }
-  .price-sub { font-size:.83rem; color:var(--muted); margin-bottom:1.5rem; }
-  .pricing-card ul { list-style:none; display:flex; flex-direction:column; gap:.65rem; margin-bottom:1.75rem; flex:1; }
-  .pricing-card ul li { font-size:.88rem; color:var(--text); display:flex; align-items:flex-start; gap:.6rem; line-height:1.5; }
-  .pricing-card ul li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
-  .pricing-note { font-size:.78rem; color:var(--muted); text-align:center; margin-top:.75rem; }
+  .pricing-inner { max-width:900px; margin:0 auto; text-align:center; }
+  .pricing-card-single { background:white; border:1.5px solid var(--border); border-radius:20px; padding:3rem; margin-top:3rem; display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; text-align:left; }
+  .pricing-card-single h3 { font-family:'DM Serif Display',serif; font-size:1.75rem; color:var(--navy); margin-bottom:.75rem; }
+  .pricing-card-single p { font-size:.95rem; color:var(--muted); line-height:1.75; margin-bottom:1.5rem; }
+  .pricing-card-single ul { list-style:none; display:flex; flex-direction:column; gap:.65rem; margin-bottom:1.75rem; }
+  .pricing-card-single ul li { font-size:.88rem; color:var(--text); display:flex; align-items:flex-start; gap:.6rem; }
+  .pricing-card-single ul li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
+  .pricing-visual { background:var(--navy); border-radius:16px; padding:2rem; color:white; }
+  .pricing-visual h4 { font-size:1rem; font-weight:700; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; font-size:.78rem; margin-bottom:1.25rem; }
+  .complexity-row { display:flex; justify-content:space-between; align-items:center; padding:.6rem 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .complexity-row:last-child { border-bottom:none; }
+  .complexity-row span { font-size:.88rem; color:rgba(255,255,255,.7); }
+  .complexity-row strong { font-size:.95rem; color:white; font-weight:700; }
+  .pricing-note { font-size:.8rem; color:rgba(255,255,255,.4); margin-top:1rem; line-height:1.6; }
 
-  /* SAMPLE WORKFLOWS */
-  .workflows-section { padding:5rem 2rem; }
-  .workflows-inner { max-width:1100px; margin:0 auto; }
-  .workflows-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3rem; }
-  .workflow-example { background:white; border:1px solid var(--border); border-radius:14px; padding:1.75rem; }
-  .workflow-example .we-icon { width:42px; height:42px; border-radius:10px; background:var(--blue-light); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
-  .workflow-example .we-icon i { width:22px; height:22px; color:var(--blue); }
-  .workflow-example h3 { font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:.5rem; }
-  .workflow-example p { font-size:.85rem; color:var(--muted); line-height:1.6; }
-  .workflow-example .we-tag { display:inline-block; font-size:.72rem; font-weight:700; padding:.2rem .65rem; border-radius:100px; background:var(--accent-light); color:#0a6b5c; margin-top:.75rem; }
+  /* SAMPLE SERVICES */
+  .samples-section { padding:5rem 2rem; }
+  .samples-inner { max-width:1100px; margin:0 auto; }
+  .samples-filter { display:flex; gap:.5rem; flex-wrap:wrap; margin:2rem 0 2.5rem; }
+  .filter-chip { background:var(--bg); border:1.5px solid var(--border); color:var(--muted); font-family:'Outfit',sans-serif; font-size:.82rem; font-weight:600; padding:.35rem .9rem; border-radius:100px; cursor:pointer; transition:all .2s; }
+  .filter-chip.active { background:var(--navy); border-color:var(--navy); color:white; }
+  .filter-chip:hover:not(.active) { border-color:var(--blue); color:var(--blue); }
+  .samples-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+  .sample-card { background:white; border:1px solid var(--border); border-radius:14px; padding:1.75rem; transition:transform .25s,box-shadow .25s; }
+  .sample-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(11,31,58,.09); }
+  .sample-card.hidden { display:none; }
+  .sample-icon { width:44px; height:44px; border-radius:11px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
+  .sample-icon i { width:22px; height:22px; }
+  .icon-teal { background:var(--accent-light); } .icon-teal i { color:#0a6b5c; }
+  .icon-blue { background:var(--blue-light); } .icon-blue i { color:var(--blue); }
+  .icon-navy { background:#e8ecf3; } .icon-navy i { color:var(--navy); }
+  .icon-purple { background:#f0ebff; } .icon-purple i { color:#7c3aed; }
+  .sample-card h3 { font-size:.98rem; font-weight:700; color:var(--navy); margin-bottom:.5rem; }
+  .sample-card p { font-size:.85rem; color:var(--muted); line-height:1.65; margin-bottom:1rem; }
+  .sample-tools { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .tool-tag { font-size:.72rem; font-weight:700; padding:.22rem .6rem; border-radius:100px; background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+  .sample-cat { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:.5rem; }
 
   /* CTA */
   .cta-strip { background:var(--navy); padding:5rem 2rem; text-align:center; }
@@ -65,9 +76,10 @@
   .btn-white:hover { transform:translateY(-2px); }
 
   @media(max-width:900px){
-    .service-detail-inner { grid-template-columns:1fr; gap:2.5rem; }
-    .pricing-grid,.workflows-grid { grid-template-columns:1fr; }
+    .service-detail-inner,.pricing-card-single { grid-template-columns:1fr; gap:2rem; }
+    .samples-grid { grid-template-columns:1fr 1fr; }
   }
+  @media(max-width:560px){ .samples-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -89,7 +101,7 @@
       <div class="section-tag">What's included</div>
       <h2>Your entire tech stack, connected and automated</h2>
       <p>We build custom automation solutions that eliminate the administrative tasks eating your time — data entry, paperwork, reminders, follow-ups, and everything in between.</p>
-      <p>Every engagement is fully customized to your practice, your tools, and your workflows. No cookie-cutter solutions.</p>
+      <p>Every engagement is fully scoped to your practice, your tools, and your existing workflows. No templates, no shortcuts.</p>
       <ul class="feature-list">
         <li>Zaps &amp; automations — certified Zapier experts</li>
         <li>Scheduling setup — Calendly or Acuity with custom parameters</li>
@@ -109,7 +121,7 @@
         </ul>
       </div>
     </div>
-    <div class="service-visual service-visual-teal">
+    <div class="service-visual">
       <h3>Our process</h3>
       <div class="step-list">
         <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Discovery Call</strong><span>We learn your workflows, tools, and pain points</span></div></div>
@@ -122,49 +134,119 @@
   </div>
 </section>
 
-<!-- SAMPLE WORKFLOWS -->
-<section class="workflows-section" style="background:var(--bg)">
-  <div class="workflows-inner">
-    <div class="section-tag">Sample workflows</div>
+<!-- SAMPLE SERVICES -->
+<section class="samples-section" style="background:var(--bg)">
+  <div class="samples-inner">
+    <div class="section-tag">Sample Services</div>
     <h2 class="section-heading">What we build for advisors</h2>
-    <p class="section-sub">Every engagement is custom, but here are some of the most common automations we set up for financial advisors.</p>
-    <div class="workflows-grid">
-      <div class="workflow-example">
-        <div class="we-icon"><i data-lucide="user-plus"></i></div>
-        <h3>Client Onboarding</h3>
-        <p>New client fills out intake form → CRM contact created → welcome email sent → onboarding tasks assigned → calendar invite scheduled. Fully automated, zero manual steps.</p>
-        <span class="we-tag">JotForm + Wealthbox + Zapier</span>
+    <p class="section-sub">Every engagement is custom — but here's the kind of work we do most. Filter by area to find what's most relevant to your practice.</p>
+    <div class="samples-filter">
+      <button class="filter-chip active" data-cat="all">All</button>
+      <button class="filter-chip" data-cat="onboarding">Client Onboarding</button>
+      <button class="filter-chip" data-cat="crm">CRM</button>
+      <button class="filter-chip" data-cat="meetings">Meetings</button>
+      <button class="filter-chip" data-cat="email">Email</button>
+      <button class="filter-chip" data-cat="compliance">Compliance</button>
+      <button class="filter-chip" data-cat="billing">Billing</button>
+    </div>
+    <div class="samples-grid">
+
+      <div class="sample-card" data-cat="onboarding">
+        <div class="sample-cat">Client Onboarding</div>
+        <div class="sample-icon icon-teal"><i data-lucide="user-plus"></i></div>
+        <h3>New Client Onboarding Flow</h3>
+        <p>Intake form submission triggers CRM contact creation, welcome email, task assignment, and calendar invite — all without a single manual step.</p>
+        <div class="sample-tools"><span class="tool-tag">JotForm</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span><span class="tool-tag">Calendly</span></div>
       </div>
-      <div class="workflow-example">
-        <div class="we-icon"><i data-lucide="clipboard-check"></i></div>
-        <h3>Meeting Prep &amp; Follow-up</h3>
-        <p>24 hours before a meeting, notes template and agenda are sent to advisor. After the meeting, summary email goes to client and tasks are logged in CRM automatically.</p>
-        <span class="we-tag">Calendly + Zapier + Wealthbox</span>
+
+      <div class="sample-card" data-cat="onboarding">
+        <div class="sample-cat">Client Onboarding</div>
+        <div class="sample-icon icon-blue"><i data-lucide="file-signature"></i></div>
+        <h3>Digital Paperwork &amp; E-sign</h3>
+        <p>Replace PDF packets with smart digital forms. Completed agreements automatically file to the right folder and notify the advisor for review.</p>
+        <div class="sample-tools"><span class="tool-tag">PreciseFP</span><span class="tool-tag">JotForm</span><span class="tool-tag">Google Drive</span><span class="tool-tag">Zapier</span></div>
       </div>
-      <div class="workflow-example">
-        <div class="we-icon"><i data-lucide="file-text"></i></div>
-        <h3>Document Collection</h3>
-        <p>Client receives a customized document checklist based on their situation. As documents are uploaded, advisor is notified and compliance checklist updates automatically.</p>
-        <span class="we-tag">JotForm + Zapier + Google Drive</span>
+
+      <div class="sample-card" data-cat="onboarding compliance">
+        <div class="sample-cat">Onboarding · Compliance</div>
+        <div class="sample-icon icon-navy"><i data-lucide="folder-check"></i></div>
+        <h3>Document Collection Tracker</h3>
+        <p>Client receives a customized document checklist. As files are uploaded, the advisor is notified and a compliance checklist updates automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">JotForm</span><span class="tool-tag">Google Drive</span><span class="tool-tag">Zapier</span></div>
       </div>
-      <div class="workflow-example">
-        <div class="we-icon"><i data-lucide="mail"></i></div>
-        <h3>Drip Email Campaigns</h3>
-        <p>Prospects and clients automatically receive relevant educational email sequences based on their lifecycle stage — no manual sends, no one falls through the cracks.</p>
-        <span class="we-tag">Mailchimp + ActiveCampaign + Zapier</span>
+
+      <div class="sample-card" data-cat="crm">
+        <div class="sample-cat">CRM</div>
+        <div class="sample-icon icon-blue"><i data-lucide="database"></i></div>
+        <h3>CRM Auto-Population</h3>
+        <p>Every new lead, form submission, or scheduled appointment automatically creates or updates a contact in your CRM — no manual data entry.</p>
+        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Redtail</span><span class="tool-tag">Zapier</span><span class="tool-tag">Calendly</span></div>
       </div>
-      <div class="workflow-example">
-        <div class="we-icon"><i data-lucide="refresh-cw"></i></div>
+
+      <div class="sample-card" data-cat="crm meetings">
+        <div class="sample-cat">CRM · Meetings</div>
+        <div class="sample-icon icon-teal"><i data-lucide="clipboard-check"></i></div>
+        <h3>Meeting Note Filing</h3>
+        <p>After a meeting, notes from your AI transcription tool are automatically filed to the correct CRM contact and a follow-up task is created.</p>
+        <div class="sample-tools"><span class="tool-tag">Thyme AI</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
+      </div>
+
+      <div class="sample-card" data-cat="meetings">
+        <div class="sample-cat">Meetings</div>
+        <div class="sample-icon icon-purple"><i data-lucide="calendar-clock"></i></div>
+        <h3>Meeting Prep Automation</h3>
+        <p>24 hours before each appointment, advisor receives a prep summary pulled from the CRM. Client gets a reminder with any outstanding items.</p>
+        <div class="sample-tools"><span class="tool-tag">Calendly</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span><span class="tool-tag">Gmail</span></div>
+      </div>
+
+      <div class="sample-card" data-cat="meetings">
+        <div class="sample-cat">Meetings</div>
+        <div class="sample-icon icon-navy"><i data-lucide="send"></i></div>
+        <h3>Post-Meeting Follow-up</h3>
+        <p>After a meeting ends, a personalized follow-up email is sent to the client summarizing next steps, and tasks are logged in the CRM automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">Calendly</span><span class="tool-tag">Gmail</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
+      </div>
+
+      <div class="sample-card" data-cat="email">
+        <div class="sample-cat">Email</div>
+        <div class="sample-icon icon-teal"><i data-lucide="mail"></i></div>
+        <h3>Lifecycle Email Campaigns</h3>
+        <p>Prospects and clients receive relevant email sequences based on their lifecycle stage — new lead, onboarding, annual review, referral ask — all triggered automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">Mailchimp</span><span class="tool-tag">ActiveCampaign</span><span class="tool-tag">Zapier</span></div>
+      </div>
+
+      <div class="sample-card" data-cat="email crm">
+        <div class="sample-cat">Email · CRM</div>
+        <div class="sample-icon icon-blue"><i data-lucide="bell"></i></div>
+        <h3>Birthday &amp; Anniversary Reminders</h3>
+        <p>CRM triggers automated personal emails on client birthdays and work anniversaries. Advisor gets a heads-up notification so they can add a personal touch.</p>
+        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Mailchimp</span><span class="tool-tag">Zapier</span></div>
+      </div>
+
+      <div class="sample-card" data-cat="compliance">
+        <div class="sample-cat">Compliance</div>
+        <div class="sample-icon icon-navy"><i data-lucide="shield-check"></i></div>
         <h3>Annual Review Workflow</h3>
-        <p>CRM triggers a review workflow 30 days before each client's anniversary. Scheduling link sent, prep tasks created, and post-review follow-up queued automatically.</p>
-        <span class="we-tag">Redtail + Calendly + Zapier</span>
+        <p>CRM triggers a review workflow 30 days before each client's anniversary. Scheduling link sent, prep tasks created, and post-review follow-up queued.</p>
+        <div class="sample-tools"><span class="tool-tag">Redtail</span><span class="tool-tag">Calendly</span><span class="tool-tag">Zapier</span></div>
       </div>
-      <div class="workflow-example">
-        <div class="we-icon"><i data-lucide="credit-card"></i></div>
-        <h3>Billing &amp; Payment Automation</h3>
-        <p>New client agreements trigger fee setup in AdvicePay. Payment confirmations sync back to CRM and trigger the next onboarding step — all without touching a spreadsheet.</p>
-        <span class="we-tag">AdvicePay + Zapier + Wealthbox</span>
+
+      <div class="sample-card" data-cat="compliance">
+        <div class="sample-cat">Compliance</div>
+        <div class="sample-icon icon-purple"><i data-lucide="check-square"></i></div>
+        <h3>Compliance Checklist Automation</h3>
+        <p>Required compliance tasks for each client are automatically created and tracked in your workflow tool. Nothing falls through the cracks.</p>
+        <div class="sample-tools"><span class="tool-tag">Process Street</span><span class="tool-tag">Hubly</span><span class="tool-tag">Zapier</span></div>
       </div>
+
+      <div class="sample-card" data-cat="billing">
+        <div class="sample-cat">Billing</div>
+        <div class="sample-icon icon-teal"><i data-lucide="credit-card"></i></div>
+        <h3>Billing &amp; Fee Setup</h3>
+        <p>New client agreements trigger fee setup in AdvicePay. Payment confirmations sync back to CRM and trigger the next onboarding step automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">AdvicePay</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -173,52 +255,30 @@
 <section class="pricing-section">
   <div class="pricing-inner">
     <div class="section-tag">Pricing</div>
-    <h2 class="section-heading">Custom projects, transparent pricing</h2>
-    <p class="section-sub">Every White Glove engagement is scoped to your practice. Here's a general guide — we'll send a custom proposal after your intro call.</p>
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <h3>Starter</h3>
-        <div class="price-amount">$1,500</div>
-        <div class="price-sub">One-time project fee</div>
+    <h2 class="section-heading">Priced by complexity, not by package</h2>
+    <p class="section-sub">We don't do one-size-fits-all pricing. Every project is scoped and quoted based on complexity — the number of steps, tools involved, and customization required. Book an intro call and we'll send a custom proposal within 48 hours.</p>
+    <div class="pricing-card-single">
+      <div>
+        <h3>How our pricing works</h3>
+        <p>Each automation is evaluated on its complexity — how many tools it connects, how many steps it involves, and how much customization is needed. Simple Zaps cost less than multi-step, multi-tool workflows.</p>
         <ul>
-          <li>1–3 core automation workflows</li>
-          <li>Up to 5 Zaps</li>
-          <li>One tool integration (e.g. CRM + JotForm)</li>
-          <li>Written documentation</li>
-          <li>1 training session</li>
+          <li>No hourly billing surprises — you get a fixed quote upfront</li>
+          <li>Scope is agreed before any work begins</li>
+          <li>Add-ons and changes are quoted separately</li>
+          <li>Optional maintenance plans available after launch</li>
         </ul>
-        <a href="/contact.html" class="btn-outline btn-full">Get a Quote</a>
-        <div class="pricing-note">Best for solo advisors getting started</div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem">
+          <a href="/contact.html" class="btn btn-primary">Request a Quote →</a>
+          <a href="https://drive.google.com/file/d/1qGFf7ytlvRwhCApTjBnjtbaCqLpTzmmk/preview" class="btn btn-outline" target="_blank">View Pricing Sheet</a>
+        </div>
       </div>
-      <div class="pricing-card featured">
-        <div class="featured-badge">Most Popular</div>
-        <h3>Growth</h3>
-        <div class="price-amount">$3,500</div>
-        <div class="price-sub">One-time project fee</div>
-        <ul>
-          <li>4–8 automation workflows</li>
-          <li>Up to 15 Zaps</li>
-          <li>Full stack integration (CRM, forms, scheduling, email)</li>
-          <li>Written documentation + video walkthroughs</li>
-          <li>2 training sessions</li>
-          <li>30-day post-launch support</li>
-        </ul>
-        <a href="/contact.html" class="btn-primary btn-full">Get a Quote</a>
-        <div class="pricing-note">Best for established RIAs and small teams</div>
-      </div>
-      <div class="pricing-card">
-        <h3>Enterprise</h3>
-        <div class="price-amount">Custom</div>
-        <div class="price-sub">Scoped to your practice</div>
-        <ul>
-          <li>Unlimited workflows and Zaps</li>
-          <li>Full firm tech stack audit and rebuild</li>
-          <li>Multi-advisor or team setup</li>
-          <li>Priority scheduling and dedicated PM</li>
-          <li>Ongoing maintenance plan included</li>
-        </ul>
-        <a href="/contact.html" class="btn-outline btn-full">Let's Talk</a>
-        <div class="pricing-note">Best for growing firms and broker-dealers</div>
+      <div class="pricing-visual">
+        <h4>Complexity tiers</h4>
+        <div class="complexity-row"><span>Simple (1–2 step Zap)</span><strong>Low</strong></div>
+        <div class="complexity-row"><span>Moderate (multi-step, 1–2 tools)</span><strong>Medium</strong></div>
+        <div class="complexity-row"><span>Complex (multi-tool, conditional logic)</span><strong>High</strong></div>
+        <div class="complexity-row"><span>Enterprise (full stack, team setup)</span><strong>Custom</strong></div>
+        <div class="pricing-note">Exact pricing in the sheet above. Every project gets a fixed quote after the discovery call.</div>
       </div>
     </div>
   </div>
@@ -234,5 +294,19 @@
 </section>
 
 <div id="site-footer"></div>
+
+<script>
+document.querySelectorAll('.filter-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    document.querySelectorAll('.sample-card').forEach(card => {
+      const cats = card.dataset.cat || '';
+      card.classList.toggle('hidden', cat !== 'all' && !cats.includes(cat));
+    });
+  });
+});
+</script>
 </body>
 </html>
