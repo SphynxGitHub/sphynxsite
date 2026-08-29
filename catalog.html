@@ -15,9 +15,15 @@
   .fc { background:var(--bg); border:1.5px solid var(--border); color:var(--muted); font-family:'Outfit',sans-serif; font-size:.78rem; font-weight:700; padding:.35rem .85rem; border-radius:100px; cursor:pointer; transition:all .2s; white-space:nowrap; }
   .fc:hover { border-color:var(--blue); color:var(--blue); }
   .fc.active { color:white; }
-  .fc.type-all.active,.fc.type-wg.active { background:var(--navy); border-color:var(--navy); }
-  .fc.type-qs.active { background:#7c3aed; border-color:#7c3aed; }
+  .fc.type-all.active,.fc.type-wg.active { background:var(--navy); border-color:var(--navy); color:white; }
+  .fc.type-qs.active { background:#7c3aed; border-color:#7c3aed; color:white; }
   .fc.type-diy.active { background:var(--accent); border-color:var(--accent); color:var(--navy); }
+  /* Category filter chips — teal border + teal text when active, never white bg */
+  .fc.cat-all.active, .filter-group:last-of-type .fc.active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: #0a6b5c;
+  }
   .search-wrap { margin-left:auto; }
   .search-wrap input { padding:.4rem .9rem; border:1.5px solid var(--border); border-radius:100px; font-family:'Outfit',sans-serif; font-size:.82rem; outline:none; width:200px; transition:border-color .2s; }
   .search-wrap input:focus { border-color:var(--blue); }

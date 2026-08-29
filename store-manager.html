@@ -80,7 +80,7 @@
 <!-- LOGIN GATE -->
 <div id="loginGate" class="login-gate">
   <div class="login-gate-card">
-    <div style="font-size:2rem;margin-bottom:1rem">🔐</div>
+    <div style="margin-bottom:1rem"><i data-lucide="lock" style="width:40px;height:40px;color:rgba(255,255,255,.6)"></i></div>
     <h2>Store Manager</h2>
     <p>Enter your manager password to access the admin panel.</p>
     <div class="form-group"><input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"></div>
@@ -282,7 +282,7 @@ function renderProductsTable() {
     <tr>
       <td>
         <div class="product-name-cell">
-          ${p.image_url ? `<img class="product-thumb" src="${p.image_url}" alt="">` : `<div class="product-thumb-placeholder">📦</div>`}
+          ${p.image_url ? `<img class="product-thumb" src="${p.image_url}" alt="">` : `<div class="product-thumb-placeholder"><i data-lucide="package" style="width:18px;height:18px;color:rgba(255,255,255,.4)"></i></div>`}
           <div><div class="td-name">${p.name}</div><div class="td-sub">${p.lesson_count || 0} lessons</div></div>
         </div>
       </td>

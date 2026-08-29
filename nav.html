@@ -29,3 +29,32 @@
     </ul>
   </div>
 </nav>
+
+<script>
+document.querySelectorAll('.has-dropdown').forEach(function(item) {
+  var timeout;
+  item.addEventListener('mouseenter', function() {
+    clearTimeout(timeout);
+    document.querySelectorAll('.has-dropdown').forEach(function(el) {
+      el.classList.remove('open');
+    });
+    item.classList.add('open');
+  });
+  item.addEventListener('mouseleave', function() {
+    timeout = setTimeout(function() {
+      item.classList.remove('open');
+    }, 150);
+  });
+  var dropdown = item.querySelector('.dropdown');
+  if (dropdown) {
+    dropdown.addEventListener('mouseenter', function() {
+      clearTimeout(timeout);
+    });
+    dropdown.addEventListener('mouseleave', function() {
+      timeout = setTimeout(function() {
+        item.classList.remove('open');
+      }, 150);
+    });
+  }
+});
+</script>

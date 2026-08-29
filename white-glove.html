@@ -135,18 +135,108 @@
 </section>
 
 <!-- SAMPLE SERVICES -->
-<section class="workflows-section" style="background:var(--bg)">
-  <div class="workflows-inner">
+<section class="samples-section" style="background:var(--bg)">
+  <div class="samples-inner">
     <div class="section-tag">Sample Services</div>
     <h2 class="section-heading">What we build for advisors</h2>
-    <p class="section-sub">Every White Glove engagement is custom — but here are some of the most common workflows we build. Browse the full catalog to see QuickStart and DIY options too.</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2.5rem">
-      <div class="workflow-example"><div class="we-icon"><i data-lucide="user-plus"></i></div><h3>Client Onboarding</h3><p>Intake form → CRM contact → welcome email → tasks → calendar invite. Fully automated.</p><span class="we-tag">JotForm + Wealthbox + Zapier</span></div>
-      <div class="workflow-example"><div class="we-icon"><i data-lucide="clipboard-check"></i></div><h3>Meeting Prep &amp; Follow-up</h3><p>Pre-meeting CRM summary sent to advisor. Post-meeting: notes filed, follow-up emailed, tasks logged.</p><span class="we-tag">Calendly + Zapier + Wealthbox</span></div>
-      <div class="workflow-example"><div class="we-icon"><i data-lucide="mail"></i></div><h3>Lifecycle Email Campaigns</h3><p>Right email, right client, right time — triggered automatically by CRM lifecycle stage.</p><span class="we-tag">Mailchimp + ActiveCampaign + Zapier</span></div>
+    <p class="section-sub">Every White Glove engagement is custom — but here are some of the most common workflows we implement. Filter by area to find what's most relevant to your practice.</p>
+    <div class="samples-filter">
+      <button class="filter-chip active" data-cat="all">All</button>
+      <button class="filter-chip" data-cat="onboarding">Client Onboarding</button>
+      <button class="filter-chip" data-cat="crm">CRM</button>
+      <button class="filter-chip" data-cat="meetings">Meetings</button>
+      <button class="filter-chip" data-cat="email">Email</button>
+      <button class="filter-chip" data-cat="compliance">Compliance</button>
+      <button class="filter-chip" data-cat="billing">Billing</button>
+    </div>
+    <div class="samples-grid">
+      <div class="sample-card" data-cat="onboarding">
+        <div class="sample-icon icon-teal"><i data-lucide="user-plus"></i></div>
+        <div class="sample-cat">Client Onboarding</div>
+        <h3>New Client Onboarding Flow</h3>
+        <p>Intake form submission triggers CRM contact creation, welcome email, task assignment, and calendar invite — all without a single manual step.</p>
+        <div class="sample-tools"><span class="tool-tag">JotForm</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span><span class="tool-tag">Calendly</span></div>
+      </div>
+      <div class="sample-card" data-cat="onboarding">
+        <div class="sample-icon icon-blue"><i data-lucide="file-signature"></i></div>
+        <div class="sample-cat">Client Onboarding</div>
+        <h3>Digital Paperwork &amp; E-sign</h3>
+        <p>Replace PDF packets with smart digital forms. Completed agreements automatically file to the right folder and notify the advisor for review.</p>
+        <div class="sample-tools"><span class="tool-tag">PreciseFP</span><span class="tool-tag">JotForm</span><span class="tool-tag">Google Drive</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="onboarding compliance">
+        <div class="sample-icon icon-navy"><i data-lucide="folder-check"></i></div>
+        <div class="sample-cat">Onboarding · Compliance</div>
+        <h3>Document Collection Tracker</h3>
+        <p>Client receives a customized document checklist. As files are uploaded, the advisor is notified and a compliance checklist updates automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">JotForm</span><span class="tool-tag">Google Drive</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="crm">
+        <div class="sample-icon icon-blue"><i data-lucide="database"></i></div>
+        <div class="sample-cat">CRM</div>
+        <h3>CRM Auto-Population</h3>
+        <p>Every new lead, form submission, or scheduled appointment automatically creates or updates a contact in your CRM — no manual data entry.</p>
+        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Redtail</span><span class="tool-tag">Zapier</span><span class="tool-tag">Calendly</span></div>
+      </div>
+      <div class="sample-card" data-cat="crm meetings">
+        <div class="sample-icon icon-teal"><i data-lucide="clipboard-check"></i></div>
+        <div class="sample-cat">CRM · Meetings</div>
+        <h3>Meeting Note Filing</h3>
+        <p>After a meeting, notes are automatically filed to the correct CRM contact and a follow-up task is created — zero manual input required.</p>
+        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="meetings">
+        <div class="sample-icon icon-purple"><i data-lucide="calendar-clock"></i></div>
+        <div class="sample-cat">Meetings</div>
+        <h3>Meeting Prep Automation</h3>
+        <p>24 hours before each appointment, advisor receives a prep summary pulled from the CRM. Client gets a reminder with any outstanding items.</p>
+        <div class="sample-tools"><span class="tool-tag">Calendly</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span><span class="tool-tag">Gmail</span></div>
+      </div>
+      <div class="sample-card" data-cat="meetings">
+        <div class="sample-icon icon-navy"><i data-lucide="send"></i></div>
+        <div class="sample-cat">Meetings</div>
+        <h3>Post-Meeting Follow-up</h3>
+        <p>After a meeting ends, a personalized follow-up email is sent to the client and tasks are logged in the CRM automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">Calendly</span><span class="tool-tag">Gmail</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="email">
+        <div class="sample-icon icon-teal"><i data-lucide="mail"></i></div>
+        <div class="sample-cat">Email</div>
+        <h3>Lifecycle Email Campaigns</h3>
+        <p>Prospects and clients receive relevant email sequences based on their lifecycle stage — all triggered automatically from your CRM.</p>
+        <div class="sample-tools"><span class="tool-tag">Mailchimp</span><span class="tool-tag">ActiveCampaign</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="email crm">
+        <div class="sample-icon icon-blue"><i data-lucide="bell"></i></div>
+        <div class="sample-cat">Email · CRM</div>
+        <h3>Birthday &amp; Anniversary Reminders</h3>
+        <p>CRM triggers automated personal emails on client birthdays and anniversaries. Advisor gets a heads-up so they can add a personal touch.</p>
+        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Mailchimp</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="compliance">
+        <div class="sample-icon icon-navy"><i data-lucide="shield-check"></i></div>
+        <div class="sample-cat">Compliance</div>
+        <h3>Annual Review Workflow</h3>
+        <p>CRM triggers a review workflow 30 days before each client's anniversary. Scheduling link sent, prep tasks created, post-review follow-up queued.</p>
+        <div class="sample-tools"><span class="tool-tag">Redtail</span><span class="tool-tag">Calendly</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="compliance">
+        <div class="sample-icon icon-purple"><i data-lucide="check-square"></i></div>
+        <div class="sample-cat">Compliance</div>
+        <h3>Compliance Checklist Automation</h3>
+        <p>Required compliance tasks for each client are automatically created and tracked in your workflow tool. Nothing falls through the cracks.</p>
+        <div class="sample-tools"><span class="tool-tag">Process Street</span><span class="tool-tag">Hubly</span><span class="tool-tag">Zapier</span></div>
+      </div>
+      <div class="sample-card" data-cat="billing">
+        <div class="sample-icon icon-teal"><i data-lucide="credit-card"></i></div>
+        <div class="sample-cat">Billing</div>
+        <h3>Billing &amp; Fee Setup</h3>
+        <p>New client agreements trigger fee setup in AdvicePay. Payment confirmations sync back to CRM and trigger the next onboarding step automatically.</p>
+        <div class="sample-tools"><span class="tool-tag">AdvicePay</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
+      </div>
     </div>
     <div style="text-align:center;margin-top:2.5rem">
-      <a href="/catalog.html" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:.5rem"><i data-lucide="grid" style="width:16px;height:16px"></i> Browse the Full Service Catalog →</a>
+      <a href="/catalog.html" class="btn btn-outline" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem"><i data-lucide="grid" style="width:16px;height:16px"></i> Browse Full Service Catalog →</a>
       <p style="font-size:.82rem;color:var(--muted);margin-top:.75rem">Includes White Glove, QuickStart projects, and DIY templates — all in one place</p>
     </div>
   </div>

@@ -75,7 +75,7 @@
   <div id="alertBanner"></div>
   <div id="productsGrid" class="products-grid">
     <div class="empty-state" style="grid-column:1/-1">
-      <div class="empty-icon">⏳</div>
+      <div class="empty-icon"><i data-lucide="loader" style="width:48px;height:48px;opacity:.4"></i></div>
       <h3>Loading products...</h3>
     </div>
   </div>
@@ -127,7 +127,7 @@ async function loadProducts() {
   if (error || !data?.length) {
     document.getElementById('productsGrid').innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">📦</div>
+        <div class="empty-icon"><i data-lucide="package" style="width:48px;height:48px;opacity:.4"></i></div>
         <h3>No products yet</h3>
         <p>Check back soon or visit our main site.</p>
       </div>`;
@@ -150,7 +150,7 @@ function renderProducts(products) {
   grid.innerHTML = '';
 
   if (!products.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>No results</h3><p>Try a different search or filter.</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><i data-lucide="search" style="width:48px;height:48px;opacity:.4"></i></div><h3>No results</h3><p>Try a different search or filter.</p></div>`;
     return;
   }
 
@@ -232,9 +232,13 @@ function showAlert(type, msg) {
   setTimeout(() => document.getElementById('alertBanner').innerHTML = '', 5000);
 }
 
+function categoryIcon(cat) {
+  const map = { 'Integration': 'link', 'JotForm': 'clipboard', 'Training': 'graduation-cap', 'Email Campaign': 'mail', 'Zapier': 'zap' };
+  return map[cat] || 'package';
+}
 function categoryEmoji(cat) {
-  const map = { 'Integration': '🔗', 'JotForm': '📋', 'Training': '🎓', 'Email Campaign': '✉️', 'Zapier': '⚡' };
-  return map[cat] || '📦';
+  const icon = categoryIcon(cat);
+  return `<i data-lucide="${icon}" style="width:28px;height:28px;color:var(--muted)"></i>`;
 }
 function categoryBadge(cat) {
   const map = { 'Integration': 'badge-navy', 'JotForm': 'badge-blue', 'Training': 'badge-teal', 'Email Campaign': 'badge-green', 'Zapier': 'badge-blue' };
@@ -246,7 +250,7 @@ window.signOut = signOut;
 
 // Check for successful payment return
 const params = new URLSearchParams(window.location.search);
-if (params.get('success')) showAlert('success', '🎉 Purchase successful! Check your email and visit My Courses to access your content.');
+if (params.get('success')) showAlert('success', 'Purchase successful! Check your email and visit My Courses to access your content.');
 if (params.get('cancelled')) showAlert('info', 'Checkout was cancelled — no charge was made.');
 
 init();

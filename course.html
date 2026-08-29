@@ -64,7 +64,7 @@
     <div style="color:var(--muted);font-size:.88rem">Loading...</div>
   </aside>
   <main class="course-main" id="courseMain">
-    <div class="empty-state"><div class="empty-icon">⏳</div><h3>Loading course...</h3></div>
+    <div class="empty-state"><div class="empty-icon"><i data-lucide="loader" style="width:48px;height:48px;opacity:.4"></i></div><h3>Loading course...</h3></div>
   </main>
 </div>
 
@@ -159,7 +159,7 @@ function renderLesson(idx) {
   if (lesson.download_url) {
     html += `
       <div class="download-section">
-        <div><h4>📎 Downloadable Resource</h4><p>${lesson.download_label || 'Download the resource for this lesson'}</p></div>
+        <div><h4><i data-lucide="paperclip" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Downloadable Resource</h4><p>${lesson.download_label || 'Download the resource for this lesson'}</p></div>
         <a href="${lesson.download_url}" class="btn btn-blue" target="_blank" download>Download</a>
       </div>`;
   }
@@ -210,7 +210,7 @@ if (lessons.length) {
 } else {
   document.getElementById('courseMain').innerHTML = `
     <div class="empty-state">
-      <div class="empty-icon">📦</div>
+      <div class="empty-icon"><i data-lucide="package" style="width:48px;height:48px;opacity:.4"></i></div>
       <h3>Content coming soon</h3>
       <p>Lessons for this course are being added. Check back shortly!</p>
     </div>`;

@@ -58,9 +58,9 @@
       <button class="btn btn-outline btn-full btn-sm" onclick="signOut()">Sign Out</button>
     </div>
     <nav class="sidebar-nav">
-      <a href="/dashboard.html" class="active"><span class="nav-icon">📚</span> My Courses</a>
-      <a href="/store.html"><span class="nav-icon">🛍️</span> Browse Store</a>
-      <a href="/index.html"><span class="nav-icon">🏠</span> Main Site</a>
+      <a href="/dashboard.html" class="active"><i data-lucide="book-open" style="width:14px;height:14px"></i> My Courses</a>
+      <a href="/store.html"><i data-lucide="shopping-bag" style="width:14px;height:14px"></i> Browse Store</a>
+      <a href="/index.html"><i data-lucide="home" style="width:14px;height:14px"></i> Main Site</a>
     </nav>
   </aside>
 
@@ -74,7 +74,7 @@
     <h2 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--navy);margin-bottom:1.25rem;">My Purchases</h2>
     <div id="purchasesGrid" class="purchases-grid">
       <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-icon">⏳</div><h3>Loading your courses...</h3>
+        <div class="empty-icon"><i data-lucide="loader" style="width:48px;height:48px;opacity:.4"></i></div><h3>Loading your courses...</h3>
       </div>
     </div>
   </main>
@@ -106,7 +106,7 @@ const grid = document.getElementById('purchasesGrid');
 if (!purchases?.length) {
   grid.innerHTML = `
     <div class="empty-state" style="grid-column:1/-1">
-      <div class="empty-icon">🛍️</div>
+      <div class="empty-icon"><i data-lucide="shopping-bag" style="width:48px;height:48px;opacity:.4"></i></div>
       <h3>No purchases yet</h3>
       <p>Head to the store to find templates and courses for your practice.</p>
       <a href="/store.html" class="btn btn-primary">Browse Store</a>
@@ -158,9 +158,13 @@ document.getElementById('statPurchased').textContent = purchases.length;
 document.getElementById('statCompleted').textContent = completedCount;
 document.getElementById('statInProgress').textContent = inProgressCount;
 
+function categoryIcon(cat) {
+  const map = { 'Integration': 'link', 'JotForm': 'clipboard', 'Training': 'graduation-cap', 'Email Campaign': 'mail', 'Zapier': 'zap' };
+  return map[cat] || 'package';
+}
 function categoryEmoji(cat) {
-  const map = { 'Integration': '🔗', 'JotForm': '📋', 'Training': '🎓', 'Email Campaign': '✉️', 'Zapier': '⚡' };
-  return map[cat] || '📦';
+  const icon = categoryIcon(cat);
+  return `<i data-lucide="${icon}" style="width:28px;height:28px;color:var(--muted)"></i>`;
 }
 
 window.signOut = async function() {
