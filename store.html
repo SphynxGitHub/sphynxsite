@@ -211,7 +211,12 @@ function renderProducts(products) {
             <div class="product-price">$${(p.price / 100).toFixed(2)}</div>
             ${owned
               ? `<div class="purchased-badge">✓ Purchased <a href="/course.html?id=${p.id}" class="btn btn-outline" style="padding:.4rem .9rem;font-size:.82rem;margin-left:.5rem">Open →</a></div>`
-              : `<button class="btn btn-primary" onclick="checkout('${p.stripe_price_id}', '${p.id}')">Buy Now</button>`}
+              : `<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
+                  <a href="/product.html?id=${p.id}" class="btn btn-outline" style="text-align:center;width:100%;box-sizing:border-box">View Details</a>
+                  ${p.kajabi_url
+                    ? `<a href="${p.kajabi_url}" class="btn btn-primary" target="_blank" style="text-align:center;width:100%;box-sizing:border-box">Buy Now — $${(p.price/100).toFixed(2)}</a>`
+                    : `<button class="btn btn-primary" style="width:100%" onclick="checkout('${p.stripe_price_id}', '${p.id}')">Buy Now — $${(p.price/100).toFixed(2)}</button>`}
+                </div>`}
           </div>
         </div>`;
       grid.appendChild(card);
