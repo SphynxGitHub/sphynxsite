@@ -86,8 +86,9 @@ module.exports = async function handler(req, res) {
     const imported = results.filter(r => r.status === 'imported').length;
     const errors = results.filter(r => r.status === 'error').length;
     const skipped = results.filter(r => r.status === 'skipped').length;
+    const errorDetails = results.filter(r => r.status === 'error').map(r => `${r.name}: ${r.reason}`);
 
-    return res.status(200).json({ imported, errors, skipped, results });
+    return res.status(200).json({ imported, errors, skipped, results, errorDetails });
 
   } catch (err) {
     console.error('Import error:', err);

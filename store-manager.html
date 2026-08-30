@@ -8,95 +8,86 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="store.css">
 <style>
-  body { background: #060f1e; }
-  .manager-nav { background: #060f1e; border-bottom: 1px solid rgba(255,255,255,.08); padding: 0 2rem; }
-  .manager-nav .nav-inner { max-width: 1300px; }
-  .manager-nav a { color: rgba(255,255,255,.6) !important; }
-  .manager-wrap { max-width: 1300px; margin: 0 auto; padding: 2.5rem 2rem; }
-  .manager-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-  .manager-header h1 { font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: white; }
-  .manager-header p { font-size: .85rem; color: rgba(255,255,255,.5); margin-top: .2rem; }
-
-  /* TABS */
-  .tabs { display: flex; gap: .5rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: .75rem; }
-  .tab-btn { background: none; border: none; font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.4); cursor: pointer; padding: .4rem .85rem; border-radius: 7px; transition: all .2s; }
-  .tab-btn.active { background: rgba(255,255,255,.1); color: white; }
-
-  /* PRODUCTS TABLE */
-  .products-table { width: 100%; border-collapse: collapse; }
-  .products-table th { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); padding: .75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,.08); }
-  .products-table td { padding: .9rem 1rem; border-bottom: 1px solid rgba(255,255,255,.05); vertical-align: middle; }
-  .products-table tr:hover td { background: rgba(255,255,255,.03); }
-  .product-name-cell { display: flex; align-items: center; gap: .85rem; }
-  .product-thumb { width: 48px; height: 36px; border-radius: 6px; object-fit: cover; background: rgba(255,255,255,.1); flex-shrink: 0; }
-  .product-thumb-placeholder { width: 48px; height: 36px; border-radius: 6px; background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-  .td-name { font-size: .9rem; font-weight: 600; color: white; }
-  .td-sub { font-size: .75rem; color: rgba(255,255,255,.4); margin-top: 1px; }
-  .td-price { font-size: .95rem; font-weight: 700; color: white; }
-  .td-cat { }
-  .action-btns { display: flex; gap: .5rem; }
-  .action-btn { background: rgba(255,255,255,.07); border: none; color: rgba(255,255,255,.6); font-size: .8rem; font-weight: 600; padding: .35rem .75rem; border-radius: 6px; cursor: pointer; transition: all .2s; }
-  .action-btn:hover { background: rgba(255,255,255,.14); color: white; }
-  .action-btn.danger:hover { background: rgba(220,38,38,.25); color: #fca5a5; }
-  .toggle-btn { width: 42px; height: 24px; border-radius: 100px; border: none; cursor: pointer; position: relative; transition: background .2s; }
-  .toggle-btn.on { background: var(--accent); }
-  .toggle-btn.off { background: rgba(255,255,255,.15); }
-  .toggle-btn::after { content: ''; position: absolute; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: left .2s; }
-  .toggle-btn.on::after { left: 21px; }
-  .toggle-btn.off::after { left: 3px; }
-  .table-wrap { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; overflow: hidden; overflow-x: auto; }
-
-  /* PRODUCT FORM */
-  .form-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 2rem; }
-  .form-card .form-group label { color: rgba(255,255,255,.7); }
-  .form-card input, .form-card select, .form-card textarea { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: white; }
-  .form-card input::placeholder, .form-card textarea::placeholder { color: rgba(255,255,255,.25); }
-  .form-card input:focus, .form-card select:focus, .form-card textarea:focus { border-color: var(--accent); }
-  .form-card select option { background: #1a2744; color: white; }
-  .form-section-title { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 1.75rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.08); }
-  .lessons-list { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1rem; }
-  .lesson-form-item { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 1rem; }
-  .lesson-form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .85rem; font-size: .85rem; font-weight: 700; color: rgba(255,255,255,.7); }
-
-  /* STATS CARDS */
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-  .stat-tile { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 1.25rem; }
-  .stat-tile .val { font-family: 'DM Serif Display', serif; font-size: 2rem; color: white; line-height: 1; }
-  .stat-tile .lbl { font-size: .78rem; color: rgba(255,255,255,.4); margin-top: .3rem; }
-
-  /* LOGIN GATE */
-  .login-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-  .login-gate-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 2.5rem; width: 100%; max-width: 380px; text-align: center; }
-  .login-gate-card h2 { font-family: 'DM Serif Display', serif; color: white; margin-bottom: .5rem; }
-  .login-gate-card p { font-size: .88rem; color: rgba(255,255,255,.5); margin-bottom: 1.5rem; }
-  .login-gate-card input { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); color: white; }
-  .login-gate-card input::placeholder { color: rgba(255,255,255,.3); }
-
-  @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+  body{background:#060f1e}
+  .manager-nav{background:#060f1e;border-bottom:1px solid rgba(255,255,255,.08);padding:0 2rem}
+  .manager-nav .nav-inner{max-width:1300px}
+  .manager-nav a{color:rgba(255,255,255,.6)!important}
+  .manager-wrap{max-width:1300px;margin:0 auto;padding:2.5rem 2rem}
+  .manager-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+  .manager-header h1{font-family:'DM Serif Display',serif;font-size:1.75rem;color:white}
+  .manager-header p{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:.2rem}
+  .header-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+  .tabs{display:flex;gap:.5rem;margin-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:.75rem;flex-wrap:wrap}
+  .tab-btn{background:none;border:none;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;padding:.4rem .85rem;border-radius:7px;transition:all .2s}
+  .tab-btn.active{background:rgba(255,255,255,.1);color:white}
+  .products-table{width:100%;border-collapse:collapse}
+  .products-table th{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:.75rem 1rem;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+  .products-table td{padding:.9rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
+  .products-table tr:hover td{background:rgba(255,255,255,.03)}
+  .product-name-cell{display:flex;align-items:center;gap:.85rem}
+  .product-thumb{width:48px;height:36px;border-radius:6px;object-fit:cover;background:rgba(255,255,255,.1);flex-shrink:0}
+  .product-thumb-placeholder{width:48px;height:36px;border-radius:6px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .td-name{font-size:.9rem;font-weight:600;color:white}
+  .td-sub{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:1px}
+  .td-price{font-size:.95rem;font-weight:700;color:white}
+  .action-btns{display:flex;gap:.4rem;flex-wrap:wrap}
+  .action-btn{background:rgba(255,255,255,.07);border:none;color:rgba(255,255,255,.6);font-size:.78rem;font-weight:600;padding:.3rem .65rem;border-radius:6px;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+  .action-btn:hover{background:rgba(255,255,255,.14);color:white}
+  .action-btn.danger:hover{background:rgba(220,38,38,.25);color:#fca5a5}
+  .action-btn.success{background:rgba(0,194,168,.15);color:var(--accent)}
+  .toggle-btn{width:42px;height:24px;border-radius:100px;border:none;cursor:pointer;position:relative;transition:background .2s}
+  .toggle-btn.on{background:var(--accent)}
+  .toggle-btn.off{background:rgba(255,255,255,.15)}
+  .toggle-btn::after{content:'';position:absolute;top:3px;width:18px;height:18px;border-radius:50%;background:white;transition:left .2s}
+  .toggle-btn.on::after{left:21px}
+  .toggle-btn.off::after{left:3px}
+  .table-wrap{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;overflow-x:auto}
+  .form-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem}
+  .form-card .form-group label{color:rgba(255,255,255,.7)}
+  .form-card input,.form-card select,.form-card textarea{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:white}
+  .form-card input::placeholder,.form-card textarea::placeholder{color:rgba(255,255,255,.25)}
+  .form-card input:focus,.form-card select:focus,.form-card textarea:focus{border-color:var(--accent)}
+  .form-card select option{background:#1a2744;color:white}
+  .form-section-title{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:1.75rem 0 1rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08)}
+  .lessons-list{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1rem}
+  .lesson-form-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:1rem}
+  .lesson-form-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.7)}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+  .stat-tile{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.25rem}
+  .stat-tile .val{font-family:'DM Serif Display',serif;font-size:2rem;color:white;line-height:1}
+  .stat-tile .lbl{font-size:.78rem;color:rgba(255,255,255,.4);margin-top:.3rem}
+  .login-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+  .login-gate-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:2.5rem;width:100%;max-width:380px;text-align:center}
+  .login-gate-card h2{font-family:'DM Serif Display',serif;color:white;margin-bottom:.5rem}
+  .login-gate-card p{font-size:.88rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem}
+  .login-gate-card input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:white}
+  .login-gate-card input::placeholder{color:rgba(255,255,255,.3)}
+  /* discount code table */
+  .code-badge{font-family:monospace;background:rgba(255,255,255,.08);padding:.2rem .6rem;border-radius:5px;font-size:.85rem;color:white;letter-spacing:.05em}
+  .section-chip{background:rgba(0,194,168,.12);color:var(--accent);font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:100px;border:1px solid rgba(0,194,168,.2)}
+  /* preview panel */
+  .preview-frame{width:100%;height:600px;border:none;border-radius:12px;background:white}
+  @media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN GATE -->
 <div id="loginGate" class="login-gate">
   <div class="login-gate-card">
     <div style="margin-bottom:1rem"><i data-lucide="lock" style="width:40px;height:40px;color:rgba(255,255,255,.6)"></i></div>
     <h2>Store Manager</h2>
-    <p>Enter your manager password to access the admin panel.</p>
+    <p>Enter your manager password to continue.</p>
     <div class="form-group"><input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"></div>
     <button class="btn btn-primary btn-full" onclick="checkPw()">Enter</button>
     <div id="pwError" style="color:#fca5a5;font-size:.82rem;margin-top:.75rem"></div>
   </div>
 </div>
 
-<!-- MANAGER UI -->
 <div id="managerUI" style="display:none">
 <nav class="manager-nav">
   <div class="nav-inner">
     <a href="/store.html" class="nav-logo"><img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2147733204/settings_images/3AWlHv0sQ5mNQO1BaIOw_Sphynx_Logo_Final_BlackandBlue_LONG-01.png" alt="Sphynx" style="filter:brightness(0) invert(1);height:28px"></a>
-    <ul class="nav-links">
-      <li><a href="/store.html">← View Store</a></li>
-    </ul>
+    <ul class="nav-links"><li><a href="/store.html">← View Store</a></li></ul>
   </div>
 </nav>
 
@@ -104,23 +95,30 @@
   <div class="manager-header">
     <div>
       <h1>Store Manager</h1>
-      <p>Manage products, lessons, and pricing — synced to Stripe automatically.</p>
+      <p>Manage products, lessons, customers, and discount codes.</p>
     </div>
-    <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-      <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
       <button class="btn" style="background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2)" onclick="importFromStripe()" id="stripeImportBtn">
-        <i data-lucide="download-cloud" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Import from Stripe
+        <i data-lucide="download-cloud" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Import from Stripe
       </button>
-      <a href="/kajabi-import.html" class="btn" style="background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2);text-decoration:none;display:inline-flex;align-items:center;gap:5px">
-        <i data-lucide="book-open" style="width:15px;height:15px"></i>Import Kajabi Lessons
+      <a href="/kajabi-import.html" class="btn" style="background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2);text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+        <i data-lucide="book-open" style="width:14px;height:14px"></i>Import Kajabi
       </a>
+      <button class="btn" style="background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2)" onclick="switchTab('preview')">
+        <i data-lucide="eye" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Preview Store
+      </button>
+      <button class="btn" style="background:rgba(220,38,38,.15);color:#fca5a5;border:1px solid rgba(220,38,38,.2)" onclick="signOut()">Sign Out</button>
     </div>
   </div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('products')">Products</button>
-    <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
+    <button class="tab-btn" onclick="switchTab('lessons')">Shared Lessons</button>
     <button class="tab-btn" onclick="switchTab('customers')">Customers</button>
+    <button class="tab-btn" onclick="switchTab('discounts')">Discount Codes</button>
+    <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
+    <button class="tab-btn" onclick="switchTab('preview')">Preview</button>
   </div>
 
   <!-- PRODUCTS TAB -->
@@ -128,26 +126,57 @@
     <div id="alertBanner" style="margin-bottom:1rem"></div>
     <div class="table-wrap">
       <table class="products-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Stripe ID</th>
-            <th>Active</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="productsTableBody">
-          <tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading products...</td></tr>
-        </tbody>
+        <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Lessons</th><th>Stripe</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody id="productsTableBody"><tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SHARED LESSONS TAB -->
+  <div id="tab-lessons" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">Shared lessons can be reused across multiple products.</p>
+      <button class="btn btn-primary" onclick="openLessonModal()">+ New Shared Lesson</button>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Title</th><th>Section</th><th>Video</th><th>Used In</th><th>Actions</th></tr></thead>
+        <tbody id="lessonsTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS TAB -->
+  <div id="tab-customers" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">Manually assign products to customers or view purchase history.</p>
+      <button class="btn btn-primary" onclick="openAssignModal()">+ Assign Product</button>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Email</th><th>Product</th><th>Date</th><th>Amount</th><th>Actions</th></tr></thead>
+        <tbody id="customersTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DISCOUNTS TAB -->
+  <div id="tab-discounts" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">Create and manage discount codes for your store.</p>
+      <button class="btn btn-primary" onclick="openDiscountModal()">+ New Code</button>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Code</th><th>Type</th><th>Amount</th><th>Uses</th><th>Expires</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody id="discountsTableBody"><tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
 
   <!-- ANALYTICS TAB -->
   <div id="tab-analytics" style="display:none">
-    <div class="stats-grid" id="analyticsStats">
+    <div class="stats-grid">
       <div class="stat-tile"><div class="val" id="statRevenue">—</div><div class="lbl">Total Revenue</div></div>
       <div class="stat-tile"><div class="val" id="statOrders">—</div><div class="lbl">Total Orders</div></div>
       <div class="stat-tile"><div class="val" id="statCustomers">—</div><div class="lbl">Customers</div></div>
@@ -156,51 +185,47 @@
     <div class="table-wrap">
       <table class="products-table">
         <thead><tr><th>Product</th><th>Sales</th><th>Revenue</th></tr></thead>
-        <tbody id="analyticsTableBody"><tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+        <tbody id="analyticsTableBody"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- CUSTOMERS TAB -->
-  <div id="tab-customers" style="display:none">
-    <div class="table-wrap">
-      <table class="products-table">
-        <thead><tr><th>Email</th><th>Purchased</th><th>Date</th></tr></thead>
-        <tbody id="customersTableBody"><tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
-      </table>
-    </div>
+  <!-- PREVIEW TAB -->
+  <div id="tab-preview" style="display:none">
+    <p style="color:rgba(255,255,255,.5);font-size:.88rem;margin-bottom:1rem">Live preview of your public store — exactly what customers see.</p>
+    <iframe class="preview-frame" id="previewFrame" src="/store.html"></iframe>
   </div>
 </div>
 </div>
 
 <!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="productModal">
-  <div class="modal" style="max-width:640px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+  <div class="modal" style="max-width:700px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1);max-height:90vh;overflow-y:auto">
     <div class="modal-header">
-      <h2 style="color:white" id="modalTitle">Add Product</h2>
-      <button class="modal-close" onclick="closeModal()" style="color:rgba(255,255,255,.5)">✕</button>
+      <h2 style="color:white" id="productModalTitle">Add Product</h2>
+      <button class="modal-close" onclick="closeProductModal()" style="color:rgba(255,255,255,.5)">✕</button>
     </div>
     <div class="form-card" style="background:transparent;border:none;padding:0">
       <input type="hidden" id="editProductId">
       <div class="form-row">
         <div class="form-group">
           <label>Product Name</label>
-          <input type="text" id="fName" placeholder="e.g. JotForm Basics Training Course">
+          <input type="text" id="fName" placeholder="e.g. JotForm Basics Course">
         </div>
         <div class="form-group">
           <label>Category</label>
           <select id="fCategory">
-            <option value="Integration">Integration</option>
             <option value="JotForm">JotForm</option>
-            <option value="Training">Training</option>
+            <option value="Integration">Integration</option>
             <option value="Email Campaign">Email Campaign</option>
             <option value="Zapier">Zapier</option>
+            <option value="Training">Training</option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea id="fDesc" placeholder="What's included in this product?"></textarea>
+        <textarea id="fDesc" placeholder="What's included?"></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -209,15 +234,17 @@
         </div>
         <div class="form-group">
           <label>Sort Order</label>
-          <input type="number" id="fSort" placeholder="1" min="0">
+          <input type="number" id="fSort" placeholder="0" min="0">
         </div>
       </div>
       <div class="form-group">
         <label>Product Image URL</label>
         <input type="url" id="fImage" placeholder="https://...">
       </div>
-
-      <div class="form-section-title">Stripe (auto-created on save)</div>
+      <div class="form-group">
+        <label>Kajabi Checkout URL <span style="color:rgba(255,255,255,.3);font-weight:400">(optional — if linking to Kajabi instead of Stripe)</span></label>
+        <input type="url" id="fKajabiUrl" placeholder="https://www.sphynxautomation.com/offers/...">
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label>Stripe Product ID <span style="color:rgba(255,255,255,.3);font-weight:400">(auto-filled)</span></label>
@@ -230,13 +257,156 @@
       </div>
 
       <div class="form-section-title">Lessons</div>
-      <div id="lessonsList" class="lessons-list"></div>
-      <button class="btn btn-outline btn-full" onclick="addLesson()" style="margin-bottom:1.5rem">+ Add Lesson</button>
+      <p style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:1rem">Add lessons directly or link shared lessons from the Shared Lessons library.</p>
 
-      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1rem">
-        <button class="btn btn-outline" onclick="closeModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
-        <button class="btn btn-primary" id="saveBtn" onclick="saveProduct()">Save & Sync to Stripe</button>
+      <div style="display:flex;gap:.75rem;margin-bottom:1rem">
+        <button class="btn btn-outline" onclick="addDirectLesson()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">+ Add Lesson</button>
+        <button class="btn btn-outline" onclick="openSharedLessonPicker()" style="border-color:rgba(0,194,168,.3);color:var(--accent)">+ Link Shared Lesson</button>
       </div>
+
+      <div id="lessonsList" class="lessons-list"></div>
+
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeProductModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()">Save & Sync to Stripe</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARED LESSON MODAL -->
+<div class="modal-overlay" id="lessonModal">
+  <div class="modal" style="max-width:600px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white" id="lessonModalTitle">New Shared Lesson</h2>
+      <button class="modal-close" onclick="closeLessonModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <input type="hidden" id="editLessonId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="lTitle" placeholder="Lesson title">
+        </div>
+        <div class="form-group">
+          <label>Section</label>
+          <input type="text" id="lSection" placeholder="e.g. Getting Started">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Video URL</label>
+        <input type="url" id="lVideo" placeholder="https://youtube.com/...">
+      </div>
+      <div class="form-group">
+        <label>Content (HTML ok)</label>
+        <textarea id="lContent" placeholder="Lesson text content..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Download URL</label>
+          <input type="url" id="lDownloadUrl" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Download Label</label>
+          <input type="text" id="lDownloadLabel" placeholder="Download the template">
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeLessonModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSharedLesson()">Save Shared Lesson</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN PRODUCT MODAL -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal" style="max-width:480px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white">Assign Product to Customer</h2>
+      <button class="modal-close" onclick="closeAssignModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <div class="form-group">
+        <label>Customer Email</label>
+        <input type="email" id="assignEmail" placeholder="customer@email.com">
+        <div style="font-size:.78rem;color:rgba(255,255,255,.4);margin-top:.35rem">Customer must have an account. If they don't, they can sign up at /login.html first.</div>
+      </div>
+      <div class="form-group">
+        <label>Product</label>
+        <select id="assignProduct"></select>
+      </div>
+      <div class="form-group">
+        <label>Amount Paid (USD) <span style="color:rgba(255,255,255,.3);font-weight:400">(enter 0 for complimentary)</span></label>
+        <input type="number" id="assignAmount" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeAssignModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" onclick="assignProduct()">Assign Access</button>
+      </div>
+      <div id="assignStatus" style="margin-top:.75rem;font-size:.83rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DISCOUNT CODE MODAL -->
+<div class="modal-overlay" id="discountModal">
+  <div class="modal" style="max-width:500px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white" id="discountModalTitle">New Discount Code</h2>
+      <button class="modal-close" onclick="closeDiscountModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <input type="hidden" id="editDiscountId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Code</label>
+          <input type="text" id="dCode" placeholder="SUMMER25" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="dType" onchange="updateDiscountLabel()">
+            <option value="percentage">Percentage off</option>
+            <option value="fixed">Fixed amount off</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label id="dAmountLabel">Discount %</label>
+          <input type="number" id="dAmount" placeholder="25" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Max Uses <span style="color:rgba(255,255,255,.3);font-weight:400">(blank = unlimited)</span></label>
+          <input type="number" id="dMaxUses" placeholder="∞" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Expires <span style="color:rgba(255,255,255,.3);font-weight:400">(optional)</span></label>
+        <input type="datetime-local" id="dExpires" style="color-scheme:dark">
+      </div>
+      <div class="form-group">
+        <label>Apply to specific products <span style="color:rgba(255,255,255,.3);font-weight:400">(blank = all products)</span></label>
+        <div id="dProductList" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.35rem"></div>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeDiscountModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveDiscountCode()">Save Code</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARED LESSON PICKER -->
+<div class="modal-overlay" id="lessonPickerModal">
+  <div class="modal" style="max-width:500px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white">Link Shared Lesson</h2>
+      <button class="modal-close" onclick="document.getElementById('lessonPickerModal').classList.remove('open')" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div style="padding:.5rem 0">
+      <input type="text" id="lessonPickerSearch" placeholder="Search lessons..." style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:white;width:100%;padding:.65rem 1rem;border-radius:8px;font-family:'Outfit',sans-serif;margin-bottom:.75rem" oninput="filterLessonPicker()">
+      <div id="lessonPickerList" style="max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:.4rem"></div>
     </div>
   </div>
 </div>
@@ -246,284 +416,529 @@ import { supabase } from '/lib/supabase.js';
 
 const MANAGER_PW = '__NEXT_PUBLIC_MANAGER_PASSWORD__';
 
-// PASSWORD GATE
+// ── AUTH ──────────────────────────────────────────────────────
 window.checkPw = function() {
   const pw = document.getElementById('pwInput').value;
   if (pw === MANAGER_PW) {
-    sessionStorage.setItem('mgr_auth', '1');
-    document.getElementById('loginGate').style.display = 'none';
-    document.getElementById('managerUI').style.display = 'block';
+    sessionStorage.setItem('mgr_auth','1');
+    document.getElementById('loginGate').style.display='none';
+    document.getElementById('managerUI').style.display='block';
     initManager();
   } else {
-    document.getElementById('pwError').textContent = 'Incorrect password.';
+    document.getElementById('pwError').textContent='Incorrect password.';
   }
 };
 
-if (sessionStorage.getItem('mgr_auth') === '1') {
-  document.getElementById('loginGate').style.display = 'none';
-  document.getElementById('managerUI').style.display = 'block';
+window.signOut = function() {
+  sessionStorage.removeItem('mgr_auth');
+  location.reload();
+};
+
+if (sessionStorage.getItem('mgr_auth')==='1') {
+  document.getElementById('loginGate').style.display='none';
+  document.getElementById('managerUI').style.display='block';
   initManager();
 }
 
-let products = [];
-let editingLessons = [];
+// ── STATE ─────────────────────────────────────────────────────
+let products=[], sharedLessons=[], editingLessons=[], discountProductFilter=[];
 
 async function initManager() {
-  await loadProducts();
-  await loadAnalytics();
-  await loadCustomers();
+  await Promise.all([loadProducts(), loadSharedLessons(), loadCustomers(), loadDiscounts(), loadAnalytics()]);
+  if (window.lucide) lucide.createIcons();
 }
 
+// ── TABS ──────────────────────────────────────────────────────
+window.switchTab = function(tab) {
+  ['products','lessons','customers','discounts','analytics','preview'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.style.display = t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().includes(tab) ||
+      (tab==='preview' && btn.textContent.includes('Preview')));
+  });
+  if (tab==='preview') document.getElementById('previewFrame').src='/store.html?_='+Date.now();
+};
+
+// ── PRODUCTS ──────────────────────────────────────────────────
 async function loadProducts() {
   const { data } = await supabase.from('products').select('*').order('category').order('sort_order');
   products = data || [];
   renderProductsTable();
+  // Populate assign product dropdown
+  const sel = document.getElementById('assignProduct');
+  if (sel) sel.innerHTML = products.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  // Populate discount product checkboxes
+  const dpl = document.getElementById('dProductList');
+  if (dpl) dpl.innerHTML = products.map(p=>`
+    <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.7);cursor:pointer;background:rgba(255,255,255,.05);padding:.3rem .7rem;border-radius:6px">
+      <input type="checkbox" value="${p.id}" style="accent-color:var(--accent)"> ${p.name}
+    </label>`).join('');
 }
 
 function renderProductsTable() {
   const tbody = document.getElementById('productsTableBody');
   if (!products.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No products yet. Add your first one!</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No products yet.</td></tr>`;
     return;
   }
-  tbody.innerHTML = products.map(p => `
+  tbody.innerHTML = products.map(p=>`
     <tr>
       <td>
         <div class="product-name-cell">
-          ${p.image_url ? `<img class="product-thumb" src="${p.image_url}" alt="">` : `<div class="product-thumb-placeholder"><i data-lucide="package" style="width:18px;height:18px;color:rgba(255,255,255,.4)"></i></div>`}
-          <div><div class="td-name">${p.name}</div><div class="td-sub">${p.lesson_count || 0} lessons</div></div>
+          ${p.image_url?`<img class="product-thumb" src="${p.image_url}" alt="">`:
+            `<div class="product-thumb-placeholder"><i data-lucide="package" style="width:18px;height:18px;color:rgba(255,255,255,.4)"></i></div>`}
+          <div>
+            <div class="td-name">${p.name}</div>
+            <div class="td-sub">${p.kajabi_url?'Links to Kajabi':'Stripe checkout'}</div>
+          </div>
         </div>
       </td>
       <td><span class="badge badge-blue">${p.category}</span></td>
-      <td class="td-price">$${(p.price / 100).toFixed(2)}</td>
-      <td><span style="font-size:.75rem;color:rgba(255,255,255,.35);font-family:monospace">${p.stripe_price_id || '—'}</span></td>
-      <td><button class="toggle-btn ${p.active ? 'on' : 'off'}" onclick="toggleActive('${p.id}', ${p.active})"></button></td>
+      <td class="td-price">${p.price?'$'+(p.price/100).toFixed(2):'Free'}</td>
+      <td style="color:rgba(255,255,255,.5);font-size:.85rem">${p.lesson_count||0} lessons</td>
+      <td><span style="font-size:.7rem;color:rgba(255,255,255,.3);font-family:monospace">${p.stripe_price_id?p.stripe_price_id.slice(0,16)+'...':'—'}</span></td>
+      <td><button class="toggle-btn ${p.active?'on':'off'}" onclick="toggleActive('${p.id}',${p.active})"></button></td>
       <td>
         <div class="action-btns">
           <button class="action-btn" onclick="editProduct('${p.id}')">Edit</button>
+          <button class="action-btn success" onclick="syncToStripe('${p.id}')">Sync</button>
           <button class="action-btn danger" onclick="deleteProduct('${p.id}')">Delete</button>
         </div>
       </td>
     </tr>`).join('');
+  if (window.lucide) lucide.createIcons();
 }
 
-async function loadAnalytics() {
-  const { data: purchases } = await supabase.from('purchases').select('product_id, amount_paid, user_id, products(name)');
-  if (!purchases) return;
-
-  const totalRevenue = purchases.reduce((s, p) => s + (p.amount_paid || 0), 0);
-  const uniqueCustomers = new Set(purchases.map(p => p.user_id)).size;
-  const activeProducts = products.filter(p => p.active).length;
-
-  document.getElementById('statRevenue').textContent = '$' + (totalRevenue / 100).toFixed(0);
-  document.getElementById('statOrders').textContent = purchases.length;
-  document.getElementById('statCustomers').textContent = uniqueCustomers;
-  document.getElementById('statProducts').textContent = activeProducts;
-
-  const byProduct = {};
-  purchases.forEach(p => {
-    const name = p.products?.name || p.product_id;
-    if (!byProduct[name]) byProduct[name] = { count: 0, revenue: 0 };
-    byProduct[name].count++;
-    byProduct[name].revenue += (p.amount_paid || 0);
-  });
-  document.getElementById('analyticsTableBody').innerHTML = Object.entries(byProduct)
-    .sort((a, b) => b[1].revenue - a[1].revenue)
-    .map(([name, d]) => `<tr>
-      <td style="color:white">${name}</td>
-      <td style="color:rgba(255,255,255,.6)">${d.count}</td>
-      <td style="color:var(--accent);font-weight:700">$${(d.revenue / 100).toFixed(2)}</td>
-    </tr>`).join('');
-}
-
-async function loadCustomers() {
-  const { data } = await supabase.from('purchases').select('user_id, purchased_at, products(name)').order('purchased_at', { ascending: false });
-  const { data: users } = await supabase.from('profiles').select('id, email');
-  const userMap = Object.fromEntries((users || []).map(u => [u.id, u.email]));
-  document.getElementById('customersTableBody').innerHTML = (data || []).map(p => `<tr>
-    <td style="color:white">${userMap[p.user_id] || p.user_id}</td>
-    <td style="color:rgba(255,255,255,.6)">${p.products?.name || '—'}</td>
-    <td style="color:rgba(255,255,255,.4)">${new Date(p.purchased_at).toLocaleDateString()}</td>
-  </tr>`).join('') || `<tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No customers yet.</td></tr>`;
-}
-
-window.switchTab = function(tab) {
-  ['products', 'analytics', 'customers'].forEach(t => {
-    document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
-    document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', ['products','analytics','customers'][i] === tab));
-  });
-};
-
-window.openModal = function(productId = null) {
-  editingLessons = [];
-  document.getElementById('editProductId').value = '';
-  document.getElementById('fName').value = '';
-  document.getElementById('fCategory').value = 'JotForm';
-  document.getElementById('fDesc').value = '';
-  document.getElementById('fPrice').value = '';
-  document.getElementById('fSort').value = '';
-  document.getElementById('fImage').value = '';
-  document.getElementById('fStripeProductId').value = '';
-  document.getElementById('fStripePriceId').value = '';
-  document.getElementById('modalTitle').textContent = 'Add Product';
+window.openProductModal = function() {
+  editingLessons=[];
+  document.getElementById('editProductId').value='';
+  ['fName','fDesc','fImage','fKajabiUrl','fStripeProductId','fStripePriceId'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCategory').value='JotForm';
+  document.getElementById('fPrice').value='';
+  document.getElementById('fSort').value='0';
+  document.getElementById('productModalTitle').textContent='Add Product';
   renderLessonsForm();
   document.getElementById('productModal').classList.add('open');
 };
+
+window.closeProductModal = function() { document.getElementById('productModal').classList.remove('open'); };
 
 window.editProduct = async function(id) {
-  const p = products.find(x => x.id === id);
+  const p = products.find(x=>x.id===id);
   if (!p) return;
-  const { data: lessons } = await supabase.from('lessons').select('*').eq('product_id', id).order('sort_order');
-  editingLessons = lessons || [];
-  document.getElementById('editProductId').value = p.id;
-  document.getElementById('fName').value = p.name;
-  document.getElementById('fCategory').value = p.category;
-  document.getElementById('fDesc').value = p.description;
-  document.getElementById('fPrice').value = (p.price / 100).toFixed(2);
-  document.getElementById('fSort').value = p.sort_order || 0;
-  document.getElementById('fImage').value = p.image_url || '';
-  document.getElementById('fStripeProductId').value = p.stripe_product_id || '';
-  document.getElementById('fStripePriceId').value = p.stripe_price_id || '';
-  document.getElementById('modalTitle').textContent = 'Edit Product';
+  const { data: lessons } = await supabase.from('lessons').select('*').eq('product_id',id).order('sort_order');
+  editingLessons = lessons||[];
+  document.getElementById('editProductId').value=p.id;
+  document.getElementById('fName').value=p.name;
+  document.getElementById('fCategory').value=p.category;
+  document.getElementById('fDesc').value=p.description||'';
+  document.getElementById('fPrice').value=p.price?(p.price/100).toFixed(2):'';
+  document.getElementById('fSort').value=p.sort_order||0;
+  document.getElementById('fImage').value=p.image_url||'';
+  document.getElementById('fKajabiUrl').value=p.kajabi_url||'';
+  document.getElementById('fStripeProductId').value=p.stripe_product_id||'';
+  document.getElementById('fStripePriceId').value=p.stripe_price_id||'';
+  document.getElementById('productModalTitle').textContent='Edit Product';
   renderLessonsForm();
   document.getElementById('productModal').classList.add('open');
-};
-
-window.closeModal = function() {
-  document.getElementById('productModal').classList.remove('open');
 };
 
 function renderLessonsForm() {
-  const list = document.getElementById('lessonsList');
-  list.innerHTML = editingLessons.map((l, i) => `
-    <div class="lesson-form-item">
+  document.getElementById('lessonsList').innerHTML = editingLessons.map((l,i)=>`
+    <div class="lesson-form-item" id="lesson-item-${i}">
       <div class="lesson-form-header">
-        Lesson ${i + 1}
-        <button class="action-btn danger" onclick="removeLesson(${i})">Remove</button>
+        <span>${l.is_shared?'<span class="section-chip">Shared</span> ':''} ${i+1}. ${l.title||'New lesson'}</span>
+        <div style="display:flex;gap:.4rem">
+          <button class="action-btn" onclick="moveLessonUp(${i})">↑</button>
+          <button class="action-btn" onclick="moveLessonDown(${i})">↓</button>
+          <button class="action-btn danger" onclick="removeLesson(${i})">Remove</button>
+        </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Title</label><input type="text" value="${l.title || ''}" onchange="editingLessons[${i}].title=this.value" placeholder="Lesson title"></div>
-        <div class="form-group"><label>Section</label><input type="text" value="${l.section || ''}" onchange="editingLessons[${i}].section=this.value" placeholder="e.g. Getting Started"></div>
+        <div class="form-group"><label>Title</label><input type="text" value="${escHtml(l.title||'')}" onchange="editingLessons[${i}].title=this.value;updateLessonHeader(${i})" placeholder="Lesson title"></div>
+        <div class="form-group"><label>Section</label><input type="text" value="${escHtml(l.section||'')}" onchange="editingLessons[${i}].section=this.value" placeholder="e.g. Module 1"></div>
       </div>
-      <div class="form-group"><label>Video URL (YouTube or Vimeo)</label><input type="url" value="${l.video_url || ''}" onchange="editingLessons[${i}].video_url=this.value" placeholder="https://youtube.com/watch?v=..."></div>
-      <div class="form-group"><label>Written Content (HTML ok)</label><textarea onchange="editingLessons[${i}].content=this.value" placeholder="Lesson text content...">${l.content || ''}</textarea></div>
+      ${l.is_shared?'<div style="font-size:.8rem;color:rgba(0,194,168,.7);padding:.5rem 0">This is a shared lesson — edit it in the Shared Lessons tab to update across all products.</div>':`
+      <div class="form-group"><label>Video URL</label><input type="url" value="${escHtml(l.video_url||'')}" onchange="editingLessons[${i}].video_url=this.value" placeholder="https://youtube.com/..."></div>
+      <div class="form-group"><label>Content (HTML ok)</label><textarea onchange="editingLessons[${i}].content=this.value" placeholder="Lesson text...">${escHtml(l.content||'')}</textarea></div>
       <div class="form-row">
-        <div class="form-group"><label>Download URL</label><input type="url" value="${l.download_url || ''}" onchange="editingLessons[${i}].download_url=this.value" placeholder="https://..."></div>
-        <div class="form-group"><label>Download Label</label><input type="text" value="${l.download_label || ''}" onchange="editingLessons[${i}].download_label=this.value" placeholder="Download the template"></div>
-      </div>
+        <div class="form-group"><label>Download URL</label><input type="url" value="${escHtml(l.download_url||'')}" onchange="editingLessons[${i}].download_url=this.value" placeholder="https://..."></div>
+        <div class="form-group"><label>Download Label</label><input type="text" value="${escHtml(l.download_label||'')}" onchange="editingLessons[${i}].download_label=this.value" placeholder="Download template"></div>
+      </div>`}
     </div>`).join('');
 }
 
-window.addLesson = function() {
-  editingLessons.push({ title: '', section: '', video_url: '', content: '', download_url: '', download_label: '', sort_order: editingLessons.length });
+window.addDirectLesson = function() {
+  editingLessons.push({title:'',section:'',video_url:'',content:'',download_url:'',download_label:'',sort_order:editingLessons.length,is_shared:false});
   renderLessonsForm();
 };
 
-window.removeLesson = function(i) {
-  editingLessons.splice(i, 1);
-  renderLessonsForm();
+window.removeLesson = function(i) { editingLessons.splice(i,1); renderLessonsForm(); };
+window.moveLessonUp = function(i) { if(i>0){[editingLessons[i-1],editingLessons[i]]=[editingLessons[i],editingLessons[i-1]];renderLessonsForm();} };
+window.moveLessonDown = function(i) { if(i<editingLessons.length-1){[editingLessons[i],editingLessons[i+1]]=[editingLessons[i+1],editingLessons[i]];renderLessonsForm();} };
+window.updateLessonHeader = function(i) {
+  const h=document.querySelector(`#lesson-item-${i} .lesson-form-header span`);
+  if(h) h.textContent=`${i+1}. ${editingLessons[i].title||'New lesson'}`;
 };
 
 window.saveProduct = async function() {
-  const btn = document.getElementById('saveBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Saving & syncing...';
-
-  const productId = document.getElementById('editProductId').value;
-  const name = document.getElementById('fName').value.trim();
-  const category = document.getElementById('fCategory').value;
-  const description = document.getElementById('fDesc').value.trim();
-  const price = Math.round(parseFloat(document.getElementById('fPrice').value) * 100);
-  const image_url = document.getElementById('fImage').value.trim();
-  const sort_order = parseInt(document.getElementById('fSort').value) || 0;
-
-  if (!name || !price) { showAlert('error', 'Name and price are required.'); btn.disabled = false; btn.textContent = 'Save & Sync to Stripe'; return; }
-
+  const btn=document.getElementById('saveProductBtn');
+  btn.disabled=true; btn.textContent='Saving...';
+  const productId=document.getElementById('editProductId').value;
+  const name=document.getElementById('fName').value.trim();
+  const category=document.getElementById('fCategory').value;
+  const description=document.getElementById('fDesc').value.trim();
+  const priceVal=document.getElementById('fPrice').value;
+  const price=priceVal?Math.round(parseFloat(priceVal)*100):0;
+  const image_url=document.getElementById('fImage').value.trim();
+  const kajabi_url=document.getElementById('fKajabiUrl').value.trim();
+  const sort_order=parseInt(document.getElementById('fSort').value)||0;
+  if (!name) { showAlert('error','Name is required.'); btn.disabled=false; btn.textContent='Save & Sync to Stripe'; return; }
   try {
-    // Sync to Stripe via our API
-    const stripeRes = await fetch('/api/sync-product', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId, name, description, price, image_url,
-        existingStripeProductId: document.getElementById('fStripeProductId').value,
-        existingStripePriceId: document.getElementById('fStripePriceId').value })
-    });
-    const stripeData = await stripeRes.json();
-    if (stripeData.error) throw new Error(stripeData.error);
-
-    const productPayload = {
-      name, category, description, price, image_url, sort_order,
-      stripe_product_id: stripeData.stripeProductId,
-      stripe_price_id: stripeData.stripePriceId,
-      lesson_count: editingLessons.length,
-      active: true
-    };
-
-    let savedProductId = productId;
+    let stripeProductId=document.getElementById('fStripeProductId').value;
+    let stripePriceId=document.getElementById('fStripePriceId').value;
+    // Only sync to Stripe if there's a price and no Kajabi URL
+    if (price && !kajabi_url) {
+      const stripeRes=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({productId,name,description,price,image_url,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
+      const stripeData=await stripeRes.json();
+      if (!stripeData.error) { stripeProductId=stripeData.stripeProductId; stripePriceId=stripeData.stripePriceId; }
+    }
+    const payload={name,category,description,price,image_url,kajabi_url,sort_order,
+      stripe_product_id:stripeProductId,stripe_price_id:stripePriceId,
+      lesson_count:editingLessons.length,active:true};
+    let savedId=productId;
     if (productId) {
-      await supabase.from('products').update(productPayload).eq('id', productId);
+      await supabase.from('products').update(payload).eq('id',productId);
     } else {
-      const { data } = await supabase.from('products').insert(productPayload).select().single();
-      savedProductId = data.id;
+      const {data}=await supabase.from('products').insert(payload).select().single();
+      savedId=data.id;
     }
-
-    // Save lessons
-    await supabase.from('lessons').delete().eq('product_id', savedProductId);
-    if (editingLessons.length) {
-      await supabase.from('lessons').insert(editingLessons.map((l, i) => ({
-        ...l, product_id: savedProductId, sort_order: i
-      })));
+    // Save direct (non-shared) lessons
+    await supabase.from('lessons').delete().eq('product_id',savedId).eq('is_shared',false);
+    const directLessons=editingLessons.filter(l=>!l.is_shared);
+    if (directLessons.length) {
+      await supabase.from('lessons').insert(directLessons.map((l,i)=>({...l,product_id:savedId,sort_order:i})));
     }
-
-    showAlert('success', `✓ "${name}" saved and synced to Stripe.`);
-    closeModal();
+    showAlert('success',`✓ "${name}" saved.`);
+    closeProductModal();
     await loadProducts();
-  } catch (err) {
-    showAlert('error', 'Error: ' + err.message);
-  }
-  btn.disabled = false;
-  btn.textContent = 'Save & Sync to Stripe';
+  } catch(err) { showAlert('error','Error: '+err.message); }
+  btn.disabled=false; btn.textContent='Save & Sync to Stripe';
 };
 
-window.toggleActive = async function(id, current) {
-  await supabase.from('products').update({ active: !current }).eq('id', id);
-  await fetch('/api/sync-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toggleActive: true, productId: id, active: !current }) });
+window.syncToStripe = async function(id) {
+  const p=products.find(x=>x.id===id);
+  if (!p) return;
+  showAlert('info','Syncing to Stripe...');
+  try {
+    const res=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,
+        existingStripeProductId:p.stripe_product_id,existingStripePriceId:p.stripe_price_id})});
+    const data=await res.json();
+    if (data.error) throw new Error(data.error);
+    await supabase.from('products').update({stripe_product_id:data.stripeProductId,stripe_price_id:data.stripePriceId}).eq('id',id);
+    showAlert('success',`✓ "${p.name}" synced to Stripe.`);
+    await loadProducts();
+  } catch(e) { showAlert('error','Sync failed: '+e.message); }
+};
+
+window.toggleActive = async function(id,current) {
+  await supabase.from('products').update({active:!current}).eq('id',id);
+  await loadProducts();
+};
+
+window.deleteProduct = async function(id) {
+  if (!confirm('Delete this product? Cannot be undone.')) return;
+  await supabase.from('lessons').delete().eq('product_id',id);
+  await supabase.from('products').delete().eq('id',id);
   await loadProducts();
 };
 
 window.importFromStripe = async function() {
-  const btn = document.getElementById('stripeImportBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Importing...';
-  showAlert('info', 'Fetching products from Stripe...');
-
+  const btn=document.getElementById('stripeImportBtn');
+  btn.disabled=true; btn.textContent='Importing...';
+  showAlert('info','Fetching from Stripe...');
   try {
-    const res = await fetch('/api/import-stripe', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Import failed');
-
-    showAlert('success', `✓ Imported ${data.imported} products from Stripe. ${data.skipped ? data.skipped + ' skipped (no price).' : ''} ${data.errors ? data.errors + ' errors.' : ''}`);
+    const res=await fetch('/api/import-stripe',{method:'POST',headers:{'Content-Type':'application/json'}});
+    const data=await res.json();
+    if (!res.ok) throw new Error(data.error||'Import failed');
+    showAlert('success',`✓ Imported ${data.imported} products. ${data.skipped?data.skipped+' skipped.':''} ${data.errors?data.errors+' errors.':''}`);
     await loadProducts();
-  } catch(e) {
-    showAlert('error', 'Import failed: ' + e.message);
-  }
-  btn.disabled = false;
-  btn.innerHTML = '<i data-lucide="download-cloud" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Import from Stripe';
+  } catch(e) { showAlert('error','Import failed: '+e.message); }
+  btn.disabled=false;
+  btn.innerHTML='<i data-lucide="download-cloud" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Import from Stripe';
   if (window.lucide) lucide.createIcons();
 };
 
-window.deleteProduct = async function(id) {
-  if (!confirm('Delete this product? This cannot be undone. The Stripe product will be archived.')) return;
-  await fetch('/api/sync-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deleteProduct: true, productId: id }) });
-  await supabase.from('lessons').delete().eq('product_id', id);
-  await supabase.from('products').delete().eq('id', id);
-  await loadProducts();
+// ── SHARED LESSONS ────────────────────────────────────────────
+async function loadSharedLessons() {
+  const {data}=await supabase.from('lessons').select('*').eq('is_shared',true).order('section').order('sort_order');
+  sharedLessons=data||[];
+  renderSharedLessonsTable();
+  renderLessonPickerList();
+}
+
+function renderSharedLessonsTable() {
+  const tbody=document.getElementById('lessonsTableBody');
+  if (!sharedLessons.length) {
+    tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No shared lessons yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML=sharedLessons.map(l=>`
+    <tr>
+      <td style="color:white;font-weight:600">${l.title}</td>
+      <td>${l.section?`<span class="section-chip">${l.section}</span>`:'-'}</td>
+      <td>${l.video_url?`<a href="${l.video_url}" target="_blank" style="color:var(--accent);font-size:.82rem">Watch</a>`:'-'}</td>
+      <td style="color:rgba(255,255,255,.5);font-size:.82rem">—</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="editSharedLesson('${l.id}')">Edit</button>
+          <button class="action-btn danger" onclick="deleteSharedLesson('${l.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+window.openLessonModal = function() {
+  document.getElementById('editLessonId').value='';
+  ['lTitle','lSection','lVideo','lContent','lDownloadUrl','lDownloadLabel'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('lessonModalTitle').textContent='New Shared Lesson';
+  document.getElementById('lessonModal').classList.add('open');
 };
 
-function showAlert(type, msg) {
-  const el = document.getElementById('alertBanner');
-  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-  setTimeout(() => el.innerHTML = '', 6000);
+window.closeLessonModal = function() { document.getElementById('lessonModal').classList.remove('open'); };
+
+window.editSharedLesson = function(id) {
+  const l=sharedLessons.find(x=>x.id===id);
+  if (!l) return;
+  document.getElementById('editLessonId').value=l.id;
+  document.getElementById('lTitle').value=l.title||'';
+  document.getElementById('lSection').value=l.section||'';
+  document.getElementById('lVideo').value=l.video_url||'';
+  document.getElementById('lContent').value=l.content||'';
+  document.getElementById('lDownloadUrl').value=l.download_url||'';
+  document.getElementById('lDownloadLabel').value=l.download_label||'';
+  document.getElementById('lessonModalTitle').textContent='Edit Shared Lesson';
+  document.getElementById('lessonModal').classList.add('open');
+};
+
+window.saveSharedLesson = async function() {
+  const id=document.getElementById('editLessonId').value;
+  const payload={
+    title:document.getElementById('lTitle').value.trim(),
+    section:document.getElementById('lSection').value.trim(),
+    video_url:document.getElementById('lVideo').value.trim(),
+    content:document.getElementById('lContent').value.trim(),
+    download_url:document.getElementById('lDownloadUrl').value.trim(),
+    download_label:document.getElementById('lDownloadLabel').value.trim(),
+    is_shared:true, sort_order:0
+  };
+  if (!payload.title) { alert('Title is required'); return; }
+  if (id) { await supabase.from('lessons').update(payload).eq('id',id); }
+  else { await supabase.from('lessons').insert(payload); }
+  closeLessonModal();
+  await loadSharedLessons();
+  showAlert('success','✓ Shared lesson saved.');
+};
+
+window.deleteSharedLesson = async function(id) {
+  if (!confirm('Delete this shared lesson?')) return;
+  await supabase.from('lessons').delete().eq('id',id);
+  await loadSharedLessons();
+};
+
+// Shared lesson picker for adding to products
+window.openSharedLessonPicker = function() {
+  renderLessonPickerList();
+  document.getElementById('lessonPickerModal').classList.add('open');
+};
+
+function renderLessonPickerList(filter='') {
+  const list=document.getElementById('lessonPickerList');
+  const filtered=sharedLessons.filter(l=>!filter||l.title.toLowerCase().includes(filter.toLowerCase())||
+    (l.section||'').toLowerCase().includes(filter.toLowerCase()));
+  if (!filtered.length) { list.innerHTML=`<div style="text-align:center;color:rgba(255,255,255,.3);padding:1.5rem">No shared lessons found.</div>`; return; }
+  list.innerHTML=filtered.map(l=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px">
+      <div>
+        <div style="font-size:.88rem;font-weight:600;color:white">${l.title}</div>
+        ${l.section?`<div style="font-size:.75rem;color:rgba(0,194,168,.7)">${l.section}</div>`:''}
+      </div>
+      <button class="action-btn success" onclick="linkSharedLesson('${l.id}')">Add →</button>
+    </div>`).join('');
+}
+
+window.filterLessonPicker = function() {
+  renderLessonPickerList(document.getElementById('lessonPickerSearch').value);
+};
+
+window.linkSharedLesson = function(id) {
+  const l=sharedLessons.find(x=>x.id===id);
+  if (!l || editingLessons.find(x=>x.id===id)) return;
+  editingLessons.push({...l, is_shared:true, sort_order:editingLessons.length});
+  document.getElementById('lessonPickerModal').classList.remove('open');
+  renderLessonsForm();
+  showAlert('info',`"${l.title}" linked.`);
+};
+
+// ── CUSTOMERS ─────────────────────────────────────────────────
+async function loadCustomers() {
+  const {data:purchases}=await supabase.from('purchases').select('id,user_id,purchased_at,amount_paid,products(name)').order('purchased_at',{ascending:false});
+  const {data:users}=await supabase.from('profiles').select('id,email');
+  const userMap=Object.fromEntries((users||[]).map(u=>[u.id,u.email]));
+  const tbody=document.getElementById('customersTableBody');
+  if (!purchases?.length) { tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No customers yet.</td></tr>`; return; }
+  tbody.innerHTML=purchases.map(p=>`
+    <tr>
+      <td style="color:white">${userMap[p.user_id]||p.user_id}</td>
+      <td style="color:rgba(255,255,255,.7)">${p.products?.name||'—'}</td>
+      <td style="color:rgba(255,255,255,.4)">${new Date(p.purchased_at).toLocaleDateString()}</td>
+      <td style="color:var(--accent)">${p.amount_paid?'$'+(p.amount_paid/100).toFixed(2):'Complimentary'}</td>
+      <td><button class="action-btn danger" onclick="revokePurchase('${p.id}')">Revoke</button></td>
+    </tr>`).join('');
+}
+
+window.openAssignModal = function() {
+  document.getElementById('assignEmail').value='';
+  document.getElementById('assignAmount').value='';
+  document.getElementById('assignStatus').textContent='';
+  document.getElementById('assignModal').classList.add('open');
+};
+window.closeAssignModal = function() { document.getElementById('assignModal').classList.remove('open'); };
+
+window.assignProduct = async function() {
+  const email=document.getElementById('assignEmail').value.trim();
+  const productId=document.getElementById('assignProduct').value;
+  const amount=Math.round(parseFloat(document.getElementById('assignAmount').value||'0')*100);
+  const st=document.getElementById('assignStatus');
+  if (!email||!productId) { st.innerHTML='<span style="color:#fca5a5">Email and product required.</span>'; return; }
+  st.innerHTML='<span style="color:rgba(255,255,255,.5)">Looking up customer...</span>';
+  try {
+    // Find user by email in profiles
+    const {data:profile}=await supabase.from('profiles').select('id').eq('email',email).single();
+    if (!profile) { st.innerHTML='<span style="color:#fca5a5">No account found for that email. Ask them to sign up at /login.html first.</span>'; return; }
+    // Check if already purchased
+    const {data:existing}=await supabase.from('purchases').select('id').eq('user_id',profile.id).eq('product_id',productId).single();
+    if (existing) { st.innerHTML='<span style="color:#fca5a5">This customer already has access to this product.</span>'; return; }
+    // Insert purchase
+    const {error}=await supabase.from('purchases').insert({user_id:profile.id,product_id:productId,amount_paid:amount,purchased_at:new Date().toISOString()});
+    if (error) throw error;
+    st.innerHTML='<span style="color:#6ee7b7">✓ Access granted successfully.</span>';
+    await loadCustomers();
+    setTimeout(closeAssignModal, 1500);
+  } catch(e) { st.innerHTML=`<span style="color:#fca5a5">Error: ${e.message}</span>`; }
+};
+
+window.revokePurchase = async function(id) {
+  if (!confirm('Revoke this purchase? The customer will lose access.')) return;
+  await supabase.from('purchases').delete().eq('id',id);
+  await loadCustomers();
+};
+
+// ── DISCOUNT CODES ────────────────────────────────────────────
+async function loadDiscounts() {
+  const {data}=await supabase.from('discount_codes').select('*').order('created_at',{ascending:false});
+  const tbody=document.getElementById('discountsTableBody');
+  if (!data?.length) { tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No codes yet.</td></tr>`; return; }
+  tbody.innerHTML=data.map(d=>`
+    <tr>
+      <td><span class="code-badge">${d.code}</span></td>
+      <td style="color:rgba(255,255,255,.6)">${d.type==='percentage'?'Percentage':'Fixed'}</td>
+      <td style="color:white;font-weight:700">${d.type==='percentage'?d.amount+'%':'$'+(d.amount/100).toFixed(2)}</td>
+      <td style="color:rgba(255,255,255,.5)">${d.uses||0}${d.max_uses?' / '+d.max_uses:' / ∞'}</td>
+      <td style="color:rgba(255,255,255,.4)">${d.expires_at?new Date(d.expires_at).toLocaleDateString():'Never'}</td>
+      <td><button class="toggle-btn ${d.active?'on':'off'}" onclick="toggleDiscount('${d.id}',${d.active})"></button></td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="copyCode('${d.code}')">Copy</button>
+          <button class="action-btn danger" onclick="deleteDiscount('${d.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+window.openDiscountModal = function() {
+  document.getElementById('editDiscountId').value='';
+  document.getElementById('dCode').value='';
+  document.getElementById('dType').value='percentage';
+  document.getElementById('dAmount').value='';
+  document.getElementById('dMaxUses').value='';
+  document.getElementById('dExpires').value='';
+  document.getElementById('discountModalTitle').textContent='New Discount Code';
+  updateDiscountLabel();
+  document.getElementById('discountModal').classList.add('open');
+};
+window.closeDiscountModal = function() { document.getElementById('discountModal').classList.remove('open'); };
+
+window.updateDiscountLabel = function() {
+  const type=document.getElementById('dType').value;
+  document.getElementById('dAmountLabel').textContent=type==='percentage'?'Discount %':'Amount Off (USD)';
+};
+
+window.saveDiscountCode = async function() {
+  const code=document.getElementById('dCode').value.trim().toUpperCase();
+  const type=document.getElementById('dType').value;
+  const amountRaw=parseFloat(document.getElementById('dAmount').value||'0');
+  const amount=type==='fixed'?Math.round(amountRaw*100):amountRaw;
+  const maxUses=document.getElementById('dMaxUses').value?parseInt(document.getElementById('dMaxUses').value):null;
+  const expires=document.getElementById('dExpires').value||null;
+  const checkedProducts=[...document.querySelectorAll('#dProductList input:checked')].map(cb=>cb.value);
+  if (!code||!amount) { alert('Code and amount required'); return; }
+  const payload={code,type,amount,max_uses:maxUses,expires_at:expires,active:true,product_ids:checkedProducts.length?checkedProducts:null};
+  const {error}=await supabase.from('discount_codes').insert(payload);
+  if (error) { alert('Error: '+error.message); return; }
+  closeDiscountModal();
+  await loadDiscounts();
+  showAlert('success',`✓ Code "${code}" created.`);
+};
+
+window.toggleDiscount = async function(id,current) {
+  await supabase.from('discount_codes').update({active:!current}).eq('id',id);
+  await loadDiscounts();
+};
+
+window.deleteDiscount = async function(id) {
+  if (!confirm('Delete this code?')) return;
+  await supabase.from('discount_codes').delete().eq('id',id);
+  await loadDiscounts();
+};
+
+window.copyCode = function(code) {
+  navigator.clipboard.writeText(code).then(()=>showAlert('info',`Code "${code}" copied to clipboard.`));
+};
+
+// ── ANALYTICS ─────────────────────────────────────────────────
+async function loadAnalytics() {
+  const {data:purchases}=await supabase.from('purchases').select('product_id,amount_paid,user_id,products(name)');
+  if (!purchases) return;
+  const totalRevenue=purchases.reduce((s,p)=>s+(p.amount_paid||0),0);
+  const uniqueCustomers=new Set(purchases.map(p=>p.user_id)).size;
+  const activeProducts=products.filter(p=>p.active).length;
+  document.getElementById('statRevenue').textContent='$'+(totalRevenue/100).toFixed(0);
+  document.getElementById('statOrders').textContent=purchases.length;
+  document.getElementById('statCustomers').textContent=uniqueCustomers;
+  document.getElementById('statProducts').textContent=activeProducts;
+  const byProduct={};
+  purchases.forEach(p=>{const n=p.products?.name||p.product_id;if(!byProduct[n])byProduct[n]={count:0,revenue:0};byProduct[n].count++;byProduct[n].revenue+=(p.amount_paid||0);});
+  document.getElementById('analyticsTableBody').innerHTML=Object.entries(byProduct)
+    .sort((a,b)=>b[1].revenue-a[1].revenue)
+    .map(([name,d])=>`<tr><td style="color:white">${name}</td><td style="color:rgba(255,255,255,.6)">${d.count}</td><td style="color:var(--accent);font-weight:700">$${(d.revenue/100).toFixed(2)}</td></tr>`)
+    .join('');
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function showAlert(type,msg) {
+  const el=document.getElementById('alertBanner');
+  if (!el) return;
+  el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(()=>el.innerHTML='',5000);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
