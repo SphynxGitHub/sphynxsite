@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "framework": null,
   "buildCommand": "bash build.sh",
   "outputDirectory": ".",
   "headers": [
