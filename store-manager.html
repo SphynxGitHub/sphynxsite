@@ -106,7 +106,15 @@
       <h1>Store Manager</h1>
       <p>Manage products, lessons, and pricing — synced to Stripe automatically.</p>
     </div>
-    <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+      <button class="btn" style="background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2)" onclick="importFromStripe()" id="stripeImportBtn">
+        <i data-lucide="download-cloud" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Import from Stripe
+      </button>
+      <a href="/kajabi-import.html" class="btn" style="background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2);text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+        <i data-lucide="book-open" style="width:15px;height:15px"></i>Import Kajabi Lessons
+      </a>
+    </div>
   </div>
 
   <div class="tabs">
