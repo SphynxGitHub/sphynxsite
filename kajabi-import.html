@@ -226,95 +226,9 @@ window.importLessons = async function() {
 
 <script>
 // Build the bookmarklet code
-const bookmarkletCode = `javascript:(function(){
-  function q(s){return document.querySelector(s);}
-  function qq(s){return [...document.querySelectorAll(s)];}
 
-  // ── KAJABI-SPECIFIC SELECTORS ──
-  // Title: Kajabi uses .lecture-name, .post__title, or h1.title
-  var titleEl = q('.lecture-name') || q('.post__title') || q('h1.title') || q('[data-lecture-name]') || q('h1');
-  var title = titleEl ? titleEl.innerText.trim() : document.title.split('|')[0].trim();
 
-  // Section/module: Kajabi sidebar shows current section
-  var sectionEl = q('.curriculum__section-title--active') || q('.section-title.is-active') || q('.course-section__title--active') || q('[data-section-title]');
-  var section = sectionEl ? sectionEl.innerText.trim() : '';
-  // Fallback: look in sidebar for active section
-  if(!section){
-    var activeItem = q('.curriculum__item--active') || q('.lesson-item--active');
-    if(activeItem){
-      var parentSection = activeItem.closest('.curriculum__section') || activeItem.closest('.course-section');
-      if(parentSection){
-        var sTitle = parentSection.querySelector('.curriculum__section-title') || parentSection.querySelector('.course-section__title');
-        if(sTitle) section = sTitle.innerText.trim();
-      }
-    }
-  }
-
-  // Video: Kajabi uses Wistia embeds primarily
-  var videoUrl = '';
-  // Wistia inline embed
-  var wistiaInline = q('.wistia_embed');
-  if(wistiaInline){
-    var wId = wistiaInline.id || wistiaInline.className.match(/wistia_async_([a-z0-9]+)/);
-    if(wId && typeof wId === 'object') wId = wId[1];
-    if(wId) videoUrl = 'https://fast.wistia.com/embed/medias/' + wId;
-  }
-  // Wistia via script tag
-  if(!videoUrl){
-    var wScript = q('script[src*="wistia"]');
-    if(wScript){
-      var m = wScript.src.match(/medias\/([a-z0-9]+)/);
-      if(m) videoUrl = 'https://fast.wistia.com/embed/medias/' + m[1];
-    }
-  }
-  // Fallback iframes
-  if(!videoUrl){
-    var iframe = q('iframe[src*="wistia"]') || q('iframe[src*="vimeo"]') || q('iframe[src*="youtube"]') || q('iframe[src*="youtu.be"]');
-    if(iframe) videoUrl = iframe.src;
-  }
-  // Kajabi video player
-  if(!videoUrl){
-    var kjbVideo = q('.kjb-video iframe') || q('.lecture-video iframe') || q('.post-video iframe');
-    if(kjbVideo) videoUrl = kjbVideo.src;
-  }
-
-  // Content: Kajabi stores lesson text in .lecture-text, .post__body, or .kjb-text
-  var contentEl = q('.lecture-text') || q('.post__body') || q('.kjb-text') || q('.post-body') || q('[data-lecture-text]') || q('article');
-  var content = contentEl ? contentEl.innerHTML.trim() : '';
-
-  // Downloads: any PDF or attachment links
-  var downloads = qq('a[href*=".pdf"], a[href*="attachment"], a[href*="download"], a[download]').map(function(a){ return {url: a.href, label: a.innerText.trim()}; });
-
-  // Product name from breadcrumb or page
-  var productEl = q('.course-title') || q('.product-title') || q('.breadcrumb__item:first-child a');
-  var product = productEl ? productEl.innerText.trim() : '';
-
-  var lesson = {
-    title: title,
-    section: section,
-    product: product,
-    videoUrl: videoUrl,
-    content: content,
-    downloadUrl: downloads[0] ? downloads[0].url : '',
-    downloadLabel: downloads[0] ? downloads[0].label || 'Download resource' : '',
-    sourceUrl: window.location.href
-  };
-
-  var json = JSON.stringify(lesson, null, 2);
-
-  // Copy to clipboard
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(json).then(function(){
-      alert('✓ Lesson scraped: "' + title + '"\n\nGo back to the Sphynx importer and paste it in.');
-    }).catch(function(){
-      prompt('Copy this JSON:', json);
-    });
-  } else {
-    prompt('Copy this JSON:', json);
-  }
-})();`;
-
-document.getElementById('bookmarkletLink').href = bookmarkletCode;
+document.getElementById('bookmarkletLink').href = 'javascript:%28function%28%29%7B%0A%20%20function%20q%28s%29%7Breturn%20document.querySelector%28s%29%3B%7D%0A%20%20function%20qq%28s%29%7Breturn%20Array.from%28document.querySelectorAll%28s%29%29%3B%7D%0A%0A%20%20var%20titleEl%3Dq%28%27.lecture-name%27%29%7C%7Cq%28%27.post__title%27%29%7C%7Cq%28%27h1.title%27%29%7C%7Cq%28%27h1%27%29%3B%0A%20%20var%20title%3DtitleEl%3FtitleEl.innerText.trim%28%29%3Adocument.title.split%28%27%7C%27%29%5B0%5D.trim%28%29%3B%0A%0A%20%20var%20section%3D%27%27%3B%0A%20%20var%20sectionEl%3Dq%28%27.curriculum__section-title--active%27%29%7C%7Cq%28%27.section-title.is-active%27%29%3B%0A%20%20if%28sectionEl%29%7Bsection%3DsectionEl.innerText.trim%28%29%3B%7D%0A%20%20if%28%21section%29%7B%0A%20%20%20%20var%20activeItem%3Dq%28%27.curriculum__item--active%27%29%7C%7Cq%28%27.lesson-item--active%27%29%3B%0A%20%20%20%20if%28activeItem%29%7B%0A%20%20%20%20%20%20var%20ps%3DactiveItem.closest%28%27.curriculum__section%27%29%7C%7CactiveItem.closest%28%27.course-section%27%29%3B%0A%20%20%20%20%20%20if%28ps%29%7Bvar%20st%3Dps.querySelector%28%27.curriculum__section-title%27%29%3Bif%28st%29section%3Dst.innerText.trim%28%29%3B%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%0A%20%20var%20videoUrl%3D%27%27%3B%0A%20%20var%20wEl%3Dq%28%27.wistia_embed%27%29%3B%0A%20%20if%28wEl%29%7Bvar%20m%3DwEl.className.match%28%2Fwistia_async_%28%5Ba-z0-9%5D%2B%29%2F%29%3Bif%28m%29videoUrl%3D%27https%3A%2F%2Ffast.wistia.com%2Fembed%2Fmedias%2F%27%2Bm%5B1%5D%3B%7D%0A%20%20if%28%21videoUrl%29%7Bvar%20ifr%3Dq%28%27iframe%5Bsrc%2A%3D%22wistia%22%5D%27%29%7C%7Cq%28%27iframe%5Bsrc%2A%3D%22vimeo%22%5D%27%29%7C%7Cq%28%27iframe%5Bsrc%2A%3D%22youtube%22%5D%27%29%3Bif%28ifr%29videoUrl%3Difr.src%3B%7D%0A%20%20if%28%21videoUrl%29%7Bvar%20kv%3Dq%28%27.kjb-video%20iframe%27%29%7C%7Cq%28%27.lecture-video%20iframe%27%29%3Bif%28kv%29videoUrl%3Dkv.src%3B%7D%0A%0A%20%20var%20contentEl%3Dq%28%27.lecture-text%27%29%7C%7Cq%28%27.post__body%27%29%7C%7Cq%28%27.kjb-text%27%29%7C%7Cq%28%27.post-body%27%29%7C%7Cq%28%27article%27%29%3B%0A%20%20var%20content%3DcontentEl%3FcontentEl.innerHTML.trim%28%29%3A%27%27%3B%0A%0A%20%20var%20downloads%3Dqq%28%27a%5Bhref%2A%3D%22.pdf%22%5D%2Ca%5Bdownload%5D%27%29.map%28function%28a%29%7Breturn%20%7Burl%3Aa.href%2Clabel%3Aa.innerText.trim%28%29%7D%3B%7D%29%3B%0A%0A%20%20var%20lesson%3D%7B%0A%20%20%20%20title%3Atitle%2C%0A%20%20%20%20section%3Asection%2C%0A%20%20%20%20videoUrl%3AvideoUrl%2C%0A%20%20%20%20content%3Acontent%2C%0A%20%20%20%20downloadUrl%3Adownloads%5B0%5D%3Fdownloads%5B0%5D.url%3A%27%27%2C%0A%20%20%20%20downloadLabel%3Adownloads%5B0%5D%3Fdownloads%5B0%5D.label%3A%27%27%2C%0A%20%20%20%20sourceUrl%3Awindow.location.href%0A%20%20%7D%3B%0A%0A%20%20var%20json%3DJSON.stringify%28lesson%2Cnull%2C2%29%3B%0A%20%20if%28navigator.clipboard%29%7B%0A%20%20%20%20navigator.clipboard.writeText%28json%29.then%28function%28%29%7Balert%28%27Scraped%3A%20%27%2Btitle%29%3B%7D%29.catch%28function%28%29%7Bprompt%28%27Copy%3A%27%2Cjson%29%3B%7D%29%3B%0A%20%20%7D%20else%20%7B%0A%20%20%20%20prompt%28%27Copy%3A%27%2Cjson%29%3B%0A%20%20%7D%0A%7D%29%28%29%3B';
 </script>
 </body>
 </html>
