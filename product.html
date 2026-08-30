@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Product | Sphynx Automation</title>
+<meta id="pageDesc" name="description" content="">
+<script src="/includes.js"></script>
+<style>
+  .product-hero { display:grid; grid-template-columns:1fr 1fr; gap:5rem; max-width:1100px; margin:0 auto; padding:5rem 2rem; align-items:start; }
+  .product-hero-left h1 { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,3.5vw,2.6rem); color:var(--navy); line-height:1.2; margin-bottom:1rem; }
+  .product-hero-left .hero-cat { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--accent); margin-bottom:.75rem; }
+  .product-hero-left .hero-desc { font-size:1rem; color:var(--muted); line-height:1.75; margin-bottom:1.5rem; }
+  .product-img { width:100%; border-radius:16px; object-fit:cover; aspect-ratio:16/9; background:var(--bg); border:1px solid var(--border); }
+  .product-img-placeholder { width:100%; aspect-ratio:16/9; border-radius:16px; background:linear-gradient(135deg,#0b1f3a,#1d6a5c); display:flex; align-items:center; justify-content:center; }
+  .product-img-placeholder i { width:64px; height:64px; color:rgba(255,255,255,.3); }
+
+  /* STICKY BUY BOX */
+  .buy-box { background:white; border:1.5px solid var(--border); border-radius:18px; padding:2rem; position:sticky; top:90px; }
+  .buy-box .bb-price { font-family:'DM Serif Display',serif; font-size:2.5rem; color:var(--navy); line-height:1; margin-bottom:.25rem; }
+  .buy-box .bb-sub { font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; }
+  .buy-box .bb-includes { list-style:none; display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.5rem; }
+  .buy-box .bb-includes li { font-size:.88rem; color:var(--text); display:flex; align-items:center; gap:.6rem; }
+  .buy-box .bb-includes li i { width:16px; height:16px; color:var(--accent); flex-shrink:0; }
+  .discount-row { display:flex; gap:.5rem; margin-bottom:1rem; }
+  .discount-row input { flex:1; padding:.65rem .9rem; border:1.5px solid var(--border); border-radius:8px; font-family:'Outfit',sans-serif; font-size:.88rem; outline:none; text-transform:uppercase; }
+  .discount-row input:focus { border-color:var(--blue); }
+  .discount-row button { background:var(--bg); border:1.5px solid var(--border); padding:.65rem 1rem; border-radius:8px; font-family:'Outfit',sans-serif; font-size:.82rem; font-weight:600; color:var(--navy); cursor:pointer; white-space:nowrap; }
+  .discount-row button:hover { border-color:var(--blue); color:var(--blue); }
+  .discount-applied { font-size:.82rem; color:#065f46; background:#d1fae5; padding:.45rem .85rem; border-radius:7px; margin-bottom:1rem; display:none; }
+  .bb-btn { width:100%; padding:1rem; font-family:'Outfit',sans-serif; font-weight:700; font-size:1rem; border:none; border-radius:12px; cursor:pointer; transition:all .2s; }
+  .bb-btn-buy { background:var(--blue); color:white; margin-bottom:.65rem; }
+  .bb-btn-buy:hover { background:#1446b8; transform:translateY(-1px); box-shadow:0 4px 16px rgba(26,86,219,.3); }
+  .bb-btn-owned { background:var(--accent); color:var(--navy); margin-bottom:.65rem; cursor:default; }
+  .bb-btn-kajabi { background:var(--navy); color:white; margin-bottom:.65rem; }
+  .bb-btn-kajabi:hover { background:#1a3060; }
+  .bb-guarantee { font-size:.78rem; color:var(--muted); text-align:center; display:flex; align-items:center; justify-content:center; gap:.4rem; margin-top:.75rem; }
+  .bb-guarantee i { width:14px; height:14px; color:var(--accent); }
+
+  /* SECTIONS */
+  .content-section { max-width:760px; margin:0 auto; padding:0 2rem 4rem; }
+  .content-section h2 { font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--navy); margin-bottom:1.25rem; }
+  .feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:3rem; }
+  .feature-item { background:white; border:1px solid var(--border); border-radius:12px; padding:1.25rem; }
+  .feature-item i { width:22px; height:22px; color:var(--accent); margin-bottom:.6rem; }
+  .feature-item h3 { font-size:.92rem; font-weight:700; color:var(--navy); margin-bottom:.3rem; }
+  .feature-item p { font-size:.83rem; color:var(--muted); line-height:1.6; }
+
+  /* LESSON LIST */
+  .lesson-list { display:flex; flex-direction:column; gap:0; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:white; }
+  .lesson-section-header { background:var(--navy); color:white; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; padding:.6rem 1.25rem; }
+  .lesson-row { display:flex; align-items:center; gap:1rem; padding:.9rem 1.25rem; border-bottom:1px solid var(--bg); }
+  .lesson-row:last-child { border-bottom:none; }
+  .lesson-row-num { width:24px; height:24px; border-radius:50%; background:var(--bg); color:var(--muted); font-size:.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lesson-row-title { font-size:.88rem; color:var(--text); flex:1; }
+  .lesson-row-icon { width:16px; height:16px; color:var(--muted); flex-shrink:0; }
+
+  /* TOOLS SECTION */
+  .tools-row { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+  .tool-chip { background:var(--bg); border:1px solid var(--border); border-radius:100px; padding:.3rem .85rem; font-size:.82rem; color:var(--muted); font-weight:600; }
+
+  /* LOADING */
+  .page-loading { text-align:center; padding:6rem 2rem; color:var(--muted); }
+  .page-loading .spin { width:36px; height:36px; border:2px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 1rem; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  @media(max-width:900px) {
+    .product-hero { grid-template-columns:1fr; gap:2.5rem; }
+    .feature-grid { grid-template-columns:1fr; }
+    .buy-box { position:static; }
+  }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div id="pageLoading" class="page-loading">
+  <div class="spin"></div>
+  <p>Loading product...</p>
+</div>
+
+<div id="pageContent" style="display:none">
+
+  <!-- HERO -->
+  <div class="product-hero" id="productHero">
+    <div class="product-hero-left">
+      <div class="hero-cat" id="heroCat"></div>
+      <h1 id="heroTitle"></h1>
+      <p class="hero-desc" id="heroDesc"></p>
+      <div id="heroImage"></div>
+    </div>
+    <div>
+      <div class="buy-box" id="buyBox">
+        <div class="bb-price" id="bbPrice"></div>
+        <div class="bb-sub" id="bbSub">One-time purchase · Lifetime access</div>
+        <ul class="bb-includes" id="bbIncludes"></ul>
+        <div class="discount-row">
+          <input type="text" id="discountInput" placeholder="Discount code">
+          <button onclick="applyDiscount()">Apply</button>
+        </div>
+        <div class="discount-applied" id="discountApplied"></div>
+        <div id="bbCta"></div>
+        <div class="bb-guarantee">
+          <i data-lucide="shield-check"></i>
+          Secure checkout via Stripe
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT'S INCLUDED -->
+  <div class="content-section">
+    <h2>What's included</h2>
+    <div class="feature-grid" id="featureGrid"></div>
+
+    <!-- TOOLS -->
+    <div id="toolsSection" style="display:none">
+      <h2>Tools you'll need</h2>
+      <div class="tools-row" id="toolsRow"></div>
+    </div>
+  </div>
+
+  <!-- LESSONS -->
+  <div class="content-section" id="lessonsSection" style="display:none">
+    <h2>What you'll learn</h2>
+    <div class="lesson-list" id="lessonList"></div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div style="background:var(--navy);padding:5rem 2rem;text-align:center">
+    <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:white;margin-bottom:1rem" id="bottomCtaTitle"></h2>
+    <p style="color:rgba(255,255,255,.65);max-width:480px;margin:0 auto 2rem;line-height:1.7" id="bottomCtaDesc"></p>
+    <div id="bottomCta"></div>
+  </div>
+
+</div>
+
+<div id="pageNotFound" style="display:none;text-align:center;padding:6rem 2rem">
+  <i data-lucide="package" style="width:64px;height:64px;color:var(--muted);margin:0 auto 1.5rem;display:block"></i>
+  <h2 style="font-family:'DM Serif Display',serif;font-size:1.75rem;color:var(--navy);margin-bottom:.75rem">Product not found</h2>
+  <p style="color:var(--muted);margin-bottom:2rem">This product may have been removed or the link is incorrect.</p>
+  <a href="/store.html" class="btn btn-primary">Browse All Products</a>
+</div>
+
+<div id="site-footer"></div>
+
+<script type="module">
+import { supabase, getUser, getUserPurchases } from '/lib/supabase.js';
+
+const STRIPE_KEY = '__NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY__';
+
+// Get product ID or slug from URL
+const params = new URLSearchParams(window.location.search);
+const productId = params.get('id');
+const productSlug = params.get('slug');
+
+if (!productId && !productSlug) {
+  showNotFound();
+} else {
+  loadProduct();
+}
+
+let currentProduct = null;
+let currentUser = null;
+let appliedDiscount = null;
+
+async function loadProduct() {
+  try {
+    let query = supabase.from('products').select('*').eq('active', true);
+    if (productId) query = query.eq('id', productId);
+    else query = query.ilike('name', productSlug.replace(/-/g,' '));
+
+    const { data, error } = await query.single();
+    if (error || !data) { showNotFound(); return; }
+    currentProduct = data;
+
+    // Load user and purchases in parallel
+    currentUser = await getUser();
+    let owned = false;
+    if (currentUser) {
+      const purchases = await getUserPurchases(currentUser.id);
+      owned = purchases.some(p => p.product_id === data.id);
+    }
+
+    // Load lessons
+    const { data: lessons } = await supabase
+      .from('lessons')
+      .select('*')
+      .eq('product_id', data.id)
+      .order('sort_order');
+
+    renderProduct(data, lessons || [], owned);
+  } catch(e) {
+    showNotFound();
+    console.error(e);
+  }
+}
+
+function renderProduct(p, lessons, owned) {
+  // Meta
+  document.getElementById('pageTitle').textContent = `${p.name} | Sphynx Automation`;
+  document.getElementById('pageDesc').setAttribute('content', p.description || '');
+
+  // Hero
+  document.getElementById('heroCat').textContent = p.category;
+  document.getElementById('heroTitle').textContent = p.name;
+  document.getElementById('heroDesc').textContent = p.description || '';
+
+  const imgEl = document.getElementById('heroImage');
+  if (p.image_url) {
+    imgEl.innerHTML = `<img class="product-img" src="${p.image_url}" alt="${p.name}">`;
+  } else {
+    imgEl.innerHTML = `<div class="product-img-placeholder"><i data-lucide="package"></i></div>`;
+  }
+
+  // Price
+  const price = p.price ? '$' + (p.price / 100).toFixed(2) : 'Free';
+  document.getElementById('bbPrice').textContent = price;
+  document.getElementById('bottomCtaTitle').textContent = `Ready to get started with ${p.name}?`;
+  document.getElementById('bottomCtaDesc').textContent = p.description || '';
+
+  // What's included bullets
+  const includes = [
+    lessons.length ? `${lessons.length} lesson${lessons.length !== 1 ? 's' : ''}` : null,
+    'Lifetime access',
+    'Step-by-step instructions',
+    p.category === 'JotForm' ? 'JotForm template included' : null,
+    p.category === 'Zapier' || p.category === 'Integration' ? 'Zapier template included' : null,
+    p.category === 'Email Campaign' ? 'Email copy templates included' : null,
+    p.category === 'Training' ? 'Video training included' : null,
+  ].filter(Boolean);
+
+  document.getElementById('bbIncludes').innerHTML = includes.map(i =>
+    `<li><i data-lucide="check"></i>${i}</li>`
+  ).join('');
+
+  // CTA buttons
+  renderCta(p, owned);
+
+  // Features grid
+  const features = buildFeatures(p, lessons);
+  document.getElementById('featureGrid').innerHTML = features.map(f => `
+    <div class="feature-item">
+      <i data-lucide="${f.icon}"></i>
+      <h3>${f.title}</h3>
+      <p>${f.desc}</p>
+    </div>`).join('');
+
+  // Lessons
+  if (lessons.length) {
+    document.getElementById('lessonsSection').style.display = 'block';
+    let lastSection = null;
+    let html = '';
+    lessons.forEach((l, i) => {
+      if (l.section !== lastSection) {
+        html += `<div class="lesson-section-header">${l.section || 'Lessons'}</div>`;
+        lastSection = l.section;
+      }
+      html += `<div class="lesson-row">
+        <div class="lesson-row-num">${i + 1}</div>
+        <div class="lesson-row-title">${l.title}</div>
+        <i data-lucide="${l.video_url ? 'play-circle' : 'file-text'}" class="lesson-row-icon"></i>
+      </div>`;
+    });
+    document.getElementById('lessonList').innerHTML = html;
+  }
+
+  // Show page
+  document.getElementById('pageLoading').style.display = 'none';
+  document.getElementById('pageContent').style.display = 'block';
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderCta(p, owned) {
+  const price = p.price ? '$' + (p.price / 100).toFixed(2) : 'Free';
+  let ctaHtml = '';
+
+  if (owned) {
+    ctaHtml = `<button class="bb-btn bb-btn-owned">✓ You own this — <a href="/dashboard.html" style="color:var(--navy)">Go to dashboard</a></button>`;
+  } else if (p.kajabi_url) {
+    ctaHtml = `<a href="${p.kajabi_url}" class="bb-btn bb-btn-kajabi" target="_blank">Buy Now — ${price}</a>`;
+  } else if (p.stripe_price_id) {
+    ctaHtml = `<button class="bb-btn bb-btn-buy" onclick="checkout()">Buy Now — <span id="ctaPrice">${price}</span></button>`;
+  } else {
+    ctaHtml = `<a href="/contact.html" class="bb-btn bb-btn-buy">Get Started →</a>`;
+  }
+
+  document.getElementById('bbCta').innerHTML = ctaHtml;
+  document.getElementById('bottomCta').innerHTML = owned
+    ? `<a href="/dashboard.html" class="btn-primary" style="display:inline-block;padding:.9rem 2rem;border-radius:12px;text-decoration:none;font-weight:700;background:white;color:var(--navy)">Go to My Dashboard</a>`
+    : p.kajabi_url
+      ? `<a href="${p.kajabi_url}" class="btn-primary" style="display:inline-block;padding:.9rem 2rem;border-radius:12px;text-decoration:none;font-weight:700;background:white;color:var(--navy)" target="_blank">Buy Now — ${price}</a>`
+      : `<button onclick="checkout()" style="background:white;color:var(--navy);font-weight:700;font-size:1rem;padding:.9rem 2rem;border-radius:12px;border:none;cursor:pointer">Buy Now — ${price}</button>`;
+}
+
+function buildFeatures(p, lessons) {
+  const map = {
+    'JotForm': [
+      { icon:'clipboard', title:'Ready-to-use form', desc:'Pre-built JotForm template you can deploy in minutes.' },
+      { icon:'video', title:'Video walkthrough', desc:'Step-by-step training to customize and publish your form.' },
+      { icon:'settings', title:'Fully customizable', desc:'Edit fields, branding, and logic to match your practice.' },
+      { icon:'refresh-cw', title:'Automatic updates', desc:'Submissions processed and routed without manual effort.' },
+    ],
+    'Integration': [
+      { icon:'link', title:'Custom integration', desc:'Expands on the native integration with additional triggers and actions.' },
+      { icon:'zap', title:'Zapier template', desc:'Pre-built Zap you can deploy directly to your account.' },
+      { icon:'book-open', title:'Written guide', desc:'Step-by-step setup instructions included.' },
+      { icon:'clock', title:'Set up in minutes', desc:'Most integrations take under 30 minutes to configure.' },
+    ],
+    'Email Campaign': [
+      { icon:'mail', title:'Ready-to-send emails', desc:'Professional email copy written for financial advisors.' },
+      { icon:'edit-3', title:'Fully editable', desc:'Customize the content to match your voice and firm.' },
+      { icon:'users', title:'Client-focused', desc:'Written to educate and nurture your specific audience.' },
+      { icon:'upload', title:'Easy to import', desc:'Works with Mailchimp, MailerLite, ActiveCampaign, and more.' },
+    ],
+    'Zapier': [
+      { icon:'zap', title:'Zapier template', desc:'Pre-built automation ready to deploy in your account.' },
+      { icon:'video', title:'Video training', desc:'Full walkthrough of how to set up and customize the Zap.' },
+      { icon:'git-branch', title:'Logic included', desc:'Filters, formatters, and conditional steps pre-configured.' },
+      { icon:'shield-check', title:'Advisor-tested', desc:'Built specifically for financial advisor workflows.' },
+    ],
+    'Training': [
+      { icon:'play-circle', title:'Video lessons', desc:`${lessons.length} lessons walking you through every step.` },
+      { icon:'clock', title:'Self-paced', desc:'Learn on your schedule, revisit any time.' },
+      { icon:'infinity', title:'Lifetime access', desc:'Your purchase never expires.' },
+      { icon:'award', title:'Practical focus', desc:'Built around real financial advisor workflows, not generic examples.' },
+    ],
+  };
+  return map[p.category] || [
+    { icon:'package', title:'Instant access', desc:'Get started immediately after purchase.' },
+    { icon:'infinity', title:'Lifetime access', desc:'Your purchase never expires.' },
+    { icon:'headphones', title:'Support included', desc:'Email support if you get stuck.' },
+    { icon:'shield-check', title:'Secure checkout', desc:'Payments processed securely via Stripe.' },
+  ];
+}
+
+window.applyDiscount = async function() {
+  const code = document.getElementById('discountInput').value.trim().toUpperCase();
+  if (!code || !currentProduct) return;
+  const { data, error } = await supabase
+    .from('discount_codes')
+    .select('*')
+    .eq('code', code)
+    .eq('active', true)
+    .single();
+
+  const appliedEl = document.getElementById('discountApplied');
+  if (error || !data) {
+    appliedEl.style.display = 'block';
+    appliedEl.style.background = '#fee2e2';
+    appliedEl.style.color = '#991b1b';
+    appliedEl.textContent = 'Invalid or expired code.';
+    return;
+  }
+  if (data.expires_at && new Date(data.expires_at) < new Date()) {
+    appliedEl.style.display = 'block';
+    appliedEl.style.background = '#fee2e2';
+    appliedEl.style.color = '#991b1b';
+    appliedEl.textContent = 'This code has expired.';
+    return;
+  }
+  if (data.product_ids?.length && !data.product_ids.includes(currentProduct.id)) {
+    appliedEl.style.display = 'block';
+    appliedEl.style.background = '#fee2e2';
+    appliedEl.style.color = '#991b1b';
+    appliedEl.textContent = 'This code does not apply to this product.';
+    return;
+  }
+
+  appliedDiscount = data;
+  const orig = currentProduct.price / 100;
+  const discounted = data.type === 'percentage'
+    ? orig * (1 - data.amount / 100)
+    : orig - data.amount / 100;
+  const savings = orig - discounted;
+
+  appliedEl.style.display = 'block';
+  appliedEl.style.background = '#d1fae5';
+  appliedEl.style.color = '#065f46';
+  appliedEl.textContent = `✓ Code applied — you save $${savings.toFixed(2)}!`;
+
+  document.getElementById('bbPrice').textContent = '$' + discounted.toFixed(2);
+  document.getElementById('ctaPrice').textContent = '$' + discounted.toFixed(2);
+};
+
+window.checkout = async function() {
+  if (!currentProduct?.stripe_price_id) return;
+  if (!currentUser) {
+    window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.href)}`;
+    return;
+  }
+  const btn = document.querySelector('.bb-btn-buy');
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
+
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        priceId: currentProduct.stripe_price_id,
+        productId: currentProduct.id,
+        userId: currentUser.id,
+        discountCode: appliedDiscount?.code || ''
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    window.location.href = data.url;
+  } catch(e) {
+    alert('Checkout error: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Buy Now'; }
+  }
+};
+
+function showNotFound() {
+  document.getElementById('pageLoading').style.display = 'none';
+  document.getElementById('pageNotFound').style.display = 'block';
+  if (window.lucide) lucide.createIcons();
+}
+</script>
+</body>
+</html>

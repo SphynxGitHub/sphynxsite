@@ -73,11 +73,22 @@ if (user) {
   window.location.href = params.get('redirect') === 'store' ? '/store.html' : '/dashboard.html';
 }
 
-// Handle magic link callback (Supabase redirects back here with token)
+// Handle magic link callback — Supabase returns tokens in URL hash
 const { data: { session } } = await supabase.auth.getSession();
 if (session) {
-  window.location.href = '/dashboard.html';
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get('redirect');
+  window.location.href = redirect || '/dashboard.html';
 }
+
+// Also listen for auth state changes (handles hash-based token exchange)
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    window.location.href = redirect || '/dashboard.html';
+  }
+});
 
 window.sendMagicLink = async function() {
   const email = document.getElementById('emailInput').value.trim();
@@ -88,10 +99,22 @@ window.sendMagicLink = async function() {
   btn.innerHTML = '<span class="spinner"></span>Sending...';
 
   const redirectTo = `${window.location.origin}/dashboard.html`;
-  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: redirectTo,
+      shouldCreateUser: true,  // allow new signups
+    }
+  });
 
   if (error) {
-    showAlert('error', error.message);
+    // Common errors and friendly messages
+    let msg = error.message;
+    if (msg.includes('Database error')) msg = 'Account setup error — please contact team@sphynxautomation.com to get access.';
+    if (msg.includes('not authorized')) msg = 'Signups are currently restricted. Contact team@sphynxautomation.com for access.';
+    if (msg.includes('rate limit')) msg = 'Too many attempts — please wait a minute and try again.';
+    showAlert('error', msg);
+    console.error('Auth error:', error);
     btn.disabled = false;
     btn.textContent = 'Send Magic Link';
   } else {

@@ -105,16 +105,31 @@ async function init() {
 
   await loadProducts();
 
-  // filter buttons
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+  // filter buttons set up dynamically after category load
+
+  document.getElementById('searchInput').addEventListener('input', filterProducts);
+}
+
+async function loadCategories() {
+  const { data, error } = await supabase.from('categories').select('*').order('sort_order').order('name');
+  const filterInner = document.getElementById('filterInner');
+  if (error || !data?.length) {
+    // Fallback: build from product categories
+    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+    filterInner.innerHTML = '<button class="filter-btn active" data-cat="all">All</button>' +
+      cats.map(c => `<button class="filter-btn" data-cat="${c}">${c}</button>`).join('');
+  } else {
+    filterInner.innerHTML = '<button class="filter-btn active" data-cat="all">All</button>' +
+      data.map(c => `<button class="filter-btn" data-cat="${c.name}">${c.name}</button>`).join('');
+  }
+  // Re-attach filter listeners
+  filterInner.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      filterInner.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       filterProducts();
     });
   });
-
-  document.getElementById('searchInput').addEventListener('input', filterProducts);
 }
 
 async function loadProducts() {
@@ -149,6 +164,7 @@ async function loadProducts() {
 
   allProducts = data;
   renderProducts(data);
+  await loadCategories();
 }
 
 function renderProducts(products) {
@@ -176,6 +192,9 @@ function renderProducts(products) {
 
     items.forEach(p => {
       const owned = userPurchases.includes(p.id);
+      // Build product page URL
+      const productUrl = `/product.html?id=${p.id}`;
+
       const card = document.createElement('div');
       card.className = 'product-card';
       card.dataset.cat = p.category;
