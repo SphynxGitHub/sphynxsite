@@ -125,12 +125,24 @@ async function loadProducts() {
     .order('category')
     .order('sort_order');
 
-  if (error || !data?.length) {
+  if (error) {
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon"><i data-lucide="alert-circle" style="width:48px;height:48px;opacity:.4"></i></div>
+        <h3>Could not load products</h3>
+        <p style="font-size:.8rem;font-family:monospace;color:var(--muted)">${error.message}</p>
+        <p>Check that your Supabase env vars are set and the products table exists.</p>
+      </div>`;
+    console.error('Supabase error:', error);
+    return;
+  }
+  if (!data?.length) {
     document.getElementById('productsGrid').innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-icon"><i data-lucide="package" style="width:48px;height:48px;opacity:.4"></i></div>
         <h3>No products yet</h3>
-        <p>Check back soon or visit our main site.</p>
+        <p>Run the product batch SQL insert, or add products in the Store Manager.</p>
+        <a href="/store-manager.html" class="btn btn-primary" style="margin-top:1rem">Go to Store Manager</a>
       </div>`;
     return;
   }

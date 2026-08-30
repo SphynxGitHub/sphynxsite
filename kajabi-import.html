@@ -6,33 +6,41 @@
 <title>Kajabi Lesson Importer | Sphynx</title>
 <script src="/includes.js"></script>
 <style>
-  .importer-wrap { max-width: 860px; margin: 0 auto; padding: 3rem 2rem 6rem; }
-  .step-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
-  .step-card h2 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; display: flex; align-items: center; gap: .6rem; }
-  .step-card h2 .step-n { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: white; font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .step-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
-  .bookmarklet-btn { display: inline-block; background: var(--blue); color: white; font-weight: 700; font-size: .88rem; padding: .65rem 1.25rem; border-radius: 9px; text-decoration: none; cursor: grab; border: 2px dashed rgba(255,255,255,.4); }
-  .bookmarklet-btn:active { cursor: grabbing; }
-  .drag-hint { font-size: .78rem; color: var(--muted); margin-top: .6rem; display: flex; align-items: center; gap: .4rem; }
-  .paste-area { width: 100%; min-height: 140px; padding: .85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: monospace; font-size: .82rem; color: var(--text); resize: vertical; outline: none; transition: border-color .2s; }
-  .paste-area:focus { border-color: var(--blue); }
-  .parse-btn { background: var(--blue); color: white; border: none; padding: .8rem 1.5rem; border-radius: 10px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .92rem; cursor: pointer; margin-top: .75rem; }
-  .parse-btn:hover { background: #1446b8; }
-  .lesson-preview { margin-top: 1.5rem; }
-  .lesson-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: .75rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; }
-  .lesson-item h4 { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
-  .lesson-item .lesson-meta { font-size: .78rem; color: var(--muted); }
-  .lesson-item textarea { width: 100%; min-height: 80px; padding: .6rem .85rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: .82rem; resize: vertical; margin-top: .5rem; grid-column: 1/-1; }
-  .product-select { width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: .93rem; margin-bottom: 1rem; }
-  .import-btn { background: var(--accent); color: var(--navy); border: none; padding: .85rem 1.75rem; border-radius: 10px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .95rem; cursor: pointer; }
-  .import-btn:hover { box-shadow: 0 4px 16px rgba(0,194,168,.3); }
-  .import-btn:disabled { opacity: .5; cursor: not-allowed; }
-  .status { font-size: .88rem; padding: .75rem 1rem; border-radius: 9px; margin-top: 1rem; }
-  .status.ok { background: #d1fae5; color: #065f46; }
-  .status.err { background: #fee2e2; color: #991b1b; }
-  .status.info { background: var(--blue-light); color: var(--blue); }
-  .hidden { display: none !important; }
-  code { background: var(--bg); padding: .2rem .5rem; border-radius: 4px; font-size: .82rem; color: var(--navy); border: 1px solid var(--border); }
+  .importer-wrap{max-width:900px;margin:0 auto;padding:3rem 2rem 6rem}
+  .step-card{background:white;border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+  .step-card h2{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem}
+  .step-n{width:26px;height:26px;border-radius:50%;background:var(--navy);color:white;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step-card p{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:1rem}
+  .bookmarklet-row{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:1rem}
+  .bookmarklet-box{display:flex;flex-direction:column;gap:.4rem}
+  .bookmarklet-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--blue);color:white;font-weight:700;font-size:.88rem;padding:.65rem 1.25rem;border-radius:9px;text-decoration:none;cursor:grab;border:2px dashed rgba(255,255,255,.4)}
+  .bookmarklet-btn2{background:var(--accent);color:var(--navy)}
+  .drag-hint{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.3rem}
+  .paste-area{width:100%;min-height:120px;padding:.85rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:monospace;font-size:.82rem;color:var(--text);resize:vertical;outline:none;transition:border-color .2s;box-sizing:border-box}
+  .paste-area:focus{border-color:var(--blue)}
+  .parse-btn{background:var(--blue);color:white;border:none;padding:.75rem 1.5rem;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:.92rem;cursor:pointer;margin-top:.75rem;display:inline-flex;align-items:center;gap:.4rem}
+  .parse-btn:hover{background:#1446b8}
+  .lesson-preview{margin-top:1.5rem}
+  .lesson-row{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.25rem;margin-bottom:.5rem;display:grid;grid-template-columns:28px 1fr auto;gap:.75rem;align-items:center}
+  .lesson-num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:white;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .lesson-info h4{font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:2px}
+  .lesson-info .lmeta{font-size:.75rem;color:var(--muted)}
+  .sec-divider{background:var(--navy);color:white;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.35rem 1rem;border-radius:7px;margin:.75rem 0 .4rem;display:inline-block}
+  .product-select{width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:.93rem;margin-bottom:.75rem}
+  .import-btn{background:var(--accent);color:var(--navy);border:none;padding:.85rem 1.75rem;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
+  .import-btn:disabled{opacity:.5;cursor:not-allowed}
+  .status-msg{font-size:.88rem;padding:.75rem 1rem;border-radius:9px;margin-top:1rem}
+  .ok{background:#d1fae5;color:#065f46}
+  .err{background:#fee2e2;color:#991b1b}
+  .info{background:var(--blue-light);color:var(--blue)}
+  .tab-row{display:flex;gap:.5rem;margin-bottom:1.25rem}
+  .tbtn{background:var(--bg);border:1.5px solid var(--border);color:var(--muted);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;padding:.45rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s}
+  .tbtn.active{background:var(--navy);border-color:var(--navy);color:white}
+  .tpanel{display:none}
+  .tpanel.active{display:block}
+  .lib-check{display:flex;align-items:center;gap:.6rem;font-size:.85rem;color:var(--text);cursor:pointer;margin-bottom:1rem}
+  .lib-check input{accent-color:var(--blue);width:16px;height:16px}
+  code{background:var(--bg);padding:.15rem .45rem;border-radius:4px;font-size:.8rem;color:var(--navy);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -42,66 +50,68 @@
   <div class="page-hero-inner">
     <div class="section-tag">Store Manager</div>
     <h1>Import Lessons from Kajabi</h1>
-    <p>Use the bookmarklet to scrape lesson content from your Kajabi course pages, then import it directly into your Sphynx store products.</p>
+    <p>Scrape a single lesson or an entire course at once, then import into your Sphynx store.</p>
   </div>
 </div>
 
 <div class="importer-wrap">
 
-  <!-- STEP 1: Bookmarklet -->
   <div class="step-card">
-    <h2><span class="step-n">1</span> Install the scraper bookmarklet</h2>
-    <p>Drag this button to your browser bookmarks bar. You'll click it while viewing a Kajabi lesson to extract the content.</p>
-    <a class="bookmarklet-btn" id="bookmarkletLink" href="#">
-      <i data-lucide="bookmark" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>
-      Sphynx: Scrape Lesson
-    </a>
-    <div class="drag-hint">
-      <i data-lucide="arrow-up" style="width:13px;height:13px"></i>
-      Drag this button to your bookmarks bar
+    <h2><span class="step-n">1</span> Install the bookmarklets</h2>
+    <p>Drag both buttons to your browser bookmarks bar. Use <strong>Scrape Lesson</strong> on individual lesson pages, or <strong>Scrape Full Course</strong> on the product overview page (e.g. <code>sphynxautomation.com/products/your-course</code>) to get all lessons at once.</p>
+    <div class="bookmarklet-row">
+      <div class="bookmarklet-box">
+        <a class="bookmarklet-btn" id="bm1" href="#">
+          <i data-lucide="file-plus" style="width:14px;height:14px"></i> Scrape This Lesson
+        </a>
+        <div class="drag-hint"><i data-lucide="arrow-up" style="width:12px;height:12px"></i> Drag to bookmarks bar</div>
+      </div>
+      <div class="bookmarklet-box">
+        <a class="bookmarklet-btn bookmarklet-btn2" id="bm2" href="#">
+          <i data-lucide="layers" style="width:14px;height:14px"></i> Scrape Full Course
+        </a>
+        <div class="drag-hint"><i data-lucide="arrow-up" style="width:12px;height:12px"></i> Drag to bookmarks bar</div>
+      </div>
     </div>
-    <p style="margin-top:1rem;font-size:.82rem;color:var(--muted)">
-      The bookmarklet is completely safe — it only reads content from the current page and copies it to your clipboard. It never sends data anywhere automatically.
-    </p>
   </div>
 
-  <!-- STEP 2: Scrape -->
   <div class="step-card">
-    <h2><span class="step-n">2</span> Scrape your Kajabi lessons</h2>
-    <p>
-      1. Log into Kajabi and open a course lesson page<br>
-      2. Click the <strong>Sphynx: Scrape Lesson</strong> bookmark<br>
-      3. The lesson data will be copied to your clipboard<br>
-      4. Come back here and paste it in the box below<br>
-      5. Repeat for each lesson
-    </p>
-    <p style="font-size:.82rem;color:var(--muted)">
-      <strong>Tip:</strong> You can paste multiple lessons one after another — just keep pasting and clicking Parse.
-    </p>
-    <textarea class="paste-area" id="pasteArea" placeholder='Paste scraped lesson JSON here — it will look like: {"title":"Lesson Name","content":"...","videoUrl":"..."}'></textarea>
-    <br>
-    <button class="parse-btn" onclick="parsePasted()">
-      <i data-lucide="file-plus" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>
-      Parse Lesson
-    </button>
+    <h2><span class="step-n">2</span> Paste scraped data</h2>
+    <div class="tab-row">
+      <button class="tbtn active" onclick="switchTab('single')">Single lesson</button>
+      <button class="tbtn" onclick="switchTab('bulk')">Full course (bulk)</button>
+    </div>
+
+    <div class="tpanel active" id="tp-single">
+      <p>Open a lesson page in Kajabi, click <strong>Scrape This Lesson</strong>, then paste below. Repeat for each lesson.</p>
+      <textarea class="paste-area" id="pa-single" placeholder="Paste lesson JSON here..."></textarea>
+      <button class="parse-btn" onclick="parseSingle()"><i data-lucide="plus" style="width:14px;height:14px"></i> Add to list</button>
+    </div>
+
+    <div class="tpanel" id="tp-bulk">
+      <p>Open the <strong>product overview page</strong> in Kajabi, click <strong>Scrape Full Course</strong>, then paste below.</p>
+      <textarea class="paste-area" id="pa-bulk" placeholder="Paste full course JSON here..."></textarea>
+      <button class="parse-btn" onclick="parseBulk()"><i data-lucide="layers" style="width:14px;height:14px"></i> Import all lessons</button>
+    </div>
+
     <div id="parseStatus"></div>
   </div>
 
-  <!-- STEP 3: Review & assign -->
   <div class="step-card" id="reviewCard" style="display:none">
-    <h2><span class="step-n">3</span> Review &amp; assign to a product</h2>
-    <p>Check the extracted lessons below, edit any content if needed, then assign them to a product and import.</p>
+    <h2><span class="step-n">3</span> Review &amp; import</h2>
 
     <label style="font-size:.83rem;font-weight:700;color:var(--navy);display:block;margin-bottom:.4rem">Assign to product</label>
-    <select class="product-select" id="productSelect">
-      <option value="">Loading products...</option>
-    </select>
+    <select class="product-select" id="productSelect"><option value="">Loading...</option></select>
 
-    <div class="lesson-preview" id="lessonPreview"></div>
+    <label class="lib-check">
+      <input type="checkbox" id="saveLib" checked>
+      Also save to Shared Lesson Library (reuse in other products)
+    </label>
 
-    <button class="import-btn" onclick="importLessons()" id="importBtn">
-      <i data-lucide="upload" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>
-      Import Lessons to Sphynx Store
+    <div id="lessonPreview"></div>
+
+    <button class="import-btn" id="importBtn" onclick="doImport()">
+      <i data-lucide="upload" style="width:15px;height:15px"></i> Import to Sphynx Store
     </button>
     <div id="importStatus"></div>
   </div>
@@ -110,125 +120,190 @@
 
 <div id="site-footer"></div>
 
-<script type="module">
-import { supabase, getUser, getProducts } from '/lib/supabase.js';
+<script>
+// ── BOOKMARKLETS ─────────────────────────────────────────────────────────────
+// Single lesson scraper — matches actual Kajabi class names
+var SINGLE_BM = (function(){
+  var code = 'javascript:(function(){'+
+    'var t=document.querySelector(".lecture-name,.post__title,h1.title,h1");'+
+    'var title=t?t.innerText.trim():document.title.split("|")[0].trim();'+
+    'var section="";'+
+    'var sEl=document.querySelector(".playlist__title h2");'+
+    'if(sEl)section=sEl.innerText.trim();'+
+    'var video="";'+
+    'var wEl=document.querySelector(".wistia_embed");'+
+    'if(wEl){var idMatch=(wEl.id||"").match(/([a-z0-9]{7,})/)||wEl.className.match(/wistia_async_([a-z0-9]+)/);if(idMatch)video="https://fast.wistia.com/embed/medias/"+idMatch[1];}'+
+    'if(!video){var wsc=document.querySelector("script[src*=\\"wistia\\"]");if(wsc){var wm=wsc.src.match(/medias\\/([a-z0-9]+)/);if(wm)video="https://fast.wistia.com/embed/medias/"+wm[1];}}'+
+    'if(!video){var ifr=document.querySelector("iframe[src*=\\"wistia\\"],iframe[src*=\\"vimeo\\"],iframe[src*=\\"youtube\\"],.kjb-video iframe,.player__video iframe");if(ifr)video=ifr.src;}'+
+    'var cEl=document.querySelector(".lecture-text,.post__body,.kjb-text,.panel__copy");'+
+    'var content=cEl?cEl.innerHTML.trim():"";'+
+    'if(!content){var pb=document.querySelector(".panel__block p");if(pb)content=pb.innerHTML.trim();}'+
+    'var dl=document.querySelector("a[href*=\\".pdf\\"],a[download]");'+
+    'var img=document.querySelector(".track--active .track__thumb");'+
+    'var data={title:title,section:section,video_url:video,content:content,download_url:dl?dl.href:"",download_label:dl?dl.innerText.trim():"",thumb:img?img.src:"",sourceUrl:location.href};'+
+    'var json=JSON.stringify(data,null,2);'+
+    'if(navigator.clipboard){navigator.clipboard.writeText(json).then(function(){alert("Scraped: \\""+title+"\\"\\n\\nGo paste it in the Sphynx importer.");}).catch(function(){prompt("Copy:",json);});}else{prompt("Copy:",json);}'+
+  '})();';
+  return code;
+})();
 
-// Auth check
-const user = await getUser();
-// Note: this page should only be accessed by you — no hard auth gate
-// since it's an internal tool, but we check the manager password was used
+// Bulk scraper — runs on the product overview page and reads the syllabus
+var BULK_BM = (function(){
+  var code = 'javascript:(function(){'+
+    'var sections=document.querySelectorAll(".panel.syllabus");'+
+    'if(!sections.length){alert("No syllabus found. Open the product overview page (not a lesson page).");return;}'+
+    'var lessons=[];'+
+    'sections.forEach(function(sec){'+
+      'var sh=sec.querySelector(".syllabus__heading");'+
+      'var sName=sh?sh.innerText.trim():"";'+
+      'var subs=sec.querySelectorAll(".syllabus__item--sub");'+
+      'if(subs.length){'+
+        'sec.querySelectorAll(":scope > .syllabus__item:not(.syllabus__item--sub)").forEach(function(item){'+
+          'var a=item.querySelector("a");var tEl=item.querySelector(".syllabus__title");var xEl=item.querySelector(".syllabus__text");var img=item.querySelector("img.thumb");'+
+          'if(a&&tEl)lessons.push({title:tEl.innerText.trim(),section:sName,text:xEl?xEl.innerText.trim():"",thumb:img?img.src:"",url:a.href});'+
+        '});'+
+        'subs.forEach(function(sub){'+
+          'var subH=sub.querySelector(".syllabus__heading");'+
+          'var subName=subH?subH.innerText.trim():"";'+
+          'var full=sName+(subName?" > "+subName:"");'+
+          'sub.querySelectorAll(".syllabus__item:not(.syllabus__item--sub)").forEach(function(item){'+
+            'var a=item.querySelector("a");var tEl=item.querySelector(".syllabus__title");var xEl=item.querySelector(".syllabus__text");var img=item.querySelector("img.thumb");'+
+            'if(a&&tEl)lessons.push({title:tEl.innerText.trim(),section:full,text:xEl?xEl.innerText.trim():"",thumb:img?img.src:"",url:a.href});'+
+          '});'+
+        '});'+
+      '}else{'+
+        'sec.querySelectorAll(".syllabus__item").forEach(function(item){'+
+          'var a=item.querySelector("a");var tEl=item.querySelector(".syllabus__title");var xEl=item.querySelector(".syllabus__text");var img=item.querySelector("img.thumb");'+
+          'if(a&&tEl)lessons.push({title:tEl.innerText.trim(),section:sName,text:xEl?xEl.innerText.trim():"",thumb:img?img.src:"",url:a.href});'+
+        '});'+
+      '}'+
+    '});'+
+    'var h1=document.querySelector("h1");'+
+    'var pName=h1?h1.innerText.trim():"";'+
+    'var result=JSON.stringify({productName:pName,lessons:lessons},null,2);'+
+    'if(navigator.clipboard){navigator.clipboard.writeText(result).then(function(){alert("Scraped "+lessons.length+" lessons from \\""+pName+"\\"! Paste into the Sphynx importer.");}).catch(function(){prompt("Copy:",result);});}else{prompt("Copy:",result);}'+
+  '})();';
+  return code;
+})();
 
-// Load products for the dropdown
-async function loadProducts() {
-  try {
-    const products = await getProducts();
-    const sel = document.getElementById('productSelect');
-    sel.innerHTML = '<option value="">— Select a product —</option>' +
-      products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-  } catch(e) {
-    document.getElementById('productSelect').innerHTML = '<option>Could not load products</option>';
-  }
-}
-loadProducts();
+document.getElementById('bm1').href = SINGLE_BM;
+document.getElementById('bm2').href = BULK_BM;
 
-// Parsed lessons accumulator
-let parsedLessons = [];
-
-window.parsePasted = function() {
-  const raw = document.getElementById('pasteArea').value.trim();
-  const st = document.getElementById('parseStatus');
-  if (!raw) { st.innerHTML = '<div class="status err">Nothing pasted yet.</div>'; return; }
-
-  try {
-    // Handle both single object and array
-    let data = JSON.parse(raw);
-    if (!Array.isArray(data)) data = [data];
-
-    data.forEach((lesson, i) => {
-      // Normalise various field names Kajabi might use
-      parsedLessons.push({
-        title: lesson.title || lesson.name || `Lesson ${parsedLessons.length + 1}`,
-        content: lesson.content || lesson.body || lesson.html || '',
-        video_url: lesson.videoUrl || lesson.video_url || lesson.video || '',
-        section: lesson.section || lesson.module || '',
-        sort_order: parsedLessons.length,
-        download_url: lesson.downloadUrl || lesson.download_url || '',
-        download_label: lesson.downloadLabel || lesson.download_label || '',
-      });
-    });
-
-    document.getElementById('pasteArea').value = '';
-    st.innerHTML = `<div class="status ok">✓ ${data.length} lesson${data.length !== 1 ? 's' : ''} parsed. Total: ${parsedLessons.length}</div>`;
-    renderLessonPreview();
-    document.getElementById('reviewCard').style.display = 'block';
-  } catch(e) {
-    st.innerHTML = `<div class="status err">Could not parse JSON: ${e.message}<br><small>Make sure you copied the full output from the bookmarklet.</small></div>`;
-  }
-};
-
-function renderLessonPreview() {
-  const preview = document.getElementById('lessonPreview');
-  if (!parsedLessons.length) { preview.innerHTML = ''; return; }
-  preview.innerHTML = parsedLessons.map((l, i) => `
-    <div class="lesson-item">
-      <div>
-        <h4>${i + 1}. ${l.title}</h4>
-        <div class="lesson-meta">
-          ${l.section ? `Section: ${l.section} · ` : ''}
-          ${l.video_url ? '<i data-lucide="video" style="width:12px;height:12px;vertical-align:middle"></i> Has video · ' : ''}
-          ${l.content ? `${l.content.replace(/<[^>]*>/g,'').slice(0,80)}...` : 'No text content'}
-        </div>
-      </div>
-      <button onclick="removeLesson(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:4px 8px;border-radius:6px" title="Remove">✕</button>
-    </div>
-  `).join('');
-  if (window.lucide) lucide.createIcons();
-}
-
-window.removeLesson = function(i) {
-  parsedLessons.splice(i, 1);
-  parsedLessons.forEach((l, idx) => l.sort_order = idx);
-  renderLessonPreview();
-};
-
-window.importLessons = async function() {
-  const productId = document.getElementById('productSelect').value;
-  const st = document.getElementById('importStatus');
-  const btn = document.getElementById('importBtn');
-  if (!productId) { st.innerHTML = '<div class="status err">Please select a product first.</div>'; return; }
-  if (!parsedLessons.length) { st.innerHTML = '<div class="status err">No lessons to import.</div>'; return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Importing...';
-  st.innerHTML = '<div class="status info">Saving lessons to Supabase...</div>';
-
-  try {
-    // Insert all lessons
-    const { error } = await supabase.from('lessons').insert(
-      parsedLessons.map(l => ({ ...l, product_id: productId }))
-    );
-    if (error) throw error;
-
-    // Update lesson count on product
-    await supabase.from('products').update({ lesson_count: parsedLessons.length }).eq('id', productId);
-
-    st.innerHTML = `<div class="status ok">✓ ${parsedLessons.length} lessons imported successfully! <a href="/store-manager.html" style="color:var(--blue);font-weight:600">Go to Store Manager →</a></div>`;
-    parsedLessons = [];
-    renderLessonPreview();
-  } catch(e) {
-    st.innerHTML = `<div class="status err">Import failed: ${e.message}</div>`;
-  }
-  btn.disabled = false;
-  btn.innerHTML = '<i data-lucide="upload" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Import Lessons to Sphynx Store';
-  if (window.lucide) lucide.createIcons();
+window.switchTab = function(t) {
+  document.querySelectorAll('.tbtn').forEach(function(b,i){b.classList.toggle('active',['single','bulk'][i]===t);});
+  document.querySelectorAll('.tpanel').forEach(function(p,i){p.classList.toggle('active',['single','bulk'][i]===t);});
 };
 </script>
 
-<script>
-// Build the bookmarklet code
+<script type="module">
+import { supabase } from '/lib/supabase.js';
 
+let parsed = [];
 
-document.getElementById('bookmarkletLink').href = 'javascript:%28function%28%29%7B%0A%20%20function%20q%28s%29%7Breturn%20document.querySelector%28s%29%3B%7D%0A%20%20function%20qq%28s%29%7Breturn%20Array.from%28document.querySelectorAll%28s%29%29%3B%7D%0A%0A%20%20var%20titleEl%3Dq%28%27.lecture-name%27%29%7C%7Cq%28%27.post__title%27%29%7C%7Cq%28%27h1.title%27%29%7C%7Cq%28%27h1%27%29%3B%0A%20%20var%20title%3DtitleEl%3FtitleEl.innerText.trim%28%29%3Adocument.title.split%28%27%7C%27%29%5B0%5D.trim%28%29%3B%0A%0A%20%20var%20section%3D%27%27%3B%0A%20%20var%20sectionEl%3Dq%28%27.curriculum__section-title--active%27%29%7C%7Cq%28%27.section-title.is-active%27%29%3B%0A%20%20if%28sectionEl%29%7Bsection%3DsectionEl.innerText.trim%28%29%3B%7D%0A%20%20if%28%21section%29%7B%0A%20%20%20%20var%20activeItem%3Dq%28%27.curriculum__item--active%27%29%7C%7Cq%28%27.lesson-item--active%27%29%3B%0A%20%20%20%20if%28activeItem%29%7B%0A%20%20%20%20%20%20var%20ps%3DactiveItem.closest%28%27.curriculum__section%27%29%7C%7CactiveItem.closest%28%27.course-section%27%29%3B%0A%20%20%20%20%20%20if%28ps%29%7Bvar%20st%3Dps.querySelector%28%27.curriculum__section-title%27%29%3Bif%28st%29section%3Dst.innerText.trim%28%29%3B%7D%0A%20%20%20%20%7D%0A%20%20%7D%0A%0A%20%20var%20videoUrl%3D%27%27%3B%0A%20%20var%20wEl%3Dq%28%27.wistia_embed%27%29%3B%0A%20%20if%28wEl%29%7Bvar%20m%3DwEl.className.match%28%2Fwistia_async_%28%5Ba-z0-9%5D%2B%29%2F%29%3Bif%28m%29videoUrl%3D%27https%3A%2F%2Ffast.wistia.com%2Fembed%2Fmedias%2F%27%2Bm%5B1%5D%3B%7D%0A%20%20if%28%21videoUrl%29%7Bvar%20ifr%3Dq%28%27iframe%5Bsrc%2A%3D%22wistia%22%5D%27%29%7C%7Cq%28%27iframe%5Bsrc%2A%3D%22vimeo%22%5D%27%29%7C%7Cq%28%27iframe%5Bsrc%2A%3D%22youtube%22%5D%27%29%3Bif%28ifr%29videoUrl%3Difr.src%3B%7D%0A%20%20if%28%21videoUrl%29%7Bvar%20kv%3Dq%28%27.kjb-video%20iframe%27%29%7C%7Cq%28%27.lecture-video%20iframe%27%29%3Bif%28kv%29videoUrl%3Dkv.src%3B%7D%0A%0A%20%20var%20contentEl%3Dq%28%27.lecture-text%27%29%7C%7Cq%28%27.post__body%27%29%7C%7Cq%28%27.kjb-text%27%29%7C%7Cq%28%27.post-body%27%29%7C%7Cq%28%27article%27%29%3B%0A%20%20var%20content%3DcontentEl%3FcontentEl.innerHTML.trim%28%29%3A%27%27%3B%0A%0A%20%20var%20downloads%3Dqq%28%27a%5Bhref%2A%3D%22.pdf%22%5D%2Ca%5Bdownload%5D%27%29.map%28function%28a%29%7Breturn%20%7Burl%3Aa.href%2Clabel%3Aa.innerText.trim%28%29%7D%3B%7D%29%3B%0A%0A%20%20var%20lesson%3D%7B%0A%20%20%20%20title%3Atitle%2C%0A%20%20%20%20section%3Asection%2C%0A%20%20%20%20videoUrl%3AvideoUrl%2C%0A%20%20%20%20content%3Acontent%2C%0A%20%20%20%20downloadUrl%3Adownloads%5B0%5D%3Fdownloads%5B0%5D.url%3A%27%27%2C%0A%20%20%20%20downloadLabel%3Adownloads%5B0%5D%3Fdownloads%5B0%5D.label%3A%27%27%2C%0A%20%20%20%20sourceUrl%3Awindow.location.href%0A%20%20%7D%3B%0A%0A%20%20var%20json%3DJSON.stringify%28lesson%2Cnull%2C2%29%3B%0A%20%20if%28navigator.clipboard%29%7B%0A%20%20%20%20navigator.clipboard.writeText%28json%29.then%28function%28%29%7Balert%28%27Scraped%3A%20%27%2Btitle%29%3B%7D%29.catch%28function%28%29%7Bprompt%28%27Copy%3A%27%2Cjson%29%3B%7D%29%3B%0A%20%20%7D%20else%20%7B%0A%20%20%20%20prompt%28%27Copy%3A%27%2Cjson%29%3B%0A%20%20%7D%0A%7D%29%28%29%3B';
+async function loadProducts() {
+  const {data} = await supabase.from('products').select('id,name').order('name');
+  const sel = document.getElementById('productSelect');
+  sel.innerHTML = '<option value="">— Select a product —</option>' +
+    (data||[]).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+loadProducts();
+
+function normalise(l) {
+  return {
+    title: l.title||'Untitled',
+    section: l.section||'',
+    video_url: l.video_url||l.video||l.videoUrl||'',
+    content: l.content||l.text||'',
+    download_url: l.download_url||l.downloadUrl||'',
+    download_label: l.download_label||l.downloadLabel||'',
+    thumb: l.thumb||l.image_url||'',
+    source_url: l.sourceUrl||l.url||''
+  };
+}
+
+function renderPreview() {
+  if (!parsed.length) { document.getElementById('lessonPreview').innerHTML=''; return; }
+  let html='', lastSec=null;
+  parsed.forEach(function(l,i){
+    if (l.section!==lastSec) {
+      html+=`<div class="sec-divider">${l.section||'No section'}</div>`;
+      lastSec=l.section;
+    }
+    html+=`<div class="lesson-row">
+      <div class="lesson-num">${i+1}</div>
+      <div class="lesson-info">
+        <h4>${l.title}</h4>
+        <div class="lmeta">${l.video_url?'<span style="color:var(--accent)">Has video</span> · ':''}${l.content?'Has content · ':''}${l.source_url?`<a href="${l.source_url}" target="_blank" style="color:var(--blue)">Kajabi ↗</a>`:''}</div>
+      </div>
+      <button onclick="removeLesson(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:2px 6px">✕</button>
+    </div>`;
+  });
+  document.getElementById('lessonPreview').innerHTML = html;
+}
+
+window.removeLesson = function(i) { parsed.splice(i,1); renderPreview(); };
+
+function showReview() { document.getElementById('reviewCard').style.display='block'; }
+
+window.parseSingle = function() {
+  var raw = document.getElementById('pa-single').value.trim();
+  var st = document.getElementById('parseStatus');
+  if (!raw) { st.innerHTML='<div class="status-msg err">Nothing pasted.</div>'; return; }
+  try {
+    var data = JSON.parse(raw);
+    var items = Array.isArray(data)?data:[data];
+    items.forEach(function(l){ parsed.push(normalise(l)); });
+    document.getElementById('pa-single').value='';
+    st.innerHTML=`<div class="status-msg ok">✓ Added ${items.length} lesson(s). Total queued: ${parsed.length}</div>`;
+    renderPreview(); showReview();
+  } catch(e) { st.innerHTML=`<div class="status-msg err">Parse error: ${e.message}</div>`; }
+};
+
+window.parseBulk = function() {
+  var raw = document.getElementById('pa-bulk').value.trim();
+  var st = document.getElementById('parseStatus');
+  if (!raw) { st.innerHTML='<div class="status-msg err">Nothing pasted.</div>'; return; }
+  try {
+    var data = JSON.parse(raw);
+    var lessons = data.lessons||(Array.isArray(data)?data:[data]);
+    lessons.forEach(function(l){ parsed.push(normalise(l)); });
+    document.getElementById('pa-bulk').value='';
+    st.innerHTML=`<div class="status-msg ok">✓ Added ${lessons.length} lessons from "${data.productName||'course'}". Total: ${parsed.length}</div>`;
+    renderPreview(); showReview();
+  } catch(e) { st.innerHTML=`<div class="status-msg err">Parse error: ${e.message}<br><small>Make sure you copied the full output from the bookmarklet.</small></div>`; }
+};
+
+window.doImport = async function() {
+  var productId = document.getElementById('productSelect').value;
+  var saveLib = document.getElementById('saveLib').checked;
+  var st = document.getElementById('importStatus');
+  var btn = document.getElementById('importBtn');
+  if (!productId) { st.innerHTML='<div class="status-msg err">Select a product.</div>'; return; }
+  if (!parsed.length) { st.innerHTML='<div class="status-msg err">No lessons queued.</div>'; return; }
+
+  btn.disabled=true; btn.textContent='Importing...';
+  st.innerHTML='<div class="status-msg info">Saving lessons...</div>';
+
+  try {
+    var rows = parsed.map(function(l,i){ return {product_id:productId,title:l.title,section:l.section,video_url:l.video_url,content:l.content,download_url:l.download_url,download_label:l.download_label,sort_order:i,is_shared:false}; });
+    var {error} = await supabase.from('lessons').insert(rows);
+    if (error) throw error;
+
+    if (saveLib) {
+      var sharedRows = parsed.map(function(l,i){ return {title:l.title,section:l.section,video_url:l.video_url,content:l.content,download_url:l.download_url,download_label:l.download_label,sort_order:i,is_shared:true}; });
+      await supabase.from('lessons').insert(sharedRows);
+    }
+    await supabase.from('products').update({lesson_count:parsed.length}).eq('id',productId);
+
+    st.innerHTML=`<div class="status-msg ok">✓ ${parsed.length} lessons imported!${saveLib?' Saved to Shared Library too.':''} <a href="/store-manager.html" style="color:var(--navy);font-weight:600">Go to Store Manager →</a></div>`;
+    parsed=[]; renderPreview();
+  } catch(e) {
+    st.innerHTML=`<div class="status-msg err">Error: ${e.message}</div>`;
+  }
+  btn.disabled=false;
+  btn.innerHTML='<i data-lucide="upload" style="width:15px;height:15px"></i> Import to Sphynx Store';
+  if (window.lucide) lucide.createIcons();
+};
 </script>
 </body>
 </html>

@@ -135,3 +135,120 @@ create policy "Service role full access lessons" on lessons
 
 create policy "Service role full access profiles" on profiles
   for all using (true) with check (true);
+
+-- ============================================================
+-- DISCOUNT CODES
+-- ============================================================
+create table if not exists discount_codes (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,
+  type text not null check (type in ('percentage', 'fixed')),
+  amount numeric not null,           -- % or cents
+  max_uses integer,                  -- null = unlimited
+  uses integer default 0,
+  expires_at timestamptz,
+  active boolean default true,
+  product_ids uuid[],                -- null = applies to all products
+  created_at timestamptz default now()
+);
+
+alter table discount_codes enable row level security;
+create policy "Service role full access discount_codes" on discount_codes
+  for all using (true) with check (true);
+create policy "Public can read active codes" on discount_codes
+  for select using (active = true);
+
+-- ============================================================
+-- SHARED LESSONS (reusable across products)
+-- ============================================================
+alter table lessons add column if not exists is_shared boolean default false;
+alter table lessons add column if not exists shared_lesson_id uuid references lessons(id);
+
+-- Junction table: links shared lessons to products
+create table if not exists product_lessons (
+  id uuid primary key default gen_random_uuid(),
+  product_id uuid references products(id) on delete cascade,
+  lesson_id uuid references lessons(id) on delete cascade,
+  sort_order integer default 0,
+  section text,
+  unique(product_id, lesson_id)
+);
+
+alter table product_lessons enable row level security;
+create policy "Service role full access product_lessons" on product_lessons
+  for all using (true) with check (true);
+create policy "Purchasers can view product_lessons" on product_lessons
+  for select using (
+    exists (
+      select 1 from purchases
+      where purchases.product_id = product_lessons.product_id
+        and purchases.user_id = auth.uid()
+    )
+  );
+
+-- ============================================================
+-- KAJABI URL on products (if not already added)
+-- ============================================================
+alter table products add column if not exists kajabi_url text;
+
+-- ============================================================
+-- AUTO-CREATE PROFILE ON SIGNUP
+-- Fixes "Database error saving new user"
+-- ============================================================
+create table if not exists profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text,
+  full_name text,
+  avatar_url text,
+  created_at timestamptz default now()
+);
+
+alter table profiles enable row level security;
+
+create policy "Users can read own profile" on profiles
+  for select using (auth.uid() = id);
+
+create policy "Users can update own profile" on profiles
+  for update using (auth.uid() = id);
+
+create policy "Service role full access profiles" on profiles
+  for all using (true) with check (true);
+
+-- Trigger: auto-insert profile when a new user signs up
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, full_name, avatar_url)
+  values (
+    new.id,
+    new.email,
+    new.raw_user_meta_data->>'full_name',
+    new.raw_user_meta_data->>'avatar_url'
+  )
+  on conflict (id) do update set email = excluded.email;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- Backfill profiles for any existing users
+insert into public.profiles (id, email)
+  select id, email from auth.users
+  on conflict (id) do nothing;
+
+-- ============================================================
+-- FIX STORE VISIBILITY
+-- Ensure anon users can read active products
+-- ============================================================
+drop policy if exists "Public can view active products" on products;
+create policy "Public can view active products" on products
+  for select using (active = true);
+
+-- Also allow anon to read lessons for purchased products
+drop policy if exists "Anyone can view lessons" on lessons;
+create policy "Anyone can view lessons" on lessons
+  for select using (true);
