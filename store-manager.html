@@ -116,6 +116,7 @@
     <button class="tab-btn active" onclick="switchTab('products')">Products</button>
     <button class="tab-btn" onclick="switchTab('lessons')">Shared Lessons</button>
     <button class="tab-btn" onclick="switchTab('customers')">Customers</button>
+    <button class="tab-btn" onclick="switchTab('categories')">Categories</button>
     <button class="tab-btn" onclick="switchTab('discounts')">Discount Codes</button>
     <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
     <button class="tab-btn" onclick="switchTab('preview')">Preview</button>
@@ -156,6 +157,20 @@
       <table class="products-table">
         <thead><tr><th>Email</th><th>Product</th><th>Date</th><th>Amount</th><th>Actions</th></tr></thead>
         <tbody id="customersTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CATEGORIES TAB -->
+  <div id="tab-categories" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">Manage product categories shown in the store and used to group products.</p>
+      <button class="btn btn-primary" onclick="openCategoryModal()">+ New Category</button>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Name</th><th>Slug</th><th>Description</th><th>Product Count</th><th>Actions</th></tr></thead>
+        <tbody id="categoriesTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -445,12 +460,13 @@ let products=[], sharedLessons=[], editingLessons=[], discountProductFilter=[];
 
 async function initManager() {
   await Promise.all([loadProducts(), loadSharedLessons(), loadCustomers(), loadDiscounts(), loadAnalytics()]);
+  await loadCategories();
   if (window.lucide) lucide.createIcons();
 }
 
 // ── TABS ──────────────────────────────────────────────────────
 window.switchTab = function(tab) {
-  ['products','lessons','customers','discounts','analytics','preview'].forEach(t => {
+  ['products','lessons','customers','categories','discounts','analytics','preview'].forEach(t => {
     const el = document.getElementById('tab-'+t);
     if (el) el.style.display = t===tab?'block':'none';
   });
@@ -929,6 +945,137 @@ async function loadAnalytics() {
     .join('');
 }
 
+// ── CATEGORIES ───────────────────────────────────────────────
+let categories = [];
+
+async function loadCategories() {
+  // Load from Supabase if table exists, otherwise use product categories
+  const { data: catData, error } = await supabase.from('categories').select('*').order('name');
+  if (!error && catData) {
+    categories = catData;
+    renderCategoriesTable();
+    updateCategoryDropdowns();
+    return;
+  }
+  // Fallback: derive categories from existing products
+  const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
+  categories = cats.map(c => ({ id: c, name: c, slug: c.toLowerCase().replace(/\s+/g,'-'), count: products.filter(p=>p.category===c).length }));
+  renderCategoriesTable();
+}
+
+function renderCategoriesTable() {
+  const tbody = document.getElementById('categoriesTableBody');
+  if (!categories.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No categories yet. Add one or they will be derived from your products.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = categories.map(c => `
+    <tr>
+      <td style="color:white;font-weight:600">${c.name}</td>
+      <td style="color:rgba(255,255,255,.4);font-family:monospace;font-size:.8rem">${c.slug||''}</td>
+      <td style="color:rgba(255,255,255,.5);font-size:.83rem">${c.description||'—'}</td>
+      <td style="color:rgba(255,255,255,.5)">${c.count||products.filter(p=>p.category===c.name).length}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="editCategory('${c.id}')">Edit</button>
+          <button class="action-btn danger" onclick="deleteCategory('${c.id}','${c.name}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function updateCategoryDropdowns() {
+  // Update the category dropdown in product modal with current categories
+  const sel = document.getElementById('fCategory');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  if (current) sel.value = current;
+}
+
+window.openCategoryModal = function() {
+  document.getElementById('editCategoryId').value = '';
+  document.getElementById('catName').value = '';
+  document.getElementById('catSlug').value = '';
+  document.getElementById('catDesc').value = '';
+  document.getElementById('catIcon').value = '';
+  document.getElementById('catStatus').textContent = '';
+  document.getElementById('categoryModalTitle').textContent = 'New Category';
+  document.getElementById('categoryModal').classList.add('open');
+};
+
+window.closeCategoryModal = function() { document.getElementById('categoryModal').classList.remove('open'); };
+
+window.autofillSlug = function() {
+  const name = document.getElementById('catName').value;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  document.getElementById('catSlug').value = slug;
+};
+
+window.editCategory = function(id) {
+  const c = categories.find(x => x.id === id || x.id === id);
+  if (!c) return;
+  document.getElementById('editCategoryId').value = c.id;
+  document.getElementById('catName').value = c.name;
+  document.getElementById('catSlug').value = c.slug || '';
+  document.getElementById('catDesc').value = c.description || '';
+  document.getElementById('catIcon').value = c.icon || '';
+  document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+  document.getElementById('categoryModal').classList.add('open');
+};
+
+window.saveCategory = async function() {
+  const id = document.getElementById('editCategoryId').value;
+  const name = document.getElementById('catName').value.trim();
+  const slug = document.getElementById('catSlug').value.trim();
+  const description = document.getElementById('catDesc').value.trim();
+  const icon = document.getElementById('catIcon').value.trim();
+  const st = document.getElementById('catStatus');
+  if (!name) { st.innerHTML = '<span style="color:#fca5a5">Name is required.</span>'; return; }
+
+  try {
+    const payload = { name, slug, description, icon };
+    let err;
+    if (id) {
+      ({ error: err } = await supabase.from('categories').update(payload).eq('id', id));
+      // Also update any products using the old name
+      const oldCat = categories.find(c => c.id === id);
+      if (oldCat && oldCat.name !== name) {
+        await supabase.from('products').update({ category: name }).eq('category', oldCat.name);
+      }
+    } else {
+      ({ error: err } = await supabase.from('categories').insert(payload));
+    }
+    if (err) throw err;
+    closeCategoryModal();
+    await loadCategories();
+    showAlert('success', `✓ Category "${name}" saved.`);
+  } catch(e) {
+    // If categories table doesn't exist yet, just update products directly
+    if (e.message?.includes('does not exist')) {
+      // Update product categories directly
+      if (id) {
+        const oldCat = categories.find(c => c.id === id);
+        if (oldCat) await supabase.from('products').update({ category: name }).eq('category', oldCat.name);
+      }
+      closeCategoryModal();
+      await loadProducts();
+      showAlert('info', 'Category updated in products. Run the schema SQL to enable full category management.');
+    } else {
+      st.innerHTML = `<span style="color:#fca5a5">Error: ${e.message}</span>`;
+    }
+  }
+};
+
+window.deleteCategory = async function(id, name) {
+  const count = products.filter(p => p.category === name).length;
+  if (count > 0 && !confirm(`"${name}" is used by ${count} product(s). Delete anyway? Products will keep this category name.`)) return;
+  const { error } = await supabase.from('categories').delete().eq('id', id);
+  if (error) { showAlert('error', 'Delete failed: ' + error.message); return; }
+  await loadCategories();
+  showAlert('success', `Category "${name}" deleted.`);
+};
+
 // ── HELPERS ───────────────────────────────────────────────────
 function showAlert(type,msg) {
   const el=document.getElementById('alertBanner');
@@ -941,5 +1088,40 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
+
+<!-- CATEGORY MODAL -->
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal" style="max-width:480px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white" id="categoryModalTitle">New Category</h2>
+      <button class="modal-close" onclick="closeCategoryModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <input type="hidden" id="editCategoryId">
+      <div class="form-group">
+        <label>Category Name</label>
+        <input type="text" id="catName" placeholder="e.g. JotForm Templates" oninput="autofillSlug()">
+      </div>
+      <div class="form-group">
+        <label>Slug <span style="color:rgba(255,255,255,.3);font-weight:400">(used in filters — auto-filled)</span></label>
+        <input type="text" id="catSlug" placeholder="jotform-templates">
+      </div>
+      <div class="form-group">
+        <label>Description <span style="color:rgba(255,255,255,.3);font-weight:400">(optional)</span></label>
+        <textarea id="catDesc" placeholder="Short description shown on store..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Icon <span style="color:rgba(255,255,255,.3);font-weight:400">(Lucide icon name, optional)</span></label>
+        <input type="text" id="catIcon" placeholder="e.g. clipboard, zap, mail">
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeCategoryModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveCategory()">Save Category</button>
+      </div>
+      <div id="catStatus" style="margin-top:.75rem;font-size:.83rem"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
