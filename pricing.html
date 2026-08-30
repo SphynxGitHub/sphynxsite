@@ -319,10 +319,12 @@ function fmt(v) {
 }
 
 function renderRates(rates) {
-  // Group variables by applyTo field, then show baseHourlyRate + teamMultiplier as info cards
   const vars = rates.variables || {};
   const baseRate = rates.baseHourlyRate;
   const teamMult = rates.teamMultiplier;
+
+  // Preferred display order — Other Implementation always second-to-last
+  const GROUP_ORDER = ['Zap', 'Email Campaign', 'Form', 'Scheduler Setup', 'Spreadsheet', 'Other Implementation'];
 
   // Group by applyTo
   const groups = {};
@@ -332,10 +334,16 @@ function renderRates(rates) {
     groups[group].push(v);
   });
 
+  // Sort groups: known order first, then any extras alphabetically, Other Implementation last of main groups
+  const knownOrder = GROUP_ORDER.filter(g => groups[g]);
+  const extras = Object.keys(groups).filter(g => !GROUP_ORDER.includes(g)).sort();
+  const sortedGroups = [...extras, ...knownOrder];
+
   let html = '';
 
-  // Render each group as a section
-  Object.entries(groups).forEach(([groupName, items]) => {
+  // Render each group in sorted order
+  sortedGroups.forEach(groupName => {
+    const items = groups[groupName];
     const icon = getIcon(groupName);
     html += `<div class="rates-table-wrap">
       <div class="rates-table-header">
