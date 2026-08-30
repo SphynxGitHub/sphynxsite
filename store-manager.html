@@ -483,6 +483,27 @@ window.toggleActive = async function(id, current) {
   await loadProducts();
 };
 
+window.importFromStripe = async function() {
+  const btn = document.getElementById('stripeImportBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Importing...';
+  showAlert('info', 'Fetching products from Stripe...');
+
+  try {
+    const res = await fetch('/api/import-stripe', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Import failed');
+
+    showAlert('success', `✓ Imported ${data.imported} products from Stripe. ${data.skipped ? data.skipped + ' skipped (no price).' : ''} ${data.errors ? data.errors + ' errors.' : ''}`);
+    await loadProducts();
+  } catch(e) {
+    showAlert('error', 'Import failed: ' + e.message);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i data-lucide="download-cloud" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Import from Stripe';
+  if (window.lucide) lucide.createIcons();
+};
+
 window.deleteProduct = async function(id) {
   if (!confirm('Delete this product? This cannot be undone. The Stripe product will be archived.')) return;
   await fetch('/api/sync-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deleteProduct: true, productId: id }) });

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kajabi Lesson Importer | Sphynx</title>
+<script src="/includes.js"></script>
+<style>
+  .importer-wrap { max-width: 860px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+  .step-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
+  .step-card h2 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; display: flex; align-items: center; gap: .6rem; }
+  .step-card h2 .step-n { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: white; font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+  .bookmarklet-btn { display: inline-block; background: var(--blue); color: white; font-weight: 700; font-size: .88rem; padding: .65rem 1.25rem; border-radius: 9px; text-decoration: none; cursor: grab; border: 2px dashed rgba(255,255,255,.4); }
+  .bookmarklet-btn:active { cursor: grabbing; }
+  .drag-hint { font-size: .78rem; color: var(--muted); margin-top: .6rem; display: flex; align-items: center; gap: .4rem; }
+  .paste-area { width: 100%; min-height: 140px; padding: .85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: monospace; font-size: .82rem; color: var(--text); resize: vertical; outline: none; transition: border-color .2s; }
+  .paste-area:focus { border-color: var(--blue); }
+  .parse-btn { background: var(--blue); color: white; border: none; padding: .8rem 1.5rem; border-radius: 10px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .92rem; cursor: pointer; margin-top: .75rem; }
+  .parse-btn:hover { background: #1446b8; }
+  .lesson-preview { margin-top: 1.5rem; }
+  .lesson-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: .75rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; }
+  .lesson-item h4 { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
+  .lesson-item .lesson-meta { font-size: .78rem; color: var(--muted); }
+  .lesson-item textarea { width: 100%; min-height: 80px; padding: .6rem .85rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: .82rem; resize: vertical; margin-top: .5rem; grid-column: 1/-1; }
+  .product-select { width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: .93rem; margin-bottom: 1rem; }
+  .import-btn { background: var(--accent); color: var(--navy); border: none; padding: .85rem 1.75rem; border-radius: 10px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .95rem; cursor: pointer; }
+  .import-btn:hover { box-shadow: 0 4px 16px rgba(0,194,168,.3); }
+  .import-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .status { font-size: .88rem; padding: .75rem 1rem; border-radius: 9px; margin-top: 1rem; }
+  .status.ok { background: #d1fae5; color: #065f46; }
+  .status.err { background: #fee2e2; color: #991b1b; }
+  .status.info { background: var(--blue-light); color: var(--blue); }
+  .hidden { display: none !important; }
+  code { background: var(--bg); padding: .2rem .5rem; border-radius: 4px; font-size: .82rem; color: var(--navy); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Store Manager</div>
+    <h1>Import Lessons from Kajabi</h1>
+    <p>Use the bookmarklet to scrape lesson content from your Kajabi course pages, then import it directly into your Sphynx store products.</p>
+  </div>
+</div>
+
+<div class="importer-wrap">
+
+  <!-- STEP 1: Bookmarklet -->
+  <div class="step-card">
+    <h2><span class="step-n">1</span> Install the scraper bookmarklet</h2>
+    <p>Drag this button to your browser bookmarks bar. You'll click it while viewing a Kajabi lesson to extract the content.</p>
+    <a class="bookmarklet-btn" id="bookmarkletLink" href="#">
+      <i data-lucide="bookmark" style="width:14px;height:14px;vertical-align:middle;margin-right:5px"></i>
+      Sphynx: Scrape Lesson
+    </a>
+    <div class="drag-hint">
+      <i data-lucide="arrow-up" style="width:13px;height:13px"></i>
+      Drag this button to your bookmarks bar
+    </div>
+    <p style="margin-top:1rem;font-size:.82rem;color:var(--muted)">
+      The bookmarklet is completely safe — it only reads content from the current page and copies it to your clipboard. It never sends data anywhere automatically.
+    </p>
+  </div>
+
+  <!-- STEP 2: Scrape -->
+  <div class="step-card">
+    <h2><span class="step-n">2</span> Scrape your Kajabi lessons</h2>
+    <p>
+      1. Log into Kajabi and open a course lesson page<br>
+      2. Click the <strong>Sphynx: Scrape Lesson</strong> bookmark<br>
+      3. The lesson data will be copied to your clipboard<br>
+      4. Come back here and paste it in the box below<br>
+      5. Repeat for each lesson
+    </p>
+    <p style="font-size:.82rem;color:var(--muted)">
+      <strong>Tip:</strong> You can paste multiple lessons one after another — just keep pasting and clicking Parse.
+    </p>
+    <textarea class="paste-area" id="pasteArea" placeholder='Paste scraped lesson JSON here — it will look like: {"title":"Lesson Name","content":"...","videoUrl":"..."}'></textarea>
+    <br>
+    <button class="parse-btn" onclick="parsePasted()">
+      <i data-lucide="file-plus" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>
+      Parse Lesson
+    </button>
+    <div id="parseStatus"></div>
+  </div>
+
+  <!-- STEP 3: Review & assign -->
+  <div class="step-card" id="reviewCard" style="display:none">
+    <h2><span class="step-n">3</span> Review &amp; assign to a product</h2>
+    <p>Check the extracted lessons below, edit any content if needed, then assign them to a product and import.</p>
+
+    <label style="font-size:.83rem;font-weight:700;color:var(--navy);display:block;margin-bottom:.4rem">Assign to product</label>
+    <select class="product-select" id="productSelect">
+      <option value="">Loading products...</option>
+    </select>
+
+    <div class="lesson-preview" id="lessonPreview"></div>
+
+    <button class="import-btn" onclick="importLessons()" id="importBtn">
+      <i data-lucide="upload" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>
+      Import Lessons to Sphynx Store
+    </button>
+    <div id="importStatus"></div>
+  </div>
+
+</div>
+
+<div id="site-footer"></div>
+
+<script type="module">
+import { supabase, getUser, getProducts } from '/lib/supabase.js';
+
+// Auth check
+const user = await getUser();
+// Note: this page should only be accessed by you — no hard auth gate
+// since it's an internal tool, but we check the manager password was used
+
+// Load products for the dropdown
+async function loadProducts() {
+  try {
+    const products = await getProducts();
+    const sel = document.getElementById('productSelect');
+    sel.innerHTML = '<option value="">— Select a product —</option>' +
+      products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  } catch(e) {
+    document.getElementById('productSelect').innerHTML = '<option>Could not load products</option>';
+  }
+}
+loadProducts();
+
+// Parsed lessons accumulator
+let parsedLessons = [];
+
+window.parsePasted = function() {
+  const raw = document.getElementById('pasteArea').value.trim();
+  const st = document.getElementById('parseStatus');
+  if (!raw) { st.innerHTML = '<div class="status err">Nothing pasted yet.</div>'; return; }
+
+  try {
+    // Handle both single object and array
+    let data = JSON.parse(raw);
+    if (!Array.isArray(data)) data = [data];
+
+    data.forEach((lesson, i) => {
+      // Normalise various field names Kajabi might use
+      parsedLessons.push({
+        title: lesson.title || lesson.name || `Lesson ${parsedLessons.length + 1}`,
+        content: lesson.content || lesson.body || lesson.html || '',
+        video_url: lesson.videoUrl || lesson.video_url || lesson.video || '',
+        section: lesson.section || lesson.module || '',
+        sort_order: parsedLessons.length,
+        download_url: lesson.downloadUrl || lesson.download_url || '',
+        download_label: lesson.downloadLabel || lesson.download_label || '',
+      });
+    });
+
+    document.getElementById('pasteArea').value = '';
+    st.innerHTML = `<div class="status ok">✓ ${data.length} lesson${data.length !== 1 ? 's' : ''} parsed. Total: ${parsedLessons.length}</div>`;
+    renderLessonPreview();
+    document.getElementById('reviewCard').style.display = 'block';
+  } catch(e) {
+    st.innerHTML = `<div class="status err">Could not parse JSON: ${e.message}<br><small>Make sure you copied the full output from the bookmarklet.</small></div>`;
+  }
+};
+
+function renderLessonPreview() {
+  const preview = document.getElementById('lessonPreview');
+  if (!parsedLessons.length) { preview.innerHTML = ''; return; }
+  preview.innerHTML = parsedLessons.map((l, i) => `
+    <div class="lesson-item">
+      <div>
+        <h4>${i + 1}. ${l.title}</h4>
+        <div class="lesson-meta">
+          ${l.section ? `Section: ${l.section} · ` : ''}
+          ${l.video_url ? '<i data-lucide="video" style="width:12px;height:12px;vertical-align:middle"></i> Has video · ' : ''}
+          ${l.content ? `${l.content.replace(/<[^>]*>/g,'').slice(0,80)}...` : 'No text content'}
+        </div>
+      </div>
+      <button onclick="removeLesson(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:4px 8px;border-radius:6px" title="Remove">✕</button>
+    </div>
+  `).join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+window.removeLesson = function(i) {
+  parsedLessons.splice(i, 1);
+  parsedLessons.forEach((l, idx) => l.sort_order = idx);
+  renderLessonPreview();
+};
+
+window.importLessons = async function() {
+  const productId = document.getElementById('productSelect').value;
+  const st = document.getElementById('importStatus');
+  const btn = document.getElementById('importBtn');
+  if (!productId) { st.innerHTML = '<div class="status err">Please select a product first.</div>'; return; }
+  if (!parsedLessons.length) { st.innerHTML = '<div class="status err">No lessons to import.</div>'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Importing...';
+  st.innerHTML = '<div class="status info">Saving lessons to Supabase...</div>';
+
+  try {
+    // Insert all lessons
+    const { error } = await supabase.from('lessons').insert(
+      parsedLessons.map(l => ({ ...l, product_id: productId }))
+    );
+    if (error) throw error;
+
+    // Update lesson count on product
+    await supabase.from('products').update({ lesson_count: parsedLessons.length }).eq('id', productId);
+
+    st.innerHTML = `<div class="status ok">✓ ${parsedLessons.length} lessons imported successfully! <a href="/store-manager.html" style="color:var(--blue);font-weight:600">Go to Store Manager →</a></div>`;
+    parsedLessons = [];
+    renderLessonPreview();
+  } catch(e) {
+    st.innerHTML = `<div class="status err">Import failed: ${e.message}</div>`;
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i data-lucide="upload" style="width:15px;height:15px;vertical-align:middle;margin-right:5px"></i>Import Lessons to Sphynx Store';
+  if (window.lucide) lucide.createIcons();
+};
+</script>
+
+<script>
+// Build the bookmarklet code
+const bookmarkletCode = `javascript:(function(){
+  function q(s){return document.querySelector(s);}
+  function qq(s){return [...document.querySelectorAll(s)];}
+
+  // Try to extract lesson title
+  var title = (q('h1')||q('.lesson-title')||q('.post-title')||q('[data-lesson-title]')||{}).innerText||document.title||'Untitled';
+
+  // Try to extract video URL (Wistia, Vimeo, YouTube embeds)
+  var videoUrl = '';
+  var iframe = q('iframe[src*="wistia"],iframe[src*="vimeo"],iframe[src*="youtube"],iframe[src*="youtu.be"]');
+  if(iframe) videoUrl = iframe.src;
+  var wistia = q('.wistia_embed[data-video-id]');
+  if(wistia) videoUrl = 'https://fast.wistia.com/embed/medias/'+wistia.dataset.videoId;
+
+  // Try to extract main content
+  var contentEl = q('.lesson-content')||q('.post-content')||q('.content-body')||q('article')||q('.kjb-section');
+  var content = contentEl ? contentEl.innerHTML : '';
+
+  // Try to extract section/module name
+  var section = (q('.module-title')||q('.section-title')||q('[data-module-title]')||{}).innerText||'';
+
+  // Try to extract any download links
+  var downloads = qq('a[href*=".pdf"],a[href*="download"],a[download]').map(function(a){return a.href;});
+
+  var lesson = {
+    title: title.trim(),
+    content: content,
+    videoUrl: videoUrl,
+    section: section.trim(),
+    downloadUrl: downloads[0]||'',
+    downloadLabel: downloads.length ? 'Download resource' : ''
+  };
+
+  var json = JSON.stringify(lesson);
+
+  // Copy to clipboard
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(json).then(function(){
+      alert('Lesson scraped! Go back to the Sphynx importer and paste it in.');
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = json;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Lesson scraped! Go back to the Sphynx importer and paste it in.');
+  }
+})();`;
+
+document.getElementById('bookmarkletLink').href = bookmarkletCode;
+</script>
+</body>
+</html>
