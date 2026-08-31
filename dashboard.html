@@ -91,10 +91,22 @@ document.getElementById('userAvatar').textContent = user.email[0].toUpperCase();
 document.getElementById('navUser').innerHTML = `<button class="btn-sm btn-ghost-sm" onclick="signOut()">Sign Out</button>`;
 
 // Load purchases + product details + progress
-const { data: purchases } = await supabase
+const { data: purchases, error: purchaseErr } = await supabase
   .from('purchases')
   .select('product_id, purchased_at, products(*)')
   .eq('user_id', user.id);
+
+console.log('User ID:', user.id);
+console.log('Purchases:', purchases, 'Error:', purchaseErr);
+
+if (purchaseErr) {
+  document.getElementById('purchasesGrid').innerHTML = `
+    <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">
+      <p style="font-family:monospace;font-size:.8rem;color:red">${purchaseErr.message}</p>
+      <p>There was an error loading your purchases. Please try refreshing.</p>
+    </div>`;
+  return;
+}
 
 const { data: allProgress } = await supabase
   .from('progress')
