@@ -33,7 +33,7 @@
   .cat-filter.active { background: var(--navy); border-color: var(--navy); color: white; }
   .cat-filter:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
   .view-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .view-btn { background: white; border: none; padding: .45rem .65rem; cursor: pointer; color: var(--muted); transition: all .2s; display: flex; align-items: center; }
+  .view-btn { background: white; border: none; padding: .45rem .75rem; cursor: pointer; color: var(--muted); transition: all .2s; display: flex; align-items: center; gap: .35rem; font-family: 'Outfit', sans-serif; font-size: .78rem; font-weight: 600; }
   .view-btn.active { background: var(--navy); color: white; }
   .view-btn i { width: 16px; height: 16px; }
   .purchase-card { background: white; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: transform .25s, box-shadow .25s; display: flex; flex-direction: column; }
@@ -94,10 +94,12 @@
       <div id="catFilters" style="display:flex;gap:.4rem;flex-wrap:wrap"></div>
       <div class="view-toggle">
         <button class="view-btn active" id="viewGrid" onclick="setView('grid')" title="Grid view">
-          <i data-lucide="grid"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Grid
         </button>
         <button class="view-btn" id="viewList" onclick="setView('list')" title="List view">
-          <i data-lucide="list"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          List
         </button>
       </div>
     </div>
