@@ -9,18 +9,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="store.css">
 <style>
-  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: 1rem 2rem; position: sticky; top: 64px; z-index: 50; }
-  .filter-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
-  .filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .83rem; font-weight: 600; padding: .4rem 1rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
+  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: 1.1rem 2rem; position: sticky; top: 64px; z-index: 50; }
+  .filter-inner-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: .55rem; }
+  .filter-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .filter-row-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 62px; flex-shrink: 0; }
+  .filter-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: .35rem .9rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
   .filter-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
   .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+  .search-row { justify-content: space-between; border-top: 1px solid var(--border); padding-top: .65rem; margin-top: .1rem; }
 
   .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
   .product-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; }
   .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(11,31,58,.1); }
   .product-card.hidden { display: none; }
-  .product-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--bg); }
-  .product-img-placeholder { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, var(--blue-light), var(--accent-light)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
   .product-body { padding: 1.4rem; flex: 1; display: flex; flex-direction: column; }
   .product-cat { margin-bottom: .6rem; }
   .product-body h3 { font-size: 1rem; font-weight: 700; color: var(--navy); line-height: 1.4; margin-bottom: .6rem; }
@@ -29,8 +31,7 @@
   .product-price { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); }
   .purchased-badge { display: flex; align-items: center; gap: 5px; font-size: .82rem; font-weight: 700; color: var(--green); }
   .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
-  .search-wrap { margin-left: auto; }
-  .search-wrap input { padding: .4rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 200px; }
+  .search-wrap input { padding: .4rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 220px; }
   .search-wrap input:focus { border-color: var(--blue); }
 
   .badge-blue { background: #E0EDFF; color: #1B4FCC; }
@@ -67,15 +68,52 @@
 </div>
 
 <div class="filter-bar">
-  <div class="filter-inner">
-    <button class="filter-btn active" data-cat="all">All</button>
-    <button class="filter-btn" data-cat="Integration">Integrations</button>
-    <button class="filter-btn" data-cat="JotForm">JotForm</button>
-    <button class="filter-btn" data-cat="Training">Training</button>
-    <button class="filter-btn" data-cat="Email Campaign">Email Campaigns</button>
-    <button class="filter-btn" data-cat="Zapier">Zapier</button>
-    <div class="search-wrap">
-      
+  <div class="filter-inner-wrap">
+    <div class="filter-row">
+      <span class="filter-row-label">Category</span>
+      <div class="filter-group" id="filterCat">
+        <button class="filter-btn active" data-val="all" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">Type</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-val="all" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+        <button class="filter-btn" data-val="Template" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Template</button>
+        <button class="filter-btn" data-val="Course" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Course</button>
+        <button class="filter-btn" data-val="Package" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Package</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">Setup</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-val="all" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+        <button class="filter-btn" data-val="DIY" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">DIY</button>
+        <button class="filter-btn" data-val="QuickStart" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">QuickStart</button>
+        <button class="filter-btn" data-val="White Glove" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">White Glove</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">Stage</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-val="all" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+        <button class="filter-btn" data-val="Lead" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Lead</button>
+        <button class="filter-btn" data-val="Onboarding" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Onboarding</button>
+        <button class="filter-btn" data-val="Ongoing Client" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Ongoing Client</button>
+        <button class="filter-btn" data-val="Business Management" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Business Mgmt</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">App</span>
+      <div class="filter-group" id="filterApps">
+        <button class="filter-btn active" data-val="all" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+      </div>
+    </div>
+    <div class="filter-row search-row">
+      <div class="search-wrap">
+        <input type="text" id="storeSearch" placeholder="Search products..." oninput="runStoreFilter()">
+      </div>
+      <button class="filter-btn" onclick="resetFilters()">Clear all filters</button>
     </div>
   </div>
 </div>
@@ -249,7 +287,6 @@ async function loadProducts() {
   await loadCategories();
 }
 
-const CATEGORY_EMOJI_POOL = ['⚡','📄','🎓','✉️','🔗','📝','🛠️','📊','🎯','💡','🧩','📦'];
 const CATEGORY_BADGE_POOL = ['badge-blue','badge-purple','badge-green','badge-orange','badge-teal','badge-pink'];
 
 function categoryHash(str) {
@@ -259,11 +296,6 @@ function categoryHash(str) {
     hash |= 0;
   }
   return Math.abs(hash);
-}
-
-function categoryEmoji(cat) {
-  if (!cat) return '📦';
-  return CATEGORY_EMOJI_POOL[categoryHash(cat) % CATEGORY_EMOJI_POOL.length];
 }
 
 function categoryBadge(cat) {
@@ -310,9 +342,6 @@ function renderProducts(products) {
       card.dataset.cat = p.category;
       card.dataset.name = p.name.toLowerCase();
       card.innerHTML = `
-        ${p.image_url
-          ? `<img class="product-img" src="${p.image_url}" alt="${p.name}" loading="lazy">`
-          : `<div class="product-img-placeholder">${categoryEmoji(p.category)}</div>`}
         <div class="product-body">
           <div class="product-cat"><span class="badge ${categoryBadge(p.category)}">${p.category}</span></div>
           <h3>${p.name}</h3>
