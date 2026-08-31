@@ -89,7 +89,8 @@ const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 
 
 window.setStoreFilter = function(group, val, btn) {
   storeFilters[group] = val;
-  btn.closest('div').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  // Deactivate siblings in same group
+  btn.closest('div').querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   window.runStoreFilter();
 };
@@ -221,15 +222,15 @@ async function loadCategories() {
     const cats = catData?.length
       ? catData.map(c => c.name)
       : [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
-    filterCat.innerHTML = '<button class="filter-btn active" data-val="all" onclick="setStoreFilter('cat','all',this)">All</button>' +
-      cats.map(c => `<button class="filter-btn" data-val="${c}" onclick="setStoreFilter('cat','${c}',this)">${c}</button>`).join('');
+    filterCat.innerHTML = '<button class="filter-btn active" data-val="all" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>' +
+      cats.map(c => `<button class="filter-btn" data-val="${c}" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">${c}</button>`).join('');
   }
   // Load apps for app filter
   const { data: appsData } = await supabase.from('apps').select('name').order('sort_order').order('name');
   const filterApps = document.getElementById('filterApps');
   if (filterApps && appsData?.length) {
-    filterApps.innerHTML = '<button class="filter-btn active" data-val="all" onclick="setStoreFilter('app','all',this)">All</button>' +
-      appsData.map(a => `<button class="filter-btn" data-val="${a.name}" onclick="setStoreFilter('app','${a.name}',this)">${a.name}</button>`).join('');
+    filterApps.innerHTML = '<button class="filter-btn active" data-val="all" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>' +
+      appsData.map(a => `<button class="filter-btn" data-val="${a.name}" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">${a.name}</button>`).join('');
   }
 }
 
