@@ -719,6 +719,12 @@ window.saveProduct = async function() {
       const stripeData=await stripeRes.json();
       if (!stripeData.error) { stripeProductId=stripeData.stripeProductId; stripePriceId=stripeData.stripePriceId; }
     }
+    const product_type=document.getElementById('fProductType')?.value||'';
+    const implementation_type=document.getElementById('fImplType')?.value||'';
+    const lifecycle_stages=[...document.querySelectorAll('#fLifecycleStages input:checked')].map(cb=>cb.value);
+    const apps_used=[...document.querySelectorAll('#fAppsUsed input:checked')].map(cb=>cb.value);
+    const video_minutes=parseFloat(document.getElementById('fVideoMinutes')?.value||'0');
+    const time_estimate_minutes=parseInt(document.getElementById('fTimeEstimate')?.value||'0')||null;
     const payload={name,category,description,price,image_url,kajabi_url,sort_order,product_type,implementation_type,lifecycle_stages,apps:apps_used,video_minutes,time_estimate_minutes,
       stripe_product_id:stripeProductId,stripe_price_id:stripePriceId,
       lesson_count:editingLessons.length,active:true};
