@@ -1,102 +1,377 @@
-/* ===== SPHYNX STORE — SHARED STYLES ===== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --navy: #0b1f3a; --blue: #1a56db; --blue-light: #e8f0fe;
-  --accent: #00c2a8; --accent-light: #e0faf7;
-  --text: #0b1f3a; --muted: #5a6a7e; --border: #dce4ef;
-  --bg: #f7f9fc; --white: #ffffff;
-  --red: #dc2626; --green: #059669;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates & Courses | Sphynx Automation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="store.css">
+<style>
+  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: 1.1rem 2rem; position: sticky; top: 64px; z-index: 50; }
+  .filter-inner-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: .55rem; }
+  .filter-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .filter-row-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 62px; flex-shrink: 0; }
+  .filter-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: .35rem .9rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
+  .filter-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
+  .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+  .search-row { justify-content: space-between; border-top: 1px solid var(--border); padding-top: .65rem; margin-top: .1rem; }
+
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .product-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; }
+  .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(11,31,58,.1); }
+  .product-card.hidden { display: none; }
+  .product-body { padding: 1.4rem; flex: 1; display: flex; flex-direction: column; }
+  .product-cat { margin-bottom: .6rem; }
+  .product-body h3 { font-size: 1rem; font-weight: 700; color: var(--navy); line-height: 1.4; margin-bottom: .6rem; }
+  .product-desc { font-size: .85rem; color: var(--muted); line-height: 1.6; flex: 1; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: auto; }
+  .product-price { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); }
+  .purchased-badge { display: flex; align-items: center; gap: 5px; font-size: .82rem; font-weight: 700; color: var(--green); }
+  .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+  .search-wrap input { padding: .4rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 220px; }
+  .search-wrap input:focus { border-color: var(--blue); }
+
+  .badge-blue { background: #E0EDFF; color: #1B4FCC; }
+  .badge-purple { background: #EFE3FF; color: #6D28D9; }
+  .badge-green { background: #DDF6E8; color: #0E8A4A; }
+  .badge-orange { background: #FFE9D6; color: #C2540B; }
+  .badge-teal { background: #D9F5F2; color: #0F7A6E; }
+  .badge-pink { background: #FCE3EE; color: #C41D6E; }
+  .badge-default { background: var(--bg); color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2147733204/settings_images/3AWlHv0sQ5mNQO1BaIOw_Sphynx_Logo_Final_BlackandBlue_LONG-01.png" alt="Sphynx Automation"></a>
+    <ul class="nav-links">
+      <li><a href="/store.html" class="active">Store</a></li>
+      <li><a href="/dashboard.html">My Courses</a></li>
+      <li><a href="/index.html">Main Site</a></li>
+    </ul>
+    <div class="nav-user" id="navUser">
+      <a href="/login.html" class="btn-sm btn-ghost-sm">Log In</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-tag">Templates & Courses</div>
+    <h1>Automation tools built for financial advisors</h1>
+    <p>Zapier integrations, JotForm templates, training courses, and email campaign templates — all ready to deploy.</p>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-inner-wrap">
+    <div class="filter-row">
+      <span class="filter-row-label">Category</span>
+      <div class="filter-group" id="filterCat">
+        <button class="filter-btn active" data-val="all" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">Type</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-val="all" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+        <button class="filter-btn" data-val="Template" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Template</button>
+        <button class="filter-btn" data-val="Course" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Course</button>
+        <button class="filter-btn" data-val="Package" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Package</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">Setup</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-val="all" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+        <button class="filter-btn" data-val="DIY" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">DIY</button>
+        <button class="filter-btn" data-val="QuickStart" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">QuickStart</button>
+        <button class="filter-btn" data-val="White Glove" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">White Glove</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">Stage</span>
+      <div class="filter-group">
+        <button class="filter-btn active" data-val="all" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+        <button class="filter-btn" data-val="Lead" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Lead</button>
+        <button class="filter-btn" data-val="Onboarding" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Onboarding</button>
+        <button class="filter-btn" data-val="Ongoing Client" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Ongoing Client</button>
+        <button class="filter-btn" data-val="Business Management" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Business Mgmt</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-row-label">App</span>
+      <div class="filter-group" id="filterApps">
+        <button class="filter-btn active" data-val="all" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
+      </div>
+    </div>
+    <div class="filter-row search-row">
+      <div class="search-wrap">
+        <input type="text" id="storeSearch" placeholder="Search products..." oninput="runStoreFilter()">
+      </div>
+      <button class="filter-btn" onclick="resetFilters()">Clear all filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="alertBanner"></div>
+  <div id="productsGrid" class="products-grid">
+    <div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon"><i data-lucide="loader" style="width:48px;height:48px;opacity:.4"></i></div>
+      <h3>Loading products...</h3>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="discountCodeInput">
+<script>
+// ── GLOBALS — must be in regular script for onclick to work ──
+const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
+
+window.setStoreFilter = function(group, val, btn) {
+  storeFilters[group] = val;
+  btn.closest('div').querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  window.runStoreFilter();
+};
+
+window.runStoreFilter = function() {
+  const q = (document.getElementById('storeSearch')?.value || '').toLowerCase();
+  const cards = document.querySelectorAll('.product-card');
+  let visible = 0;
+  cards.forEach(function(card) {
+    const search = (card.dataset.search || '').toLowerCase();
+    const matchQ = !q || search.includes(q);
+    const matchCat = storeFilters.cat === 'all' || card.dataset.cat === storeFilters.cat;
+    const matchType = storeFilters.type === 'all' || card.dataset.type === storeFilters.type;
+    const matchImpl = storeFilters.impl === 'all' || card.dataset.impl === storeFilters.impl;
+    const matchStage = storeFilters.stage === 'all' || (card.dataset.stages||'').toLowerCase().includes(storeFilters.stage.toLowerCase());
+    const matchApp = storeFilters.app === 'all' || (card.dataset.apps||'').toLowerCase().includes(storeFilters.app.toLowerCase());
+    const show = matchQ && matchCat && matchType && matchImpl && matchStage && matchApp;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('emptyState')?.remove();
+  if (!visible) {
+    const el = document.createElement('div');
+    el.id = 'emptyState';
+    el.style.cssText = 'text-align:center;padding:4rem;color:var(--muted);grid-column:1/-1';
+    el.innerHTML = '<p>No products match your filters. <button onclick="resetFilters()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit">Clear filters</button></p>';
+    document.getElementById('productsGrid').appendChild(el);
+  }
+};
+
+window.resetFilters = function() {
+  Object.keys(storeFilters).forEach(function(k) { storeFilters[k] = 'all'; });
+  document.querySelectorAll('.filter-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.val === 'all');
+  });
+  var s = document.getElementById('storeSearch');
+  if (s) s.value = '';
+  window.runStoreFilter();
+};
+
+async function checkout(stripePriceId, productId) {
+  if (!currentUser) { window.location.href = '/login.html'; return; }
+  const btn = document.querySelector(`[data-pid="${productId}"]`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
+  try {
+    const code = document.getElementById('discountCodeInput')?.value?.trim() || '';
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId: stripePriceId, productId, userId: currentUser?.id, discountCode: code })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    window.location.href = data.url;
+  } catch(e) {
+    alert('Checkout error: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Buy Now'; }
+  }
 }
-html { scroll-behavior: smooth; }
-body { font-family: 'Outfit', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
 
-/* NAV */
-nav { background: var(--navy); padding: 0 2rem; position: sticky; top: 0; z-index: 100; }
-.nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-.nav-logo img { height: 32px; filter: brightness(0) invert(1); }
-.nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
-.nav-links a { font-size: .88rem; font-weight: 500; color: rgba(255,255,255,.7); text-decoration: none; transition: color .2s; }
-.nav-links a:hover, .nav-links a.active { color: white; }
-.nav-user { display: flex; align-items: center; gap: 1rem; }
-.nav-user span { font-size: .85rem; color: rgba(255,255,255,.6); }
-.btn-sm { font-size: .82rem; font-weight: 700; padding: .4rem .9rem; border-radius: 7px; cursor: pointer; border: none; text-decoration: none; display: inline-block; }
-.btn-ghost-sm { background: rgba(255,255,255,.1); color: white; }
-.btn-ghost-sm:hover { background: rgba(255,255,255,.18); }
+window.checkout = checkout;
 
-/* BUTTONS */
-.btn { display: inline-block; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .95rem; padding: .8rem 1.6rem; border-radius: 10px; border: none; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s, background .2s; text-align: center; }
-.btn-primary { background: var(--accent); color: var(--navy); }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,194,168,.35); }
-.btn-blue { background: var(--blue); color: white; }
-.btn-blue:hover { background: #1446b8; }
-.btn-outline { background: transparent; color: var(--blue); border: 2px solid var(--blue); }
-.btn-outline:hover { background: var(--blue); color: white; }
-.btn-danger { background: var(--red); color: white; }
-.btn-danger:hover { background: #b91c1c; }
-.btn-full { width: 100%; }
-.btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+window.signOut = async function() {
+  await supabase.auth.signOut();
+  window.location.href = '/login.html';
+};
+</script>
+<script type="module">
+import { supabase, getUser, getUserPurchases } from '/lib/supabase.js';
 
-/* PAGE SHELL */
-.page-header { background: var(--navy); color: white; padding: 4rem 2rem 3rem; }
-.page-header-inner { max-width: 1200px; margin: 0 auto; }
-.page-tag { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .6rem; }
-.page-header h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: white; line-height: 1.15; margin-bottom: .75rem; }
-.page-header p { font-size: 1rem; color: rgba(255,255,255,.65); max-width: 560px; }
-.container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+const STRIPE_KEY = '__NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY__';
+let stripe;
+let currentUser = null;
+let userPurchases = [];
+let allProducts = [];
 
-/* CARDS */
-.card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-.card-body { padding: 1.5rem; }
+async function init() {
+  stripe = Stripe(STRIPE_KEY);
+  currentUser = await getUser();
 
-/* FORM ELEMENTS */
-.form-group { margin-bottom: 1.25rem; }
-.form-group label { display: block; font-size: .83rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; }
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: 9px;
-  font-family: 'Outfit', sans-serif; font-size: .93rem; color: var(--text); background: white; outline: none; transition: border-color .2s;
+  if (currentUser) {
+    document.getElementById('navUser').innerHTML = `
+      <span>${currentUser.email}</span>
+      <a href="/dashboard.html" class="btn-sm btn-ghost-sm">My Courses</a>
+      <button class="btn-sm btn-ghost-sm" onclick="signOut()">Sign Out</button>`;
+    userPurchases = (await getUserPurchases(currentUser.id)).map(p => p.product_id);
+  }
+
+  await loadProducts();
+
+  
+
+
+  // search handled by storeSearch input oninput
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); }
-.form-group textarea { min-height: 90px; resize: vertical; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-/* BADGES */
-.badge { display: inline-block; font-size: .72rem; font-weight: 700; padding: .25rem .65rem; border-radius: 100px; text-transform: uppercase; letter-spacing: .05em; }
-.badge-teal { background: var(--accent-light); color: #0a6b5c; }
-.badge-blue { background: var(--blue-light); color: var(--blue); }
-.badge-navy { background: #e8ecf3; color: var(--navy); }
-.badge-green { background: #d1fae5; color: #065f46; }
-.badge-red { background: #fee2e2; color: var(--red); }
-
-/* ALERTS */
-.alert { padding: 1rem 1.25rem; border-radius: 10px; font-size: .9rem; margin-bottom: 1.25rem; }
-.alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-.alert-error { background: #fee2e2; color: var(--red); border: 1px solid #fecaca; }
-.alert-info { background: var(--blue-light); color: var(--blue); border: 1px solid #bfdbfe; }
-
-/* LOADING */
-.spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* PROGRESS BAR */
-.progress-bar-wrap { background: var(--border); border-radius: 100px; height: 6px; overflow: hidden; }
-.progress-bar-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width .4s ease; }
-
-/* MODAL */
-.modal-overlay { position: fixed; inset: 0; background: rgba(11,31,58,.55); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .25s; }
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal { background: white; border-radius: 18px; padding: 2rem; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; transform: translateY(16px); transition: transform .25s; }
-.modal-overlay.open .modal { transform: translateY(0); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.modal-header h2 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); }
-.modal-close { background: none; border: none; font-size: 1.4rem; color: var(--muted); cursor: pointer; line-height: 1; }
-
-/* EMPTY STATE */
-.empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
-.empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-.empty-state h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: .5rem; }
-.empty-state p { font-size: .9rem; max-width: 340px; margin: 0 auto 1.5rem; }
-
-@media (max-width: 768px) {
-  .form-row { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
+async function loadCategories() {
+  // Load categories for cat filter
+  const { data: catData } = await supabase.from('categories').select('*').order('sort_order').order('name');
+  const filterCat = document.getElementById('filterCat');
+  if (filterCat) {
+    const cats = catData?.length
+      ? catData.map(c => c.name)
+      : [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+    filterCat.innerHTML = '<button class="filter-btn active" data-val="all" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>' +
+      cats.map(c => `<button class="filter-btn" data-val="${c}" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">${c}</button>`).join('');
+  }
+  // Load apps for app filter
+  const { data: appsData } = await supabase.from('apps').select('name').order('sort_order').order('name');
+  const filterApps = document.getElementById('filterApps');
+  if (filterApps && appsData?.length) {
+    filterApps.innerHTML = '<button class="filter-btn active" data-val="all" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>' +
+      appsData.map(a => `<button class="filter-btn" data-val="${a.name}" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">${a.name}</button>`).join('');
+  }
 }
+
+async function loadProducts() {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('active', true)
+    .order('category')
+    .order('sort_order');
+
+  if (error) {
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon"><i data-lucide="alert-circle" style="width:48px;height:48px;opacity:.4"></i></div>
+        <h3>Could not load products</h3>
+        <p style="font-size:.8rem;font-family:monospace;color:var(--muted)">${error.message}</p>
+        <p>Check that your Supabase env vars are set and the products table exists.</p>
+      </div>`;
+    console.error('Supabase error:', error);
+    return;
+  }
+  if (!data?.length) {
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon"><i data-lucide="package" style="width:48px;height:48px;opacity:.4"></i></div>
+        <h3>No products yet</h3>
+        <p>Run the product batch SQL insert, or add products in the Store Manager.</p>
+        <a href="/store-manager.html" class="btn btn-primary" style="margin-top:1rem">Go to Store Manager</a>
+      </div>`;
+    return;
+  }
+
+  allProducts = data;
+  renderProducts(data);
+  await loadCategories();
+}
+
+const CATEGORY_BADGE_POOL = ['badge-blue','badge-purple','badge-green','badge-orange','badge-teal','badge-pink'];
+
+function categoryHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function categoryBadge(cat) {
+  if (!cat) return 'badge-default';
+  return CATEGORY_BADGE_POOL[categoryHash(cat) % CATEGORY_BADGE_POOL.length];
+}
+
+function renderProducts(products) {
+  // group by category
+  const grouped = {};
+  products.forEach(p => {
+    if (!grouped[p.category]) grouped[p.category] = [];
+    grouped[p.category].push(p);
+  });
+
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+
+  if (!products.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><i data-lucide="search" style="width:48px;height:48px;opacity:.4"></i></div><h3>No results</h3><p>Try a different search or filter.</p></div>`;
+    return;
+  }
+
+  Object.entries(grouped).forEach(([cat, items]) => {
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.style.gridColumn = '1 / -1';
+    label.textContent = cat;
+    grid.appendChild(label);
+
+    items.forEach(p => {
+      const owned = userPurchases.includes(p.id);
+      // Build product page URL
+      const productUrl = `/product.html?id=${p.id}`;
+
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.dataset.search = [p.name, p.category, p.description, ...(p.apps||[])].filter(Boolean).join(' ').toLowerCase();
+      card.dataset.cat = p.category || '';
+      card.dataset.type = p.product_type || '';
+      card.dataset.impl = p.implementation_type || '';
+      card.dataset.stages = (p.lifecycle_stages || []).join(',').toLowerCase();
+      card.dataset.apps = (p.apps || []).join(',').toLowerCase();
+      card.dataset.cat = p.category;
+      card.dataset.name = p.name.toLowerCase();
+      card.innerHTML = `
+        <div class="product-body">
+          <div class="product-cat"><span class="badge ${categoryBadge(p.category)}">${p.category}</span></div>
+          <h3>${p.name}</h3>
+          <p class="product-desc">${p.description}</p>
+          <div class="product-footer">
+            <div class="product-price">$${(p.price / 100).toFixed(2)}</div>
+            ${owned
+              ? `<div class="purchased-badge">✓ Purchased <a href="/course.html?id=${p.id}" class="btn btn-outline" style="padding:.4rem .9rem;font-size:.82rem;margin-left:.5rem">Open →</a></div>`
+              : `<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
+                  <a href="/product.html?id=${p.id}" class="btn btn-outline" style="text-align:center;width:100%;box-sizing:border-box">View Details</a>
+                  ${p.stripe_price_id
+                    ? `<button class="btn btn-primary" style="width:100%" data-price="${p.stripe_price_id}" data-pid="${p.id}" onclick="checkout(this.dataset.price,this.dataset.pid)">Buy Now — $${(p.price/100).toFixed(2)}</button>`
+                    : p.kajabi_url
+                      ? `<a href="${p.kajabi_url}" class="btn btn-primary" target="_blank" style="text-align:center;width:100%;box-sizing:border-box">Buy Now — $${(p.price/100).toFixed(2)}</a>`
+                      : `<a href="/contact.html" class="btn btn-primary" style="text-align:center;width:100%;box-sizing:border-box">Get Started</a>`}
+                </div>`}
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  });
+}
+
+// Check for successful payment return
+const params = new URLSearchParams(window.location.search);
+if (params.get('success')) showAlert('success', 'Purchase successful! Check your email and visit My Courses to access your content.');
+if (params.get('cancelled')) showAlert('info', 'Checkout was cancelled — no charge was made.');
+
+init();
+</script>
+<script src="https://js.stripe.com/v3/"></script>
+</body>
+</html>
