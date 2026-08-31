@@ -83,8 +83,9 @@
 <script type="module">
 import { supabase, getUser } from '/lib/supabase.js';
 
+async function initDashboard() {
 const user = await getUser();
-if (!user) { window.location.href = '/login.html'; }
+if (!user) { window.location.href = '/login.html'; return; }
 
 document.getElementById('userEmail').textContent = user.email;
 document.getElementById('userAvatar').textContent = user.email[0].toUpperCase();
@@ -178,6 +179,9 @@ function categoryEmoji(cat) {
   const icon = categoryIcon(cat);
   return `<i data-lucide="${icon}" style="width:28px;height:28px;color:var(--muted)"></i>`;
 }
+
+} // end initDashboard
+initDashboard();
 
 window.signOut = async function() {
   await supabase.auth.signOut();
