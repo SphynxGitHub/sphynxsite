@@ -242,6 +242,9 @@ purchases.forEach(({ product_id, purchased_at, products: p }) => {
   const purchaseDate = new Date(purchased_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const card = document.createElement('div');
   card.className = 'purchase-card';
+  card.dataset.search = [p.name, p.category, p.description].filter(Boolean).join(' ').toLowerCase();
+  card.dataset.cat = p.category || '';
+  card.dataset.name = (p.name || '').toLowerCase();
   card.innerHTML = `
     ${p.image_url
       ? `<img class="purchase-img" src="${p.image_url}" alt="${p.name}" loading="lazy">`
