@@ -17,10 +17,14 @@
   .pricing-card ul { list-style:none; display:flex; flex-direction:column; gap:.7rem; margin-bottom:2rem; }
   .pricing-card ul li { font-size:.9rem; color:var(--text); display:flex; align-items:flex-start; gap:.65rem; }
   .pricing-card ul li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
-  .discount-banner { background:var(--accent-light); border:1px solid rgba(0,194,168,.3); border-radius:12px; padding:1.25rem 1.5rem; margin-top:2rem; display:flex; align-items:center; gap:1rem; }
+  .book-btn-row { display:flex; gap:.6rem; }
+  .book-btn-row a { flex:1; text-align:center; }
+
+  .discount-banner { background:var(--accent-light); border:1px solid rgba(0,194,168,.3); border-radius:12px; padding:1.25rem 1.5rem; margin-top:2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
   .discount-banner .disc-icon { font-size:1.8rem; flex-shrink:0; }
   .discount-banner strong { display:block; font-size:.95rem; color:var(--navy); font-weight:700; }
   .discount-banner span { font-size:.85rem; color:var(--muted); }
+  .discount-banner button { margin-left:auto; white-space:nowrap; flex-shrink:0; }
 
   .coaches-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:3rem; }
   .coach-card { background:white; border:1px solid var(--border); border-radius:18px; overflow:hidden; display:grid; grid-template-columns:160px 1fr; }
@@ -28,7 +32,11 @@
   .coach-body { padding:2rem; }
   .coach-body h3 { font-size:1.15rem; font-weight:700; color:var(--navy); margin-bottom:.2rem; }
   .coach-title { font-size:.83rem; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.85rem; }
-  .coach-body p { font-size:.88rem; color:var(--muted); line-height:1.65; margin-bottom:1.25rem; }
+  .coach-body p { font-size:.88rem; color:var(--muted); line-height:1.65; margin-bottom:1rem; }
+  .coach-expertise-label { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--navy); margin-bottom:.55rem; }
+  .coach-expertise { list-style:none; display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.35rem; }
+  .coach-expertise li { font-size:.88rem; color:var(--text); display:flex; align-items:flex-start; gap:.6rem; }
+  .coach-expertise li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
 
   .topics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:2.5rem; }
   .topic-chip { background:white; border:1px solid var(--border); border-radius:10px; padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem; font-size:.88rem; font-weight:600; color:var(--navy); transition:border-color .2s,transform .2s; }
@@ -55,7 +63,7 @@
     .topics-grid { grid-template-columns:1fr 1fr; }
     .steps-row { grid-template-columns:1fr 1fr; }
   }
-  @media(max-width:500px){ .topics-grid { grid-template-columns:1fr; } }
+  @media(max-width:500px){ .topics-grid { grid-template-columns:1fr; } .book-btn-row { flex-direction:column; } }
 </style>
 <script src="/includes.js"></script>
 </head>
@@ -67,12 +75,52 @@
     <div class="section-tag">1:1 Coaching</div>
     <h1>Expert guidance on your exact automation challenges</h1>
     <p>Work directly with a certified Zapier expert to overcome roadblocks, master integrations, and build automations that actually stick — at your own pace.</p>
-    <a href="https://www.sphynxautomation.com/coaching-call" class="btn-primary" target="_blank">Book a Session →</a>
+    <a href="#pricing" class="btn-primary">Book a Session →</a>
   </div>
 </div>
 
-<!-- PRICING -->
+<!-- COACHES -->
 <section>
+  <div class="section-inner">
+    <div class="section-tag">Your Coaches</div>
+    <h2 class="section-heading">Meet the experts you'll work with</h2>
+    <div class="coaches-grid">
+      <div class="coach-card">
+        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/afd74f1-d61c-01a5-7ad-821e68c8d_ArielleSquare.jpg" alt="Arielle Minicozzi">
+        <div class="coach-body">
+          <h3>Arielle Minicozzi</h3>
+          <div class="coach-title">Founder &amp; CEO</div>
+          <p>Former RIA owner turned automation expert. Arielle has been building financial advisor workflows since 2017 and is a certified Zapier expert and Mailchimp partner.</p>
+          <div class="coach-expertise-label">Areas of Expertise</div>
+          <ul class="coach-expertise">
+            <li>JotForm</li>
+            <li>Custom-coded solutions</li>
+            <li>Complex Zapier setups</li>
+          </ul>
+          <a href="https://calendly.com/sphynx/coaching-call" class="btn-primary" target="_blank">Book with Arielle →</a>
+        </div>
+      </div>
+      <div class="coach-card">
+        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/a7e7287-27b-ea-53af-278b3d8f4f_Chad_Rixse_Headshot.jpg" alt="Chad Rixse">
+        <div class="coach-body">
+          <h3>Chad Rixse</h3>
+          <div class="coach-title">Automation Specialist</div>
+          <p>Chad specializes in complex integrations and multi-step Zapier workflows. He's helped dozens of advisors untangle messy tech stacks and build clean, reliable automations.</p>
+          <div class="coach-expertise-label">Areas of Expertise</div>
+          <ul class="coach-expertise">
+            <li>Process creation</li>
+            <li>Workflow mapping</li>
+            <li>CRM setup</li>
+          </ul>
+          <a href="https://calendly.com/chad-sphynxautomation/coaching-call" class="btn-primary" target="_blank">Book with Chad →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--bg);">
   <div class="section-inner">
     <div class="section-tag">Simple Pricing</div>
     <h2 class="section-heading">Pay only for the time you need</h2>
@@ -88,7 +136,10 @@
           <li>Recording provided after the session</li>
           <li>Follow-up notes &amp; resources</li>
         </ul>
-        <a href="https://www.sphynxautomation.com/coaching-call" class="btn-outline" target="_blank">Book 30-Min Session</a>
+        <div class="book-btn-row">
+          <a href="https://calendly.com/sphynx/coaching-call?duration=30" class="btn-outline" target="_blank">Book with Arielle</a>
+          <a href="https://calendly.com/chad-sphynxautomation/coaching-call?duration=30" class="btn-outline" target="_blank">Book with Chad</a>
+        </div>
       </div>
       <div class="pricing-card featured">
         <div class="featured-badge">Most Popular</div>
@@ -102,44 +153,19 @@
           <li>Follow-up notes, resources &amp; next steps</li>
           <li>Covers Zapier, CRMs, scheduling tools &amp; more</li>
         </ul>
-        <a href="https://www.sphynxautomation.com/coaching-call" class="btn-primary" target="_blank">Book 60-Min Session</a>
+        <div class="book-btn-row">
+          <a href="https://calendly.com/sphynx/coaching-call?duration=60" class="btn-primary" target="_blank">Book with Arielle</a>
+          <a href="https://calendly.com/chad-sphynxautomation/coaching-call?duration=60" class="btn-primary" target="_blank">Book with Chad</a>
+        </div>
       </div>
     </div>
     <div class="discount-banner">
       <div class="disc-icon"><i data-lucide="tag" style="width:22px;height:22px"></i></div>
       <div>
-        <strong>20% discount when you prepay 5+ hours</strong>
-        <span>Ideal for advisors tackling multiple projects or ongoing tech build-outs. Contact us to set this up.</span>
+        <strong>20% off when you prepay 5+ hours</strong>
+        <span id="discountSubtext">Prepay a 5-hour block at $240/hour (20% off the $300 rate) — add more hours at checkout at the same discounted rate.</span>
       </div>
-      <a href="contact.html" class="btn-outline" style="margin-left:auto;white-space:nowrap;flex-shrink:0;">Get the Discount</a>
-    </div>
-  </div>
-</section>
-
-<!-- COACHES -->
-<section style="background:var(--bg);">
-  <div class="section-inner">
-    <div class="section-tag">Your Coaches</div>
-    <h2 class="section-heading">Meet the experts you'll work with</h2>
-    <div class="coaches-grid">
-      <div class="coach-card">
-        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/afd74f1-d61c-01a5-7ad-821e68c8d_ArielleSquare.jpg" alt="Arielle Minicozzi">
-        <div class="coach-body">
-          <h3>Arielle Minicozzi</h3>
-          <div class="coach-title">Founder &amp; CEO</div>
-          <p>Former RIA owner turned automation expert. Arielle has been building financial advisor workflows since 2017 and is a certified Zapier expert and Mailchimp partner.</p>
-          <a href="https://www.sphynxautomation.com/coaching-call" class="btn-primary" target="_blank">Book with Arielle →</a>
-        </div>
-      </div>
-      <div class="coach-card">
-        <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/themes/2147733204/settings_images/a7e7287-27b-ea-53af-278b3d8f4f_Chad_Rixse_Headshot.jpg" alt="Chad Rixse">
-        <div class="coach-body">
-          <h3>Chad Rixse</h3>
-          <div class="coach-title">Automation Specialist</div>
-          <p>Chad specializes in complex integrations and multi-step Zapier workflows. He's helped dozens of advisors untangle messy tech stacks and build clean, reliable automations.</p>
-          <a href="https://www.sphynxautomation.com/coaching-call" class="btn-primary" target="_blank">Book with Chad →</a>
-        </div>
-      </div>
+      <button id="prepaidBtn" class="btn-outline" disabled onclick="startCoachingCheckout()">Loading...</button>
     </div>
   </div>
 </section>
@@ -198,11 +224,68 @@
   <h2>Ready to unblock your automation?</h2>
   <p>Sessions are paid upfront at the time of booking. New slots added regularly.</p>
   <div class="cta-btns">
-    <a href="https://www.sphynxautomation.com/coaching-call" class="btn-primary" target="_blank">Book a Session Now</a>
+    <a href="#pricing" class="btn-primary">Book a Session Now</a>
     <a href="services.html" class="btn-white">Compare All Services</a>
   </div>
 </section>
 
 <div id="site-footer"></div>
+
+<script type="module">
+import { supabase } from '/lib/supabase.js';
+
+let coachingProduct = null;
+
+async function loadCoachingProduct() {
+  const btn = document.getElementById('prepaidBtn');
+  const subtext = document.getElementById('discountSubtext');
+  try {
+    const { data } = await supabase
+      .from('products')
+      .select('*')
+      .ilike('category', '%coach%')
+      .eq('active', true)
+      .order('sort_order')
+      .limit(1);
+    coachingProduct = data?.[0] || null;
+  } catch (e) {
+    console.error('Could not load coaching product:', e);
+  }
+
+  if (coachingProduct?.stripe_price_id) {
+    btn.disabled = false;
+    btn.textContent = `Get the Discount — $${(coachingProduct.price / 100).toFixed(0)}`;
+  } else {
+    // Product hasn't been created/synced in the Store Manager yet — fall back to contact.
+    btn.disabled = false;
+    btn.textContent = 'Get the Discount';
+    btn.onclick = () => { window.location.href = 'contact.html'; };
+    if (subtext) subtext.textContent += ' (Contact us to set this up.)';
+  }
+}
+
+window.startCoachingCheckout = async function() {
+  if (!coachingProduct?.stripe_price_id) { window.location.href = 'contact.html'; return; }
+  const btn = document.getElementById('prepaidBtn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId: coachingProduct.stripe_price_id, productId: coachingProduct.id })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    window.location.href = data.url;
+  } catch (e) {
+    alert('Checkout error: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = `Get the Discount — $${(coachingProduct.price / 100).toFixed(0)}`;
+  }
+};
+
+loadCoachingProduct();
+</script>
 
 </body></html>
