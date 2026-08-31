@@ -87,53 +87,6 @@
 // Store filter state and functions — in regular script so filter buttons can access them
 const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
 
-window.setStoreFilter = function(group, val, btn) {
-  storeFilters[group] = val;
-  // Deactivate siblings in same group
-  btn.closest('div').querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  window.runStoreFilter();
-};
-
-window.runStoreFilter = function() {
-  const q = (document.getElementById('storeSearch')?.value || '').toLowerCase();
-  const cards = document.querySelectorAll('.product-card');
-  let visible = 0;
-  cards.forEach(function(card) {
-    const search = (card.dataset.search || '').toLowerCase();
-    const cat = card.dataset.cat || '';
-    const type = card.dataset.type || '';
-    const impl = card.dataset.impl || '';
-    const stages = (card.dataset.stages || '').toLowerCase();
-    const apps = (card.dataset.apps || '').toLowerCase();
-    const matchQ = !q || search.includes(q);
-    const matchCat = storeFilters.cat === 'all' || cat === storeFilters.cat;
-    const matchType = storeFilters.type === 'all' || type === storeFilters.type;
-    const matchImpl = storeFilters.impl === 'all' || impl === storeFilters.impl;
-    const matchStage = storeFilters.stage === 'all' || stages.includes(storeFilters.stage.toLowerCase());
-    const matchApp = storeFilters.app === 'all' || apps.includes(storeFilters.app.toLowerCase());
-    const show = matchQ && matchCat && matchType && matchImpl && matchStage && matchApp;
-    card.style.display = show ? '' : 'none';
-    if (show) visible++;
-  });
-  document.getElementById('emptyState')?.remove();
-  if (!visible) {
-    const el = document.createElement('div');
-    el.id = 'emptyState';
-    el.style.cssText = 'text-align:center;padding:4rem;color:var(--muted);grid-column:1/-1';
-    el.innerHTML = '<p style="font-size:1rem">No products match your filters. <button onclick="resetFilters()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit">Clear filters</button></p>';
-    document.getElementById('productsGrid').appendChild(el);
-  }
-};
-
-window.resetFilters = function() {
-  Object.keys(storeFilters).forEach(function(k) { storeFilters[k] = 'all'; });
-  document.querySelectorAll('.filter-btn').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.val === 'all');
-  });
-  if (document.getElementById('storeSearch')) document.getElementById('storeSearch').value = '';
-  window.runStoreFilter();
-};
 </script>
 <script type="module">
 import { supabase, getUser, getUserPurchases } from '/lib/supabase.js';
@@ -322,7 +275,7 @@ function renderProducts(products) {
               : `<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
                   <a href="/product.html?id=${p.id}" class="btn btn-outline" style="text-align:center;width:100%;box-sizing:border-box">View Details</a>
                   ${p.stripe_price_id
-                    ? `<button class="btn btn-primary" style="width:100%" onclick="checkout('${p.stripe_price_id}', '${p.id}')">Buy Now — $${(p.price/100).toFixed(2)}</button>`
+                    ? `<button class="btn btn-primary" style="width:100%" data-price="${p.stripe_price_id}" data-pid="${p.id}" onclick="checkout(this.dataset.price,this.dataset.pid)">Buy Now — $${(p.price/100).toFixed(2)}</button>`
                     : p.kajabi_url
                       ? `<a href="${p.kajabi_url}" class="btn btn-primary" target="_blank" style="text-align:center;width:100%;box-sizing:border-box">Buy Now — $${(p.price/100).toFixed(2)}</a>`
                       : `<a href="/contact.html" class="btn btn-primary" style="text-align:center;width:100%;box-sizing:border-box">Get Started</a>`}
@@ -337,6 +290,8 @@ function renderProducts(products) {
 
 
 window.checkout = checkout;
+// alias for inline onclick
+function checkout(a,b){return window.checkout(a,b);}
 window.signOut = signOut;
 
 // Check for successful payment return
