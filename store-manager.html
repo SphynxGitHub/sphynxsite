@@ -155,7 +155,7 @@
     </div>
     <div class="table-wrap">
       <table class="products-table">
-        <thead><tr><th>Email</th><th>Product</th><th>Date</th><th>Amount</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Email</th><th>Name</th><th>Products</th><th>Joined</th><th>Actions</th></tr></thead>
         <tbody id="customersTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
       </table>
     </div>
@@ -802,20 +802,49 @@ window.linkSharedLesson = function(id) {
 
 // ── CUSTOMERS ─────────────────────────────────────────────────
 async function loadCustomers() {
-  const {data:purchases}=await supabase.from('purchases').select('id,user_id,purchased_at,amount_paid,products(name)').order('purchased_at',{ascending:false});
-  const {data:users}=await supabase.from('profiles').select('id,email');
-  const userMap=Object.fromEntries((users||[]).map(u=>[u.id,u.email]));
-  const tbody=document.getElementById('customersTableBody');
-  if (!purchases?.length) { tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No customers yet.</td></tr>`; return; }
-  tbody.innerHTML=purchases.map(p=>`
-    <tr>
-      <td style="color:white">${userMap[p.user_id]||p.user_id}</td>
-      <td style="color:rgba(255,255,255,.7)">${p.products?.name||'—'}</td>
-      <td style="color:rgba(255,255,255,.4)">${new Date(p.purchased_at).toLocaleDateString()}</td>
-      <td style="color:var(--accent)">${p.amount_paid?'$'+(p.amount_paid/100).toFixed(2):'Complimentary'}</td>
-      <td><button class="action-btn danger" onclick="revokePurchase('${p.id}')">Revoke</button></td>
-    </tr>`).join('');
+  // Load all profiles (everyone who signed up)
+  const {data:users, error:userErr} = await supabase.from('profiles').select('id,email,full_name,created_at').order('created_at', {ascending:false});
+  // Load all purchases
+  const {data:purchases} = await supabase.from('purchases').select('id,user_id,purchased_at,amount_paid,products(name)');
+
+  const tbody = document.getElementById('customersTableBody');
+  if (!users?.length) {
+    tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No users have signed up yet.</td></tr>`;
+    return;
+  }
+
+  // Group purchases by user
+  const purchasesByUser = {};
+  (purchases||[]).forEach(p => {
+    if (!purchasesByUser[p.user_id]) purchasesByUser[p.user_id] = [];
+    purchasesByUser[p.user_id].push(p);
+  });
+
+  tbody.innerHTML = users.map(u => {
+    const userPurchases = purchasesByUser[u.id] || [];
+    const purchaseList = userPurchases.length
+      ? userPurchases.map(p => `<div style="font-size:.75rem;color:rgba(255,255,255,.5)">${p.products?.name||'Unknown'} — ${p.amount_paid?'$'+(p.amount_paid/100).toFixed(2):'Free'}</div>`).join('')
+      : '<span style="font-size:.75rem;color:rgba(255,255,255,.3)">No purchases</span>';
+    return `<tr>
+      <td style="color:white;font-weight:600">${u.email}</td>
+      <td style="color:rgba(255,255,255,.6)">${u.full_name||'—'}</td>
+      <td>${purchaseList}</td>
+      <td style="color:rgba(255,255,255,.4);font-size:.82rem">${new Date(u.created_at).toLocaleDateString()}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn success" onclick="openAssignModalFor('${u.email}')">+ Assign</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
+
+window.openAssignModalFor = function(email) {
+  document.getElementById('assignEmail').value = email;
+  document.getElementById('assignAmount').value = '';
+  document.getElementById('assignStatus').textContent = '';
+  document.getElementById('assignModal').classList.add('open');
+};
 
 window.openAssignModal = function() {
   document.getElementById('assignEmail').value='';
@@ -828,20 +857,22 @@ window.closeAssignModal = function() { document.getElementById('assignModal').cl
 window.assignProduct = async function() {
   const email=document.getElementById('assignEmail').value.trim();
   const productId=document.getElementById('assignProduct').value;
-  const amount=Math.round(parseFloat(document.getElementById('assignAmount').value||'0')*100);
+  const amount=document.getElementById('assignAmount').value||'0';
   const st=document.getElementById('assignStatus');
   if (!email||!productId) { st.innerHTML='<span style="color:#fca5a5">Email and product required.</span>'; return; }
-  st.innerHTML='<span style="color:rgba(255,255,255,.5)">Looking up customer...</span>';
+  st.innerHTML='<span style="color:rgba(255,255,255,.5)">Assigning access...</span>';
   try {
-    // Find user by email in profiles
-    const {data:profile}=await supabase.from('profiles').select('id').eq('email',email).single();
-    if (!profile) { st.innerHTML='<span style="color:#fca5a5">No account found for that email. Ask them to sign up at /login.html first.</span>'; return; }
-    // Check if already purchased
-    const {data:existing}=await supabase.from('purchases').select('id').eq('user_id',profile.id).eq('product_id',productId).single();
-    if (existing) { st.innerHTML='<span style="color:#fca5a5">This customer already has access to this product.</span>'; return; }
-    // Insert purchase
-    const {error}=await supabase.from('purchases').insert({user_id:profile.id,product_id:productId,amount_paid:amount,purchased_at:new Date().toISOString()});
-    if (error) throw error;
+    // Use admin API endpoint (uses service role to bypass RLS)
+    const res = await fetch('/api/admin-assign', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        password: '__NEXT_PUBLIC_MANAGER_PASSWORD__',
+        email, productId, amount
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
     st.innerHTML='<span style="color:#6ee7b7">✓ Access granted successfully.</span>';
     await loadCustomers();
     setTimeout(closeAssignModal, 1500);

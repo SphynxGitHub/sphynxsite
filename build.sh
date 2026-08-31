@@ -20,6 +20,7 @@ FILES=(
   "login.html"
   "lib/supabase.js"
   "includes.js"
+  "store-manager.html"
   "product.html"
 )
 
