@@ -159,6 +159,19 @@ window.setView = function(view) {
 <script type="module">
 import { supabase, getUser } from '/lib/supabase.js';
 
+let allPurchases = [];
+let currentView = 'grid';
+
+function buildCatFilters(purchases) {
+  const cats = ['all', ...new Set(purchases.map(p => p.products?.category).filter(Boolean))];
+  const filtersEl = document.getElementById('catFilters');
+  if (!filtersEl) return;
+  filtersEl.innerHTML = cats.map(c => `
+    <button class="cat-filter ${c === 'all' ? 'active' : ''}" data-cat="${c}" onclick="setCatFilter(this)">
+      ${c === 'all' ? 'All' : c}
+    </button>`).join('');
+}
+
 async function initDashboard() {
 const user = await getUser();
 if (!user) { window.location.href = '/login.html'; return; }
