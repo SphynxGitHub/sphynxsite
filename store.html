@@ -67,7 +67,7 @@
     <button class="filter-btn" data-cat="Email Campaign">Email Campaigns</button>
     <button class="filter-btn" data-cat="Zapier">Zapier</button>
     <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Search products...">
+      
     </div>
   </div>
 </div>
@@ -83,6 +83,57 @@
 </div>
 
 <input type="hidden" id="discountCodeInput">
+<script>
+// Store filter state and functions — in regular script so filter buttons can access them
+const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
+
+window.setStoreFilter = function(group, val, btn) {
+  storeFilters[group] = val;
+  btn.closest('div').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  window.runStoreFilter();
+};
+
+window.runStoreFilter = function() {
+  const q = (document.getElementById('storeSearch')?.value || '').toLowerCase();
+  const cards = document.querySelectorAll('.product-card');
+  let visible = 0;
+  cards.forEach(function(card) {
+    const search = (card.dataset.search || '').toLowerCase();
+    const cat = card.dataset.cat || '';
+    const type = card.dataset.type || '';
+    const impl = card.dataset.impl || '';
+    const stages = (card.dataset.stages || '').toLowerCase();
+    const apps = (card.dataset.apps || '').toLowerCase();
+    const matchQ = !q || search.includes(q);
+    const matchCat = storeFilters.cat === 'all' || cat === storeFilters.cat;
+    const matchType = storeFilters.type === 'all' || type === storeFilters.type;
+    const matchImpl = storeFilters.impl === 'all' || impl === storeFilters.impl;
+    const matchStage = storeFilters.stage === 'all' || stages.includes(storeFilters.stage.toLowerCase());
+    const matchApp = storeFilters.app === 'all' || apps.includes(storeFilters.app.toLowerCase());
+    const show = matchQ && matchCat && matchType && matchImpl && matchStage && matchApp;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('emptyState')?.remove();
+  if (!visible) {
+    const el = document.createElement('div');
+    el.id = 'emptyState';
+    el.style.cssText = 'text-align:center;padding:4rem;color:var(--muted);grid-column:1/-1';
+    el.innerHTML = '<p style="font-size:1rem">No products match your filters. <button onclick="resetFilters()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit">Clear filters</button></p>';
+    document.getElementById('productsGrid').appendChild(el);
+  }
+};
+
+window.resetFilters = function() {
+  Object.keys(storeFilters).forEach(function(k) { storeFilters[k] = 'all'; });
+  document.querySelectorAll('.filter-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.val === 'all');
+  });
+  if (document.getElementById('storeSearch')) document.getElementById('storeSearch').value = '';
+  window.runStoreFilter();
+};
+</script>
 <script type="module">
 import { supabase, getUser, getUserPurchases } from '/lib/supabase.js';
 
@@ -159,7 +210,7 @@ window.resetFilters = function() {
   runStoreFilter();
 };
 
-  document.getElementById('searchInput').addEventListener('input', filterProducts);
+  // search handled by storeSearch input oninput
 }
 
 async function loadCategories() {
@@ -282,63 +333,7 @@ function renderProducts(products) {
   });
 }
 
-function filterProducts() {
-  const cat = document.querySelector('.filter-btn.active').dataset.cat;
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = allProducts.filter(p =>
-    (cat === 'all' || p.category === cat) &&
-    (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
-  );
-  renderProducts(filtered);
-}
 
-async function checkout(stripePriceId, productId) {
-  if (!currentUser) {
-    sessionStorage.setItem('postLoginProductId', productId);
-    window.location.href = '/login.html?redirect=store';
-    return;
-  }
-  const btn = event.target;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Loading...';
-  try {
-    const res = await fetch('/api/create-checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: stripePriceId, productId, userId: currentUser.id, email: currentUser.email })
-    });
-    const { sessionId, error } = await res.json();
-    if (error) throw new Error(error);
-    await stripe.redirectToCheckout({ sessionId });
-  } catch (err) {
-    showAlert('error', 'Something went wrong: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = 'Buy Now';
-  }
-}
-
-async function signOut() {
-  await supabase.auth.signOut();
-  window.location.reload();
-}
-
-function showAlert(type, msg) {
-  document.getElementById('alertBanner').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-  setTimeout(() => document.getElementById('alertBanner').innerHTML = '', 5000);
-}
-
-function categoryIcon(cat) {
-  const map = { 'Integration': 'link', 'JotForm': 'clipboard', 'Training': 'graduation-cap', 'Email Campaign': 'mail', 'Zapier': 'zap' };
-  return map[cat] || 'package';
-}
-function categoryEmoji(cat) {
-  const icon = categoryIcon(cat);
-  return `<i data-lucide="${icon}" style="width:28px;height:28px;color:var(--muted)"></i>`;
-}
-function categoryBadge(cat) {
-  const map = { 'Integration': 'badge-navy', 'JotForm': 'badge-blue', 'Training': 'badge-teal', 'Email Campaign': 'badge-green', 'Zapier': 'badge-blue' };
-  return map[cat] || 'badge-navy';
-}
 
 window.checkout = checkout;
 window.signOut = signOut;
