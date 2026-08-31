@@ -114,6 +114,48 @@
   </main>
 </div>
 
+<script>
+// Filter and view functions — defined in regular script so oninput can access them
+window.filterPurchases = function() {
+  const q = (document.getElementById('purchaseSearch')?.value || '').toLowerCase();
+  const activeCat = document.querySelector('.cat-filter.active')?.dataset.cat || 'all';
+  const grid = document.getElementById('purchasesGrid');
+  if (!grid) return;
+  const cards = grid.querySelectorAll('.purchase-card');
+  let visible = 0;
+  cards.forEach(function(card) {
+    const searchable = card.dataset.search || card.dataset.name || '';
+    const cat = card.dataset.cat || '';
+    const matchQ = !q || searchable.includes(q);
+    const matchCat = activeCat === 'all' || cat === activeCat;
+    card.style.display = matchQ && matchCat ? '' : 'none';
+    if (matchQ && matchCat) visible++;
+  });
+  document.getElementById('noResults')?.remove();
+  if (!visible && (q || activeCat !== 'all')) {
+    const el = document.createElement('div');
+    el.id = 'noResults';
+    el.style.cssText = 'text-align:center;padding:2rem;color:var(--muted);grid-column:1/-1';
+    el.innerHTML = '<p>No courses match your search.</p>';
+    grid.appendChild(el);
+  }
+};
+
+window.setCatFilter = function(btn) {
+  document.querySelectorAll('.cat-filter').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  window.filterPurchases();
+};
+
+window.setView = function(view) {
+  const grid = document.getElementById('purchasesGrid');
+  if (!grid) return;
+  grid.className = view === 'grid' ? 'purchases-grid' : 'purchases-list';
+  document.getElementById('viewGrid').classList.toggle('active', view === 'grid');
+  document.getElementById('viewList').classList.toggle('active', view === 'list');
+  window.filterPurchases();
+};
+</script>
 <script type="module">
 import { supabase, getUser } from '/lib/supabase.js';
 
@@ -224,58 +266,7 @@ function categoryEmoji(cat) {
 } // end initDashboard
 initDashboard();
 
-// ── VIEW TOGGLE & FILTER ──────────────────────────────────
-let currentView = 'grid';
-let allPurchases = [];
-
-window.setView = function(view) {
-  currentView = view;
-  const grid = document.getElementById('purchasesGrid');
-  grid.className = view === 'grid' ? 'purchases-grid' : 'purchases-list';
-  document.getElementById('viewGrid').classList.toggle('active', view === 'grid');
-  document.getElementById('viewList').classList.toggle('active', view === 'list');
-  filterPurchases();
-};
-
-window.filterPurchases = function() {
-  const q = (document.getElementById('purchaseSearch')?.value || '').toLowerCase();
-  const activeCat = document.querySelector('.cat-filter.active')?.dataset.cat || 'all';
-  const grid = document.getElementById('purchasesGrid');
-  const cards = grid.querySelectorAll('.purchase-card');
-  let visible = 0;
-  cards.forEach(card => {
-    const searchable = card.dataset.search || card.dataset.name || '';
-    const cat = card.dataset.cat || '';
-    const matchQ = !q || searchable.includes(q);
-    const matchCat = activeCat === 'all' || cat === activeCat;
-    card.style.display = matchQ && matchCat ? '' : 'none';
-    if (matchQ && matchCat) visible++;
-  });
-  document.getElementById('noResults')?.remove();
-  if (!visible && (q || activeCat !== 'all')) {
-    const el = document.createElement('div');
-    el.id = 'noResults';
-    el.className = 'empty-state';
-    el.style.cssText = 'text-align:center;padding:2rem;color:var(--muted);grid-column:1/-1';
-    el.innerHTML = '<p>No courses match your search.</p>';
-    grid.appendChild(el);
-  }
-};
-
-function buildCatFilters(purchases) {
-  const cats = ['all', ...new Set(purchases.map(p => p.products?.category).filter(Boolean))];
-  const filtersEl = document.getElementById('catFilters');
-  filtersEl.innerHTML = cats.map(c => `
-    <button class="cat-filter ${c === 'all' ? 'active' : ''}" data-cat="${c}" onclick="setCatFilter(this)">
-      ${c === 'all' ? 'All' : c}
-    </button>`).join('');
-}
-
-window.setCatFilter = function(btn) {
-  document.querySelectorAll('.cat-filter').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  filterPurchases();
-};
+// filter functions defined in regular script above
 
 window.signOut = async function() {
   await supabase.auth.signOut();
