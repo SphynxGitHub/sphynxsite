@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Course | Sphynx Automation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,6 +38,20 @@
   .lesson-content ul, .lesson-content ol { margin: .75rem 0 1rem 1.5rem; }
   .lesson-content li { font-size: .93rem; color: var(--muted); line-height: 1.65; margin-bottom: .4rem; }
   .lesson-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .note-btn { background: white; border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit',sans-serif; font-size: .82rem; font-weight: 600; padding: .5rem 1rem; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; transition: all .2s; }
+  .note-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .note-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; }
+  .note-modal.open { display: flex; }
+  .note-box { background: white; border-radius: 18px; padding: 2rem; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+  .note-box h3 { font-family: 'DM Serif Display',serif; font-size: 1.3rem; color: var(--navy); margin-bottom: .4rem; }
+  .note-box p { font-size: .85rem; color: var(--muted); margin-bottom: 1.25rem; }
+  .preset-btns { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+  .preset-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--text); font-family: 'Outfit',sans-serif; font-size: .8rem; font-weight: 500; padding: .4rem .85rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
+  .preset-btn:hover, .preset-btn.selected { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+  .note-textarea { width: 100%; min-height: 100px; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Outfit',sans-serif; font-size: .88rem; resize: vertical; outline: none; box-sizing: border-box; margin-bottom: 1rem; }
+  .note-textarea:focus { border-color: var(--blue); }
+  .note-footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .note-status { font-size: .82rem; color: var(--muted); }
   .complete-btn { display: flex; align-items: center; gap: .6rem; padding: .75rem 1.5rem; border-radius: 10px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .92rem; cursor: pointer; border: 2px solid var(--accent); background: transparent; color: var(--accent); transition: all .2s; }
   .complete-btn.done { background: var(--accent); color: var(--navy); }
   .complete-btn:hover { background: var(--accent); color: var(--navy); }
@@ -176,6 +191,14 @@ function renderLesson(idx) {
   // Also fix content — strip any stray HTML tags that Kajabi might have encoded
   
 
+  // Note to instructor button
+  html += `<div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+    <button class="note-btn" onclick="openNoteModal()">
+      <i data-lucide="message-circle" style="width:14px;height:14px"></i>
+      Send a note to the instructor
+    </button>
+  </div>`;
+
   if (lesson.download_url) {
     html += `
       <div class="download-section">
@@ -245,5 +268,127 @@ if (lessons.length) {
     </div>`;
 }
 </script>
+<!-- NOTE TO INSTRUCTOR MODAL -->
+<div class="note-modal" id="noteModal">
+  <div class="note-box">
+    <h3>Send a note to the instructor</h3>
+    <p>Have feedback or a question about this lesson? We'll get back to you by email.</p>
+    <div class="preset-btns" id="presetBtns">
+      <button class="preset-btn" onclick="selectPreset(this, 'This content is confusing')">
+        <i data-lucide="help-circle" style="width:12px;height:12px;vertical-align:middle;margin-right:3px"></i>
+        This is confusing
+      </button>
+      <button class="preset-btn" onclick="selectPreset(this, 'This content seems out of date')">
+        <i data-lucide="clock" style="width:12px;height:12px;vertical-align:middle;margin-right:3px"></i>
+        Seems out of date
+      </button>
+      <button class="preset-btn" onclick="selectPreset(this, 'I have a question about this lesson')">
+        <i data-lucide="message-square" style="width:12px;height:12px;vertical-align:middle;margin-right:3px"></i>
+        I have a question
+      </button>
+      <button class="preset-btn" onclick="selectPreset(this, 'The video is not working')">
+        <i data-lucide="video-off" style="width:12px;height:12px;vertical-align:middle;margin-right:3px"></i>
+        Video not working
+      </button>
+      <button class="preset-btn" onclick="selectPreset(this, 'I found an error or typo')">
+        <i data-lucide="alert-triangle" style="width:12px;height:12px;vertical-align:middle;margin-right:3px"></i>
+        Found an error
+      </button>
+      <button class="preset-btn" onclick="selectPreset(this, 'Great lesson! Just wanted to say thanks')">
+        <i data-lucide="thumbs-up" style="width:12px;height:12px;vertical-align:middle;margin-right:3px"></i>
+        Love this lesson!
+      </button>
+    </div>
+    <textarea class="note-textarea" id="noteText" placeholder="Add any details here... (optional if you selected a preset above)"></textarea>
+    <div class="note-footer">
+      <div class="note-status" id="noteStatus"></div>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn btn-outline" onclick="closeNoteModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="sendNote()" id="sendNoteBtn">Send Note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.openNoteModal = function() {
+  document.getElementById('noteModal').classList.add('open');
+  document.getElementById('noteText').value = '';
+  document.getElementById('noteStatus').textContent = '';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+  if (window.lucide) lucide.createIcons();
+};
+
+window.closeNoteModal = function() {
+  document.getElementById('noteModal').classList.remove('open');
+};
+
+window.selectPreset = function(btn, text) {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const ta = document.getElementById('noteText');
+  if (!ta.value || document.querySelector('.preset-btn.selected + [data-preset]')) {
+    ta.placeholder = text + ' — add any details below...';
+  }
+};
+
+window.sendNote = async function() {
+  const preset = document.querySelector('.preset-btn.selected')?.textContent?.trim() || '';
+  const note = document.getElementById('noteText').value.trim();
+  const message = [preset, note].filter(Boolean).join(' — ');
+  const st = document.getElementById('noteStatus');
+  const btn = document.getElementById('sendNoteBtn');
+
+  if (!message) {
+    st.textContent = 'Please select a preset or add a note.';
+    st.style.color = 'red';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  st.textContent = '';
+
+  try {
+    // Get current lesson info from the page
+    const lessonTitle = document.getElementById('lessonTitle')?.textContent || 'Unknown lesson';
+    const courseTitle = document.getElementById('courseTitle')?.textContent || 'Unknown course';
+    const userEmail = document.getElementById('navUser')?.textContent?.trim() || '';
+
+    // Send via Zapier webhook or direct email
+    const ZAPIER_URL = '__ZAPIER_WEBHOOK_URL__';
+    if (ZAPIER_URL && !ZAPIER_URL.includes('REPLACE')) {
+      await fetch(ZAPIER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'instructor_note',
+          from: userEmail,
+          course: courseTitle,
+          lesson: lessonTitle,
+          message,
+          sent_at: new Date().toISOString()
+        })
+      });
+    }
+
+    st.textContent = '✓ Note sent! We'll follow up by email.';
+    st.style.color = 'var(--accent)';
+    btn.textContent = 'Sent!';
+    setTimeout(closeNoteModal, 1500);
+  } catch(e) {
+    st.textContent = 'Could not send — email us at team@sphynxautomation.com';
+    st.style.color = 'red';
+    btn.disabled = false;
+    btn.textContent = 'Send Note';
+  }
+};
+
+// Close on backdrop click
+document.getElementById('noteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeNoteModal();
+});
+</script>
+
 </body>
 </html>

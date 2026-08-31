@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Courses | Sphynx Automation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +21,21 @@
   .sidebar-nav a .nav-icon { font-size: 1rem; }
 
   .purchases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+  .purchases-list { display: flex; flex-direction: column; gap: .75rem; }
+  .purchases-list .purchase-card { display: grid; grid-template-columns: 80px 1fr auto; align-items: center; gap: 1.25rem; padding: 1rem 1.25rem; }
+  .purchases-list .purchase-img { width: 80px; height: 56px; border-radius: 8px; object-fit: cover; }
+  .purchases-list .purchase-img-placeholder { width: 80px; height: 56px; border-radius: 8px; }
+  .purchases-list .purchase-footer { flex-direction: column; align-items: flex-end; gap: .4rem; }
+  .purchases-toolbar { display: flex; gap: .75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .purchases-search { flex: 1; min-width: 200px; padding: .6rem 1rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .88rem; outline: none; transition: border-color .2s; }
+  .purchases-search:focus { border-color: var(--blue); }
+  .cat-filter { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .78rem; font-weight: 600; padding: .35rem .85rem; border-radius: 100px; cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .cat-filter.active { background: var(--navy); border-color: var(--navy); color: white; }
+  .cat-filter:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+  .view-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .view-btn { background: white; border: none; padding: .45rem .65rem; cursor: pointer; color: var(--muted); transition: all .2s; display: flex; align-items: center; }
+  .view-btn.active { background: var(--navy); color: white; }
+  .view-btn i { width: 16px; height: 16px; }
   .purchase-card { background: white; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: transform .25s, box-shadow .25s; display: flex; flex-direction: column; }
   .purchase-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(11,31,58,.09); }
   .purchase-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--bg); }
@@ -72,6 +88,20 @@
     </div>
 
     <h2 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--navy);margin-bottom:1.25rem;">My Purchases</h2>
+    <!-- TOOLBAR -->
+    <div class="purchases-toolbar" id="purchasesToolbar" style="display:none">
+      <input type="text" class="purchases-search" id="purchaseSearch" placeholder="Search your courses..." oninput="filterPurchases()">
+      <div id="catFilters" style="display:flex;gap:.4rem;flex-wrap:wrap"></div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewGrid" onclick="setView('grid')" title="Grid view">
+          <i data-lucide="grid"></i>
+        </button>
+        <button class="view-btn" id="viewList" onclick="setView('list')" title="List view">
+          <i data-lucide="list"></i>
+        </button>
+      </div>
+    </div>
+
     <div id="purchasesGrid" class="purchases-grid">
       <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-icon"><i data-lucide="loader" style="width:48px;height:48px;opacity:.4"></i></div><h3>Loading your courses...</h3>
@@ -114,7 +144,14 @@ const { data: allProgress } = await supabase
   .select('product_id, lesson_id, completed')
   .eq('user_id', user.id);
 
+allPurchases = purchases || [];
 const grid = document.getElementById('purchasesGrid');
+
+// Show toolbar if there are purchases
+if (purchases?.length) {
+  document.getElementById('purchasesToolbar').style.display = 'flex';
+  buildCatFilters(purchases);
+}
 
 if (!purchases?.length) {
   grid.innerHTML = `
@@ -182,6 +219,61 @@ function categoryEmoji(cat) {
 
 } // end initDashboard
 initDashboard();
+
+// ── VIEW TOGGLE & FILTER ──────────────────────────────────
+let currentView = 'grid';
+let allPurchases = [];
+
+window.setView = function(view) {
+  currentView = view;
+  const grid = document.getElementById('purchasesGrid');
+  grid.className = view === 'grid' ? 'purchases-grid' : 'purchases-list';
+  document.getElementById('viewGrid').classList.toggle('active', view === 'grid');
+  document.getElementById('viewList').classList.toggle('active', view === 'list');
+  filterPurchases();
+};
+
+window.filterPurchases = function() {
+  const q = document.getElementById('purchaseSearch').value.toLowerCase();
+  const activeCat = document.querySelector('.cat-filter.active')?.dataset.cat || 'all';
+  const grid = document.getElementById('purchasesGrid');
+  const cards = grid.querySelectorAll('.purchase-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const name = (card.dataset.name || '').toLowerCase();
+    const cat = card.dataset.cat || '';
+    const matchQ = !q || name.includes(q);
+    const matchCat = activeCat === 'all' || cat === activeCat;
+    card.style.display = matchQ && matchCat ? '' : 'none';
+    if (matchQ && matchCat) visible++;
+  });
+  if (!visible) {
+    if (!document.getElementById('noResults')) {
+      const el = document.createElement('div');
+      el.id = 'noResults';
+      el.style = 'text-align:center;padding:2rem;color:var(--muted);grid-column:1/-1';
+      el.innerHTML = '<p>No courses match your search.</p>';
+      grid.appendChild(el);
+    }
+  } else {
+    document.getElementById('noResults')?.remove();
+  }
+};
+
+function buildCatFilters(purchases) {
+  const cats = ['all', ...new Set(purchases.map(p => p.products?.category).filter(Boolean))];
+  const filtersEl = document.getElementById('catFilters');
+  filtersEl.innerHTML = cats.map(c => `
+    <button class="cat-filter ${c === 'all' ? 'active' : ''}" data-cat="${c}" onclick="setCatFilter(this)">
+      ${c === 'all' ? 'All' : c}
+    </button>`).join('');
+}
+
+window.setCatFilter = function(btn) {
+  document.querySelectorAll('.cat-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterPurchases();
+};
 
 window.signOut = async function() {
   await supabase.auth.signOut();

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Templates & Courses | Sphynx Automation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -213,9 +214,11 @@ function renderProducts(products) {
               ? `<div class="purchased-badge">✓ Purchased <a href="/course.html?id=${p.id}" class="btn btn-outline" style="padding:.4rem .9rem;font-size:.82rem;margin-left:.5rem">Open →</a></div>`
               : `<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
                   <a href="/product.html?id=${p.id}" class="btn btn-outline" style="text-align:center;width:100%;box-sizing:border-box">View Details</a>
-                  ${p.kajabi_url
-                    ? `<a href="${p.kajabi_url}" class="btn btn-primary" target="_blank" style="text-align:center;width:100%;box-sizing:border-box">Buy Now — $${(p.price/100).toFixed(2)}</a>`
-                    : `<button class="btn btn-primary" style="width:100%" onclick="checkout('${p.stripe_price_id}', '${p.id}')">Buy Now — $${(p.price/100).toFixed(2)}</button>`}
+                  ${p.stripe_price_id
+                    ? `<button class="btn btn-primary" style="width:100%" onclick="checkout('${p.stripe_price_id}', '${p.id}')">Buy Now — $${(p.price/100).toFixed(2)}</button>`
+                    : p.kajabi_url
+                      ? `<a href="${p.kajabi_url}" class="btn btn-primary" target="_blank" style="text-align:center;width:100%;box-sizing:border-box">Buy Now — $${(p.price/100).toFixed(2)}</a>`
+                      : `<a href="/contact.html" class="btn btn-primary" style="text-align:center;width:100%;box-sizing:border-box">Get Started</a>`}
                 </div>`}
           </div>
         </div>`;
