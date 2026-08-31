@@ -84,9 +84,78 @@
 
 <input type="hidden" id="discountCodeInput">
 <script>
-// Store filter state and functions — in regular script so filter buttons can access them
+// ── GLOBALS — must be in regular script for onclick to work ──
 const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
 
+window.setStoreFilter = function(group, val, btn) {
+  storeFilters[group] = val;
+  btn.closest('div').querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  window.runStoreFilter();
+};
+
+window.runStoreFilter = function() {
+  const q = (document.getElementById('storeSearch')?.value || '').toLowerCase();
+  const cards = document.querySelectorAll('.product-card');
+  let visible = 0;
+  cards.forEach(function(card) {
+    const search = (card.dataset.search || '').toLowerCase();
+    const matchQ = !q || search.includes(q);
+    const matchCat = storeFilters.cat === 'all' || card.dataset.cat === storeFilters.cat;
+    const matchType = storeFilters.type === 'all' || card.dataset.type === storeFilters.type;
+    const matchImpl = storeFilters.impl === 'all' || card.dataset.impl === storeFilters.impl;
+    const matchStage = storeFilters.stage === 'all' || (card.dataset.stages||'').toLowerCase().includes(storeFilters.stage.toLowerCase());
+    const matchApp = storeFilters.app === 'all' || (card.dataset.apps||'').toLowerCase().includes(storeFilters.app.toLowerCase());
+    const show = matchQ && matchCat && matchType && matchImpl && matchStage && matchApp;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('emptyState')?.remove();
+  if (!visible) {
+    const el = document.createElement('div');
+    el.id = 'emptyState';
+    el.style.cssText = 'text-align:center;padding:4rem;color:var(--muted);grid-column:1/-1';
+    el.innerHTML = '<p>No products match your filters. <button onclick="resetFilters()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit">Clear filters</button></p>';
+    document.getElementById('productsGrid').appendChild(el);
+  }
+};
+
+window.resetFilters = function() {
+  Object.keys(storeFilters).forEach(function(k) { storeFilters[k] = 'all'; });
+  document.querySelectorAll('.filter-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.val === 'all');
+  });
+  var s = document.getElementById('storeSearch');
+  if (s) s.value = '';
+  window.runStoreFilter();
+};
+
+async function checkout(stripePriceId, productId) {
+  if (!currentUser) { window.location.href = '/login.html'; return; }
+  const btn = document.querySelector(`[data-pid="${productId}"]`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
+  try {
+    const code = document.getElementById('discountCodeInput')?.value?.trim() || '';
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId: stripePriceId, productId, userId: currentUser?.id, discountCode: code })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    window.location.href = data.url;
+  } catch(e) {
+    alert('Checkout error: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Buy Now'; }
+  }
+}
+
+window.checkout = checkout;
+
+window.signOut = async function() {
+  await supabase.auth.signOut();
+  window.location.href = '/login.html';
+};
 </script>
 <script type="module">
 import { supabase, getUser, getUserPurchases } from '/lib/supabase.js';
@@ -111,58 +180,8 @@ async function init() {
 
   await loadProducts();
 
-  // Multi-filter state
-const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
+  
 
-window.setStoreFilter = function(group, val, btn) {
-  storeFilters[group] = val;
-  // Update active state for this group
-  const groupBtns = btn.parentElement.querySelectorAll('.filter-btn');
-  groupBtns.forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  runStoreFilter();
-};
-
-window.runStoreFilter = function() {
-  const q = (document.getElementById('storeSearch')?.value || '').toLowerCase();
-  const cards = document.querySelectorAll('.product-card');
-  let visible = 0;
-  cards.forEach(card => {
-    const search = (card.dataset.search || '').toLowerCase();
-    const cat = card.dataset.cat || '';
-    const type = card.dataset.type || '';
-    const impl = card.dataset.impl || '';
-    const stages = (card.dataset.stages || '').toLowerCase();
-    const apps = (card.dataset.apps || '').toLowerCase();
-    const matchQ = !q || search.includes(q);
-    const matchCat = storeFilters.cat === 'all' || cat === storeFilters.cat;
-    const matchType = storeFilters.type === 'all' || type === storeFilters.type;
-    const matchImpl = storeFilters.impl === 'all' || impl === storeFilters.impl;
-    const matchStage = storeFilters.stage === 'all' || stages.includes(storeFilters.stage.toLowerCase());
-    const matchApp = storeFilters.app === 'all' || apps.includes(storeFilters.app.toLowerCase());
-    const show = matchQ && matchCat && matchType && matchImpl && matchStage && matchApp;
-    card.style.display = show ? '' : 'none';
-    if (show) visible++;
-  });
-  // Show/hide empty state
-  document.getElementById('emptyState')?.remove();
-  if (!visible) {
-    const el = document.createElement('div');
-    el.id = 'emptyState';
-    el.style.cssText = 'text-align:center;padding:4rem;color:var(--muted);grid-column:1/-1';
-    el.innerHTML = '<p style="font-size:1rem">No products match your filters. <button onclick="resetFilters()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit">Clear filters</button></p>';
-    document.getElementById('productsGrid').appendChild(el);
-  }
-};
-
-window.resetFilters = function() {
-  Object.keys(storeFilters).forEach(k => storeFilters[k] = 'all');
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.val === 'all');
-  });
-  document.getElementById('storeSearch').value = '';
-  runStoreFilter();
-};
 
   // search handled by storeSearch input oninput
 }
@@ -286,13 +305,6 @@ function renderProducts(products) {
     });
   });
 }
-
-
-
-window.checkout = checkout;
-// alias for inline onclick
-function checkout(a,b){return window.checkout(a,b);}
-window.signOut = signOut;
 
 // Check for successful payment return
 const params = new URLSearchParams(window.location.search);
