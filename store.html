@@ -32,6 +32,14 @@
   .search-wrap { margin-left: auto; }
   .search-wrap input { padding: .4rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 200px; }
   .search-wrap input:focus { border-color: var(--blue); }
+
+  .badge-blue { background: #E0EDFF; color: #1B4FCC; }
+  .badge-purple { background: #EFE3FF; color: #6D28D9; }
+  .badge-green { background: #DDF6E8; color: #0E8A4A; }
+  .badge-orange { background: #FFE9D6; color: #C2540B; }
+  .badge-teal { background: #D9F5F2; color: #0F7A6E; }
+  .badge-pink { background: #FCE3EE; color: #C41D6E; }
+  .badge-default { background: var(--bg); color: var(--muted); }
 </style>
 </head>
 <body>
@@ -239,6 +247,28 @@ async function loadProducts() {
   allProducts = data;
   renderProducts(data);
   await loadCategories();
+}
+
+const CATEGORY_EMOJI_POOL = ['⚡','📄','🎓','✉️','🔗','📝','🛠️','📊','🎯','💡','🧩','📦'];
+const CATEGORY_BADGE_POOL = ['badge-blue','badge-purple','badge-green','badge-orange','badge-teal','badge-pink'];
+
+function categoryHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function categoryEmoji(cat) {
+  if (!cat) return '📦';
+  return CATEGORY_EMOJI_POOL[categoryHash(cat) % CATEGORY_EMOJI_POOL.length];
+}
+
+function categoryBadge(cat) {
+  if (!cat) return 'badge-default';
+  return CATEGORY_BADGE_POOL[categoryHash(cat) % CATEGORY_BADGE_POOL.length];
 }
 
 function renderProducts(products) {
