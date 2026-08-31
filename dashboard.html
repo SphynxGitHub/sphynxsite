@@ -90,9 +90,9 @@
     <h2 style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--navy);margin-bottom:1.25rem;">My Purchases</h2>
     <!-- TOOLBAR -->
     <div class="purchases-toolbar" id="purchasesToolbar" style="display:none">
-      <input type="text" class="purchases-search" id="purchaseSearch" placeholder="Search your courses..." oninput="filterPurchases()">
-      <div id="catFilters" style="display:flex;gap:.4rem;flex-wrap:wrap"></div>
-      <div class="view-toggle">
+      <div style="display:flex;gap:.75rem;align-items:center;width:100%">
+        <input type="text" class="purchases-search" id="purchaseSearch" placeholder="Search your courses..." oninput="filterPurchases()">
+        <div class="view-toggle">
         <button class="view-btn active" id="viewGrid" onclick="setView('grid')" title="Grid view">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           Grid
@@ -101,7 +101,9 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           List
         </button>
+        </div>
       </div>
+      <div id="catFilters" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem"></div>
     </div>
 
     <div id="purchasesGrid" class="purchases-grid">
@@ -236,29 +238,27 @@ window.setView = function(view) {
 };
 
 window.filterPurchases = function() {
-  const q = document.getElementById('purchaseSearch').value.toLowerCase();
+  const q = (document.getElementById('purchaseSearch')?.value || '').toLowerCase();
   const activeCat = document.querySelector('.cat-filter.active')?.dataset.cat || 'all';
   const grid = document.getElementById('purchasesGrid');
   const cards = grid.querySelectorAll('.purchase-card');
   let visible = 0;
   cards.forEach(card => {
-    const name = (card.dataset.name || '').toLowerCase();
+    const name = (card.dataset.name || card.querySelector('.purchase-title')?.textContent || '').toLowerCase();
     const cat = card.dataset.cat || '';
     const matchQ = !q || name.includes(q);
     const matchCat = activeCat === 'all' || cat === activeCat;
     card.style.display = matchQ && matchCat ? '' : 'none';
     if (matchQ && matchCat) visible++;
   });
-  if (!visible) {
-    if (!document.getElementById('noResults')) {
-      const el = document.createElement('div');
-      el.id = 'noResults';
-      el.style = 'text-align:center;padding:2rem;color:var(--muted);grid-column:1/-1';
-      el.innerHTML = '<p>No courses match your search.</p>';
-      grid.appendChild(el);
-    }
-  } else {
-    document.getElementById('noResults')?.remove();
+  document.getElementById('noResults')?.remove();
+  if (!visible && (q || activeCat !== 'all')) {
+    const el = document.createElement('div');
+    el.id = 'noResults';
+    el.className = 'empty-state';
+    el.style.cssText = 'text-align:center;padding:2rem;color:var(--muted);grid-column:1/-1';
+    el.innerHTML = '<p>No courses match your search.</p>';
+    grid.appendChild(el);
   }
 };
 
