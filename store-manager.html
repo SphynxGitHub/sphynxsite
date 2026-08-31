@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Store Manager | Sphynx</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,6 +118,7 @@
     <button class="tab-btn" onclick="switchTab('lessons')">Shared Lessons</button>
     <button class="tab-btn" onclick="switchTab('customers')">Customers</button>
     <button class="tab-btn" onclick="switchTab('categories')">Categories</button>
+    <button class="tab-btn" onclick="switchTab('apps')">Apps</button>
     <button class="tab-btn" onclick="switchTab('discounts')">Discount Codes</button>
     <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
     <button class="tab-btn" onclick="switchTab('preview')">Preview</button>
@@ -125,6 +127,30 @@
   <!-- PRODUCTS TAB -->
   <div id="tab-products">
     <div id="alertBanner" style="margin-bottom:1rem"></div>
+    <!-- SEARCH & FILTERS -->
+    <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem">
+      <div style="display:flex;gap:.75rem;align-items:center">
+        <input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()"
+          style="flex:1;padding:.6rem 1rem;border:1.5px solid rgba(255,255,255,.15);border-radius:100px;background:rgba(255,255,255,.06);color:white;font-family:'Outfit',sans-serif;font-size:.88rem;outline:none">
+        <select id="filterType" onchange="filterProducts()"
+          style="padding:.55rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:white;font-family:'Outfit',sans-serif;font-size:.82rem;outline:none">
+          <option value="">All types</option>
+          <option value="Template">Template</option>
+          <option value="Course">Course</option>
+          <option value="Package">Package</option>
+        </select>
+        <select id="filterImpl" onchange="filterProducts()"
+          style="padding:.55rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:white;font-family:'Outfit',sans-serif;font-size:.82rem;outline:none">
+          <option value="">All implementations</option>
+          <option value="DIY">DIY</option>
+          <option value="QuickStart">QuickStart</option>
+          <option value="White Glove">White Glove</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap" id="managerCatFilters">
+        <button class="action-btn active" data-cat="all" onclick="setManagerCat(this)" style="background:rgba(255,255,255,.15);color:white">All</button>
+      </div>
+    </div>
     <div class="table-wrap">
       <table class="products-table">
         <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Lessons</th><th>Stripe</th><th>Active</th><th>Actions</th></tr></thead>
@@ -157,6 +183,20 @@
       <table class="products-table">
         <thead><tr><th>Email</th><th>Name</th><th>Products</th><th>Joined</th><th>Actions</th></tr></thead>
         <tbody id="customersTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- APPS TAB -->
+  <div id="tab-apps" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">Manage the apps list used for product filtering.</p>
+      <button class="btn btn-primary" onclick="openAppModal()">+ New App</button>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Sort Order</th><th>Actions</th></tr></thead>
+        <tbody id="appsTableBody"><tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -255,6 +295,49 @@
       <div class="form-group">
         <label>Product Image URL</label>
         <input type="url" id="fImage" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Type</label>
+          <select id="fProductType">
+            <option value="">— Select —</option>
+            <option value="Template">Template</option>
+            <option value="Course">Course</option>
+            <option value="Package">Package</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Implementation Type</label>
+          <select id="fImplType">
+            <option value="">— Select —</option>
+            <option value="DIY">DIY</option>
+            <option value="QuickStart">QuickStart</option>
+            <option value="White Glove">White Glove</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Lifecycle Stages</label>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.35rem" id="fLifecycleStages">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.7);cursor:pointer"><input type="checkbox" value="Lead" style="accent-color:var(--accent)"> Lead</label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.7);cursor:pointer"><input type="checkbox" value="Onboarding" style="accent-color:var(--accent)"> Onboarding</label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.7);cursor:pointer"><input type="checkbox" value="Ongoing Client" style="accent-color:var(--accent)"> Ongoing Client</label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:rgba(255,255,255,.7);cursor:pointer"><input type="checkbox" value="Business Management" style="accent-color:var(--accent)"> Business Management</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Apps Used</label>
+        <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem;max-height:120px;overflow-y:auto" id="fAppsUsed"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Video Length (minutes) <span style="color:rgba(255,255,255,.3);font-weight:400">total across all lessons</span></label>
+          <input type="number" id="fVideoMinutes" placeholder="0" min="0" step="0.5" oninput="autoCalcTime()">
+        </div>
+        <div class="form-group">
+          <label>Time Estimate (minutes) <span style="color:rgba(255,255,255,.3);font-weight:400">auto-calculated</span></label>
+          <input type="number" id="fTimeEstimate" placeholder="Auto" min="0">
+        </div>
       </div>
       <div class="form-group">
         <label>Kajabi Checkout URL <span style="color:rgba(255,255,255,.3);font-weight:400">(optional — if linking to Kajabi instead of Stripe)</span></label>
@@ -461,12 +544,15 @@ let products=[], sharedLessons=[], editingLessons=[], discountProductFilter=[];
 async function initManager() {
   await Promise.all([loadProducts(), loadSharedLessons(), loadCustomers(), loadDiscounts(), loadAnalytics()]);
   await loadCategories();
+  await loadApps();
+  buildManagerCatFilters();
+  addRowDataAttrs();
   if (window.lucide) lucide.createIcons();
 }
 
 // ── TABS ──────────────────────────────────────────────────────
 window.switchTab = function(tab) {
-  ['products','lessons','customers','categories','discounts','analytics','preview'].forEach(t => {
+  ['products','lessons','customers','categories','apps','discounts','analytics','preview'].forEach(t => {
     const el = document.getElementById('tab-'+t);
     if (el) el.style.display = t===tab?'block':'none';
   });
@@ -556,6 +642,17 @@ window.editProduct = async function(id) {
   document.getElementById('fKajabiUrl').value=p.kajabi_url||'';
   document.getElementById('fStripeProductId').value=p.stripe_product_id||'';
   document.getElementById('fStripePriceId').value=p.stripe_price_id||'';
+  document.getElementById('fProductType').value=p.product_type||'';
+  document.getElementById('fImplType').value=p.implementation_type||'';
+  document.getElementById('fVideoMinutes').value=p.video_minutes||'';
+  document.getElementById('fTimeEstimate').value=p.time_estimate_minutes||'';
+  // Set lifecycle checkboxes
+  document.querySelectorAll('#fLifecycleStages input').forEach(cb=>{
+    cb.checked=(p.lifecycle_stages||[]).includes(cb.value);
+  });
+  // Set apps checkboxes
+  window._currentProductApps = p.apps || [];
+  renderAppsCheckboxes();
   document.getElementById('productModalTitle').textContent='Edit Product';
   renderLessonsForm();
   document.getElementById('productModal').classList.add('open');
@@ -622,7 +719,7 @@ window.saveProduct = async function() {
       const stripeData=await stripeRes.json();
       if (!stripeData.error) { stripeProductId=stripeData.stripeProductId; stripePriceId=stripeData.stripePriceId; }
     }
-    const payload={name,category,description,price,image_url,kajabi_url,sort_order,
+    const payload={name,category,description,price,image_url,kajabi_url,sort_order,product_type,implementation_type,lifecycle_stages,apps:apps_used,video_minutes,time_estimate_minutes,
       stripe_product_id:stripeProductId,stripe_price_id:stripePriceId,
       lesson_count:editingLessons.length,active:true};
     let savedId=productId;
@@ -981,6 +1078,171 @@ async function loadAnalytics() {
     .join('');
 }
 
+// ── SEARCH & FILTER ──────────────────────────────────────────
+let managerActiveCat = 'all';
+
+window.filterProducts = function() {
+  const q = (document.getElementById('productSearch')?.value || '').toLowerCase();
+  const type = document.getElementById('filterType')?.value || '';
+  const impl = document.getElementById('filterImpl')?.value || '';
+  const rows = document.querySelectorAll('#productsTableBody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const cat = row.dataset.cat || '';
+    const ptype = row.dataset.type || '';
+    const pimpl = row.dataset.impl || '';
+    const matchQ = !q || text.includes(q);
+    const matchCat = managerActiveCat === 'all' || cat === managerActiveCat;
+    const matchType = !type || ptype === type;
+    const matchImpl = !impl || pimpl === impl;
+    row.style.display = matchQ && matchCat && matchType && matchImpl ? '' : 'none';
+  });
+};
+
+window.setManagerCat = function(btn) {
+  document.querySelectorAll('#managerCatFilters .action-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = 'rgba(255,255,255,.07)';
+    b.style.color = 'rgba(255,255,255,.6)';
+  });
+  btn.classList.add('active');
+  btn.style.background = 'rgba(255,255,255,.15)';
+  btn.style.color = 'white';
+  managerActiveCat = btn.dataset.cat;
+  filterProducts();
+};
+
+function buildManagerCatFilters() {
+  const cats = [...new Set(products.map(p => p.category).filter(Boolean))].sort();
+  const el = document.getElementById('managerCatFilters');
+  el.innerHTML = `<button class="action-btn active" data-cat="all" onclick="setManagerCat(this)" style="background:rgba(255,255,255,.15);color:white">All</button>` +
+    cats.map(c => `<button class="action-btn" data-cat="${c}" onclick="setManagerCat(this)">${c}</button>`).join('');
+};
+
+// Add data attributes to table rows for filtering
+function addRowDataAttrs() {
+  document.querySelectorAll('#productsTableBody tr').forEach((row, i) => {
+    const p = products[i];
+    if (p) {
+      row.dataset.cat = p.category || '';
+      row.dataset.type = p.product_type || '';
+      row.dataset.impl = p.implementation_type || '';
+    }
+  });
+}
+
+// ── TIME ESTIMATE AUTO-CALC ──────────────────────────────────
+window.autoCalcTime = function() {
+  const videoMins = parseFloat(document.getElementById('fVideoMinutes')?.value || '0');
+  const priceVal = parseFloat(document.getElementById('fPrice')?.value || '0');
+  const ptype = document.getElementById('fProductType')?.value || '';
+  const implType = document.getElementById('fImplType')?.value || '';
+  let estimate = 0;
+  if (videoMins > 0) {
+    estimate = Math.round(videoMins * 2.5);
+  } else if (ptype === 'Template' || implType === 'DIY' || implType === 'QuickStart') {
+    // price / 300 * 4 hours = price / 300 * 240 minutes
+    estimate = Math.round((priceVal / 300) * 240);
+  }
+  if (estimate > 0) document.getElementById('fTimeEstimate').value = estimate;
+};
+
+function formatTime(mins) {
+  if (!mins) return null;
+  if (mins < 60) return `${mins} min`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h} hour${h !== 1 ? 's' : ''}`;
+}
+
+// ── APPS ──────────────────────────────────────────────────────
+let apps = [];
+
+async function loadApps() {
+  const { data } = await supabase.from('apps').select('*').order('category').order('sort_order').order('name');
+  apps = data || [];
+  renderAppsTable();
+  renderAppsCheckboxes();
+}
+
+function renderAppsTable() {
+  const tbody = document.getElementById('appsTableBody');
+  if (!apps.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No apps yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = apps.map(a => `
+    <tr>
+      <td style="color:white;font-weight:600">${a.name}</td>
+      <td><span class="section-chip">${a.category || '—'}</span></td>
+      <td style="color:rgba(255,255,255,.4)">${a.sort_order || 0}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="editApp('${a.id}')">Edit</button>
+          <button class="action-btn danger" onclick="deleteApp('${a.id}','${a.name}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function renderAppsCheckboxes() {
+  const el = document.getElementById('fAppsUsed');
+  if (!el) return;
+  const currentApps = window._currentProductApps || [];
+  el.innerHTML = apps.map(a => `
+    <label style="display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:rgba(255,255,255,.7);cursor:pointer;background:rgba(255,255,255,.05);padding:.25rem .6rem;border-radius:6px;white-space:nowrap">
+      <input type="checkbox" value="${a.name}" ${currentApps.includes(a.name) ? 'checked' : ''} style="accent-color:var(--accent)">
+      ${a.name}
+    </label>`).join('');
+}
+
+window.openAppModal = function() {
+  document.getElementById('editAppId').value = '';
+  document.getElementById('aName').value = '';
+  document.getElementById('aCategory').value = 'Other';
+  document.getElementById('aSort').value = '';
+  document.getElementById('appStatus').textContent = '';
+  document.getElementById('appModalTitle').textContent = 'New App';
+  document.getElementById('appModal').classList.add('open');
+};
+
+window.closeAppModal = function() { document.getElementById('appModal').classList.remove('open'); };
+
+window.editApp = function(id) {
+  const a = apps.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('editAppId').value = a.id;
+  document.getElementById('aName').value = a.name;
+  document.getElementById('aCategory').value = a.category || 'Other';
+  document.getElementById('aSort').value = a.sort_order || 0;
+  document.getElementById('appModalTitle').textContent = 'Edit App';
+  document.getElementById('appModal').classList.add('open');
+};
+
+window.saveApp = async function() {
+  const id = document.getElementById('editAppId').value;
+  const name = document.getElementById('aName').value.trim();
+  const category = document.getElementById('aCategory').value;
+  const sort_order = parseInt(document.getElementById('aSort').value) || 0;
+  const st = document.getElementById('appStatus');
+  if (!name) { st.innerHTML = '<span style="color:#fca5a5">Name required.</span>'; return; }
+  const payload = { name, category, sort_order };
+  const { error } = id
+    ? await supabase.from('apps').update(payload).eq('id', id)
+    : await supabase.from('apps').insert(payload);
+  if (error) { st.innerHTML = `<span style="color:#fca5a5">${error.message}</span>`; return; }
+  closeAppModal();
+  await loadApps();
+  showAlert('success', `✓ App "${name}" saved.`);
+};
+
+window.deleteApp = async function(id, name) {
+  if (!confirm(`Delete "${name}"?`)) return;
+  await supabase.from('apps').delete().eq('id', id);
+  await loadApps();
+  showAlert('success', `App "${name}" deleted.`);
+};
+
 // ── CATEGORIES ───────────────────────────────────────────────
 let categories = [];
 
@@ -1124,6 +1386,53 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
+
+<!-- APP MODAL -->
+<div class="modal-overlay" id="appModal">
+  <div class="modal" style="max-width:420px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1)">
+    <div class="modal-header">
+      <h2 style="color:white" id="appModalTitle">New App</h2>
+      <button class="modal-close" onclick="closeAppModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <input type="hidden" id="editAppId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>App Name</label>
+          <input type="text" id="aName" placeholder="e.g. Wealthbox">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="aCategory">
+            <option value="Automation">Automation</option>
+            <option value="CRM">CRM</option>
+            <option value="Forms">Forms</option>
+            <option value="Email">Email</option>
+            <option value="Scheduling">Scheduling</option>
+            <option value="Billing">Billing</option>
+            <option value="Planning">Planning</option>
+            <option value="Portfolio">Portfolio</option>
+            <option value="Custodian">Custodian</option>
+            <option value="Productivity">Productivity</option>
+            <option value="Workflow">Workflow</option>
+            <option value="Communication">Communication</option>
+            <option value="Video">Video</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Sort Order</label>
+        <input type="number" id="aSort" placeholder="0" min="0">
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeAppModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveApp()">Save App</button>
+      </div>
+      <div id="appStatus" style="margin-top:.75rem;font-size:.83rem"></div>
+    </div>
+  </div>
+</div>
 
 <!-- CATEGORY MODAL -->
 <div class="modal-overlay" id="categoryModal">

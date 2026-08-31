@@ -252,3 +252,33 @@ create policy "Public can view active products" on products
 drop policy if exists "Anyone can view lessons" on lessons;
 create policy "Anyone can view lessons" on lessons
   for select using (true);
+
+-- ============================================================
+-- CATEGORIES TABLE
+-- ============================================================
+create table if not exists categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  slug text,
+  description text,
+  icon text,
+  sort_order integer default 0,
+  created_at timestamptz default now()
+);
+
+alter table categories enable row level security;
+
+drop policy if exists "Public can view categories" on categories;
+create policy "Public can view categories" on categories for select using (true);
+
+drop policy if exists "Service role full access categories" on categories;
+create policy "Service role full access categories" on categories for all using (true) with check (true);
+
+-- Seed categories from existing product data
+insert into categories (name, slug) values
+  ('JotForm', 'jotform'),
+  ('Integration', 'integration'),
+  ('Email Campaign', 'email-campaign'),
+  ('Zapier', 'zapier'),
+  ('Training', 'training')
+on conflict (name) do nothing;

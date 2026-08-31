@@ -91,8 +91,10 @@
     </div>
     <div>
       <div class="buy-box" id="buyBox">
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem" id="heroBadges"></div>
         <div class="bb-price" id="bbPrice"></div>
         <div class="bb-sub" id="bbSub">One-time purchase · Lifetime access</div>
+        <div id="bbTimeEstimate" style="display:none;align-items:center;gap:.4rem;font-size:.82rem;color:var(--muted);margin-bottom:.75rem"></div>
         <ul class="bb-includes" id="bbIncludes"></ul>
         <div class="discount-row">
           <input type="text" id="discountInput" placeholder="Discount code">
@@ -113,10 +115,15 @@
     <h2>What's included</h2>
     <div class="feature-grid" id="featureGrid"></div>
 
-    <!-- TOOLS -->
-    <div id="toolsSection" style="display:none">
-      <h2>Tools you'll need</h2>
-      <div class="tools-row" id="toolsRow"></div>
+    <!-- APPS USED -->
+    <div id="appsSection" style="display:none;margin-bottom:2.5rem">
+      <h2>Apps used</h2>
+      <div class="tools-row" id="appsRow"></div>
+    </div>
+    <!-- LIFECYCLE STAGE -->
+    <div id="stagesSection" style="display:none;margin-bottom:2.5rem">
+      <h2>Who this is for</h2>
+      <div class="tools-row" id="stagesRow"></div>
     </div>
   </div>
 
@@ -216,6 +223,26 @@ function renderProduct(p, lessons, owned) {
   // Price
   const price = p.price ? '$' + (p.price / 100).toFixed(2) : 'Free';
   document.getElementById('bbPrice').textContent = price;
+
+  // Time estimate
+  if (p.time_estimate_minutes) {
+    const mins = p.time_estimate_minutes;
+    const label = p.product_type === 'Course' ? 'Time to complete' : 'Time to implement';
+    const timeStr = mins < 60 ? `${mins} min` : `${Math.round(mins/60*10)/10} hours`;
+    const timeEl = document.getElementById('bbTimeEstimate');
+    if (timeEl) {
+      timeEl.style.display = 'flex';
+      timeEl.innerHTML = `<i data-lucide="clock" style="width:14px;height:14px;color:var(--accent)"></i><span>${label}: <strong>${timeStr}</strong></span>`;
+    }
+  }
+
+  // Lifecycle + app badges
+  const badges = [];
+  if (p.implementation_type) badges.push(`<span style="background:var(--blue-light);color:var(--blue);font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:100px">${p.implementation_type}</span>`);
+  if (p.product_type) badges.push(`<span style="background:var(--bg);border:1px solid var(--border);color:var(--muted);font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:100px">${p.product_type}</span>`);
+  const badgeEl = document.getElementById('heroBadges');
+  if (badgeEl && badges.length) badgeEl.innerHTML = badges.join('');
+
   document.getElementById('bottomCtaTitle').textContent = `Ready to get started with ${p.name}?`;
   document.getElementById('bottomCtaDesc').textContent = p.description || '';
 
@@ -245,6 +272,20 @@ function renderProduct(p, lessons, owned) {
       <h3>${f.title}</h3>
       <p>${f.desc}</p>
     </div>`).join('');
+
+  // Apps used
+  if (p.apps?.length) {
+    document.getElementById('appsSection').style.display = 'block';
+    document.getElementById('appsRow').innerHTML = p.apps.map(a =>
+      `<span class="tool-chip">${a}</span>`).join('');
+  }
+
+  // Lifecycle stages
+  if (p.lifecycle_stages?.length) {
+    document.getElementById('stagesSection').style.display = 'block';
+    document.getElementById('stagesRow').innerHTML = p.lifecycle_stages.map(s =>
+      `<span class="tool-chip" style="background:var(--accent-light);color:#0a6b5c;border-color:rgba(0,194,168,.2)">${s}</span>`).join('');
+  }
 
   // Lessons
   if (lessons.length) {

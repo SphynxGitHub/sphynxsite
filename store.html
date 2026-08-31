@@ -106,31 +106,80 @@ async function init() {
 
   await loadProducts();
 
-  // filter buttons set up dynamically after category load
+  // Multi-filter state
+const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
+
+window.setStoreFilter = function(group, val, btn) {
+  storeFilters[group] = val;
+  // Update active state for this group
+  const groupBtns = btn.parentElement.querySelectorAll('.filter-btn');
+  groupBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  runStoreFilter();
+};
+
+window.runStoreFilter = function() {
+  const q = (document.getElementById('storeSearch')?.value || '').toLowerCase();
+  const cards = document.querySelectorAll('.product-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const search = (card.dataset.search || '').toLowerCase();
+    const cat = card.dataset.cat || '';
+    const type = card.dataset.type || '';
+    const impl = card.dataset.impl || '';
+    const stages = (card.dataset.stages || '').toLowerCase();
+    const apps = (card.dataset.apps || '').toLowerCase();
+    const matchQ = !q || search.includes(q);
+    const matchCat = storeFilters.cat === 'all' || cat === storeFilters.cat;
+    const matchType = storeFilters.type === 'all' || type === storeFilters.type;
+    const matchImpl = storeFilters.impl === 'all' || impl === storeFilters.impl;
+    const matchStage = storeFilters.stage === 'all' || stages.includes(storeFilters.stage.toLowerCase());
+    const matchApp = storeFilters.app === 'all' || apps.includes(storeFilters.app.toLowerCase());
+    const show = matchQ && matchCat && matchType && matchImpl && matchStage && matchApp;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  // Show/hide empty state
+  document.getElementById('emptyState')?.remove();
+  if (!visible) {
+    const el = document.createElement('div');
+    el.id = 'emptyState';
+    el.style.cssText = 'text-align:center;padding:4rem;color:var(--muted);grid-column:1/-1';
+    el.innerHTML = '<p style="font-size:1rem">No products match your filters. <button onclick="resetFilters()" style="background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit">Clear filters</button></p>';
+    document.getElementById('productsGrid').appendChild(el);
+  }
+};
+
+window.resetFilters = function() {
+  Object.keys(storeFilters).forEach(k => storeFilters[k] = 'all');
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === 'all');
+  });
+  document.getElementById('storeSearch').value = '';
+  runStoreFilter();
+};
 
   document.getElementById('searchInput').addEventListener('input', filterProducts);
 }
 
 async function loadCategories() {
-  const { data, error } = await supabase.from('categories').select('*').order('sort_order').order('name');
-  const filterInner = document.getElementById('filterInner');
-  if (error || !data?.length) {
-    // Fallback: build from product categories
-    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
-    filterInner.innerHTML = '<button class="filter-btn active" data-cat="all">All</button>' +
-      cats.map(c => `<button class="filter-btn" data-cat="${c}">${c}</button>`).join('');
-  } else {
-    filterInner.innerHTML = '<button class="filter-btn active" data-cat="all">All</button>' +
-      data.map(c => `<button class="filter-btn" data-cat="${c.name}">${c.name}</button>`).join('');
+  // Load categories for cat filter
+  const { data: catData } = await supabase.from('categories').select('*').order('sort_order').order('name');
+  const filterCat = document.getElementById('filterCat');
+  if (filterCat) {
+    const cats = catData?.length
+      ? catData.map(c => c.name)
+      : [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+    filterCat.innerHTML = '<button class="filter-btn active" data-val="all" onclick="setStoreFilter('cat','all',this)">All</button>' +
+      cats.map(c => `<button class="filter-btn" data-val="${c}" onclick="setStoreFilter('cat','${c}',this)">${c}</button>`).join('');
   }
-  // Re-attach filter listeners
-  filterInner.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterInner.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filterProducts();
-    });
-  });
+  // Load apps for app filter
+  const { data: appsData } = await supabase.from('apps').select('name').order('sort_order').order('name');
+  const filterApps = document.getElementById('filterApps');
+  if (filterApps && appsData?.length) {
+    filterApps.innerHTML = '<button class="filter-btn active" data-val="all" onclick="setStoreFilter('app','all',this)">All</button>' +
+      appsData.map(a => `<button class="filter-btn" data-val="${a.name}" onclick="setStoreFilter('app','${a.name}',this)">${a.name}</button>`).join('');
+  }
 }
 
 async function loadProducts() {
@@ -198,6 +247,12 @@ function renderProducts(products) {
 
       const card = document.createElement('div');
       card.className = 'product-card';
+      card.dataset.search = [p.name, p.category, p.description, ...(p.apps||[])].filter(Boolean).join(' ').toLowerCase();
+      card.dataset.cat = p.category || '';
+      card.dataset.type = p.product_type || '';
+      card.dataset.impl = p.implementation_type || '';
+      card.dataset.stages = (p.lifecycle_stages || []).join(',').toLowerCase();
+      card.dataset.apps = (p.apps || []).join(',').toLowerCase();
       card.dataset.cat = p.category;
       card.dataset.name = p.name.toLowerCase();
       card.innerHTML = `
