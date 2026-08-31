@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're All Set | Sphynx Automation</title>
+<meta name="robots" content="noindex">
+<style>
+  .thanks-wrap { max-width: 720px; margin: 0 auto; padding: 5rem 2rem 6rem; text-align: center; }
+  .thanks-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+  .thanks-wrap h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.9rem,3.5vw,2.6rem); color: var(--navy); margin-bottom: 1rem; }
+  .thanks-wrap > p { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 520px; margin: 0 auto 2.5rem; }
+  .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; text-align: left; margin-bottom: 2.5rem; }
+  .book-coach-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
+  .book-coach-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
+  .book-coach-card .book-btn-row { display: flex; gap: .6rem; }
+  .book-coach-card .book-btn-row a { flex: 1; text-align: center; }
+  @media(max-width:640px){ .book-grid { grid-template-columns: 1fr; } }
+</style>
+<script src="/includes.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="thanks-wrap">
+  <div class="thanks-icon"><i data-lucide="check-circle" style="width:32px;height:32px;color:var(--accent)"></i></div>
+  <h1>You're all set!</h1>
+  <p>Your prepaid coaching hours are confirmed. A receipt and this same booking info are on their way to your email — use the links below to grab a time with either coach.</p>
+
+  <div class="book-grid">
+    <div class="book-coach-card">
+      <h3>Book with Arielle</h3>
+      <div class="book-btn-row">
+        <a href="https://calendly.com/sphynx/coaching-call?duration=30" class="btn-outline" target="_blank">30 min</a>
+        <a href="https://calendly.com/sphynx/coaching-call?duration=60" class="btn-outline" target="_blank">60 min</a>
+      </div>
+    </div>
+    <div class="book-coach-card">
+      <h3>Book with Chad</h3>
+      <div class="book-btn-row">
+        <a href="https://calendly.com/chad-sphynxautomation/coaching-call?duration=30" class="btn-outline" target="_blank">30 min</a>
+        <a href="https://calendly.com/chad-sphynxautomation/coaching-call?duration=60" class="btn-outline" target="_blank">60 min</a>
+      </div>
+    </div>
+  </div>
+
+  <a href="coaching.html" class="btn-white" style="color:var(--navy);border:1px solid var(--border)">Back to Coaching Page</a>
+</div>
+
+<div id="site-footer"></div>
+</body></html>
