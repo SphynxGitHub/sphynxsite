@@ -244,9 +244,9 @@ window.filterPurchases = function() {
   const cards = grid.querySelectorAll('.purchase-card');
   let visible = 0;
   cards.forEach(card => {
-    const name = (card.dataset.name || card.querySelector('.purchase-title')?.textContent || '').toLowerCase();
+    const searchable = card.dataset.search || card.dataset.name || '';
     const cat = card.dataset.cat || '';
-    const matchQ = !q || name.includes(q);
+    const matchQ = !q || searchable.includes(q);
     const matchCat = activeCat === 'all' || cat === activeCat;
     card.style.display = matchQ && matchCat ? '' : 'none';
     if (matchQ && matchCat) visible++;
