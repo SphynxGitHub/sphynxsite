@@ -83,6 +83,86 @@
   </main>
 </div>
 
+<script>
+window.openNoteModal = function() {
+  const modal = document.getElementById('noteModal');
+  modal.classList.add('open');
+  // Close on backdrop click
+  modal.onclick = function(e) { if (e.target === modal) closeNoteModal(); };
+  document.getElementById('noteText').value = '';
+  document.getElementById('noteStatus').textContent = '';
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+  if (window.lucide) lucide.createIcons();
+};
+
+window.closeNoteModal = function() {
+  document.getElementById('noteModal').classList.remove('open');
+};
+
+window.selectPreset = function(btn, text) {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const ta = document.getElementById('noteText');
+  if (!ta.value || document.querySelector('.preset-btn.selected + [data-preset]')) {
+    ta.placeholder = text + ' — add any details below...';
+  }
+};
+
+window.sendNote = async function() {
+  const preset = document.querySelector('.preset-btn.selected')?.textContent?.trim() || '';
+  const note = document.getElementById('noteText').value.trim();
+  const message = [preset, note].filter(Boolean).join(' — ');
+  const st = document.getElementById('noteStatus');
+  const btn = document.getElementById('sendNoteBtn');
+
+  if (!message) {
+    st.textContent = 'Please select a preset or add a note.';
+    st.style.color = 'red';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  st.textContent = '';
+
+  try {
+    // Get current lesson info from the page
+    const lessonTitle = document.getElementById('lessonTitle')?.textContent || 'Unknown lesson';
+    const courseTitle = document.getElementById('courseTitle')?.textContent || 'Unknown course';
+    const userEmail = document.getElementById('navUser')?.textContent?.trim() || '';
+
+    // Send via Zapier webhook or direct email
+    const ZAPIER_URL = '__ZAPIER_WEBHOOK_URL__';
+    if (ZAPIER_URL && !ZAPIER_URL.includes('REPLACE')) {
+      await fetch(ZAPIER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'instructor_note',
+          from: userEmail,
+          course: courseTitle,
+          lesson: lessonTitle,
+          message,
+          sent_at: new Date().toISOString()
+        })
+      });
+    }
+
+    st.textContent = "✓ Note sent! We'll follow up by email.";
+    st.style.color = 'var(--accent)';
+    btn.textContent = 'Sent!';
+    setTimeout(closeNoteModal, 1500);
+  } catch(e) {
+    st.textContent = 'Could not send — email us at team@sphynxautomation.com';
+    st.style.color = 'red';
+    btn.disabled = false;
+    btn.textContent = 'Send Note';
+  }
+};
+
+// Backdrop click handled inside openNoteModal
+</script>
+
 <script type="module">
 import { supabase, getUser, getProgress, toggleLesson } from '/lib/supabase.js';
 
@@ -310,85 +390,7 @@ if (lessons.length) {
   </div>
 </div>
 
-<script>
-window.openNoteModal = function() {
-  document.getElementById('noteModal').classList.add('open');
-  document.getElementById('noteText').value = '';
-  document.getElementById('noteStatus').textContent = '';
-  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
-  if (window.lucide) lucide.createIcons();
-};
 
-window.closeNoteModal = function() {
-  document.getElementById('noteModal').classList.remove('open');
-};
-
-window.selectPreset = function(btn, text) {
-  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  const ta = document.getElementById('noteText');
-  if (!ta.value || document.querySelector('.preset-btn.selected + [data-preset]')) {
-    ta.placeholder = text + ' — add any details below...';
-  }
-};
-
-window.sendNote = async function() {
-  const preset = document.querySelector('.preset-btn.selected')?.textContent?.trim() || '';
-  const note = document.getElementById('noteText').value.trim();
-  const message = [preset, note].filter(Boolean).join(' — ');
-  const st = document.getElementById('noteStatus');
-  const btn = document.getElementById('sendNoteBtn');
-
-  if (!message) {
-    st.textContent = 'Please select a preset or add a note.';
-    st.style.color = 'red';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  st.textContent = '';
-
-  try {
-    // Get current lesson info from the page
-    const lessonTitle = document.getElementById('lessonTitle')?.textContent || 'Unknown lesson';
-    const courseTitle = document.getElementById('courseTitle')?.textContent || 'Unknown course';
-    const userEmail = document.getElementById('navUser')?.textContent?.trim() || '';
-
-    // Send via Zapier webhook or direct email
-    const ZAPIER_URL = '__ZAPIER_WEBHOOK_URL__';
-    if (ZAPIER_URL && !ZAPIER_URL.includes('REPLACE')) {
-      await fetch(ZAPIER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'instructor_note',
-          from: userEmail,
-          course: courseTitle,
-          lesson: lessonTitle,
-          message,
-          sent_at: new Date().toISOString()
-        })
-      });
-    }
-
-    st.textContent = '✓ Note sent! We'll follow up by email.';
-    st.style.color = 'var(--accent)';
-    btn.textContent = 'Sent!';
-    setTimeout(closeNoteModal, 1500);
-  } catch(e) {
-    st.textContent = 'Could not send — email us at team@sphynxautomation.com';
-    st.style.color = 'red';
-    btn.disabled = false;
-    btn.textContent = 'Send Note';
-  }
-};
-
-// Close on backdrop click
-document.getElementById('noteModal').addEventListener('click', function(e) {
-  if (e.target === this) closeNoteModal();
-});
-</script>
 
 </body>
 </html>
