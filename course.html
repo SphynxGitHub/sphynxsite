@@ -152,9 +152,29 @@ function renderLesson(idx) {
     </div>`;
 
   if (lesson.video_url) {
-    const embedUrl = lesson.video_url.replace('watch?v=', 'embed/').replace('vimeo.com/', 'player.vimeo.com/video/');
-    html += `<div class="video-wrap"><iframe src="${embedUrl}" allowfullscreen></iframe></div>`;
+    let embedUrl = lesson.video_url;
+    // YouTube
+    if (embedUrl.includes('youtube.com/watch')) {
+      embedUrl = embedUrl.replace('watch?v=', 'embed/');
+    } else if (embedUrl.includes('youtu.be/')) {
+      const id = embedUrl.split('youtu.be/')[1].split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${id}`;
+    }
+    // Vimeo
+    else if (embedUrl.includes('vimeo.com/') && !embedUrl.includes('player.vimeo.com')) {
+      const id = embedUrl.split('vimeo.com/')[1].split('?')[0];
+      embedUrl = `https://player.vimeo.com/video/${id}`;
+    }
+    // Wistia — convert medias URL to iframe embed
+    else if (embedUrl.includes('wistia.com/medias/') || embedUrl.includes('fast.wistia.com/embed/medias/')) {
+      const wId = embedUrl.match(/medias\/([a-z0-9]+)/)?.[1];
+      if (wId) embedUrl = `https://fast.wistia.com/embed/iframe/${wId}?autoPlay=false&controlsVisibleOnLoad=true&playerColor=0b1f3a`;
+    }
+    html += `<div class="video-wrap"><iframe src="${embedUrl}" allowfullscreen allow="autoplay; fullscreen"></iframe></div>`;
   }
+
+  // Also fix content — strip any stray HTML tags that Kajabi might have encoded
+  
 
   if (lesson.download_url) {
     html += `
@@ -165,7 +185,16 @@ function renderLesson(idx) {
   }
 
   if (lesson.content) {
-    html += `<div class="lesson-content">${lesson.content}</div>`;
+    // Decode any HTML entities and render properly
+    const contentHtml = lesson.content
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      // Wrap plain text paragraphs if no HTML tags present
+      .replace(/^([^<].+)$/gm, (line) => line.trim() ? `<p>${line}</p>` : '');
+    html += `<div class="lesson-content">${contentHtml}</div>`;
   }
 
   html += `
