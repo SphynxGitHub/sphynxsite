@@ -9,15 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="store.css">
 <style>
-  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: 1.1rem 2rem; position: sticky; top: 64px; z-index: 50; }
-  .filter-inner-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: .55rem; }
-  .filter-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
-  .filter-row-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); min-width: 62px; flex-shrink: 0; }
-  .filter-group { display: flex; gap: .5rem; flex-wrap: wrap; }
-  .filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: .35rem .9rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
-  .filter-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
-  .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
-  .search-row { justify-content: space-between; border-top: 1px solid var(--border); padding-top: .65rem; margin-top: .1rem; }
+  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: .9rem 2rem; position: sticky; top: 64px; z-index: 50; }
+  .filter-inner-wrap { max-width: 1200px; margin: 0 auto; }
+  .filter-controls { display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; }
+  .filter-select { appearance: none; -webkit-appearance: none; background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23808fa8'/%3E%3C/svg%3E") no-repeat right .8rem center; border: 1.5px solid var(--border); color: var(--navy); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: .5rem 1.9rem .5rem .9rem; border-radius: 100px; cursor: pointer; transition: all .2s; max-width: 160px; }
+  .filter-select:hover { border-color: var(--blue); }
+  .filter-select:focus { outline: none; border-color: var(--blue); }
+  .filter-select.is-empty { display: none; }
+  .search-wrap { margin-left: auto; }
+  .search-wrap input { padding: .5rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 200px; }
+  .search-wrap input:focus { border-color: var(--blue); }
+  .filter-clear-btn { background: none; border: none; color: var(--muted); font-size: .8rem; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; text-decoration: underline; padding: .4rem 0; white-space: nowrap; }
+  .filter-clear-btn:hover { color: var(--blue); }
 
   .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
   .product-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; }
@@ -31,8 +34,6 @@
   .product-price { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); }
   .purchased-badge { display: flex; align-items: center; gap: 5px; font-size: .82rem; font-weight: 700; color: var(--green); }
   .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 2.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
-  .search-wrap input { padding: .4rem .9rem; border: 1.5px solid var(--border); border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: .83rem; outline: none; transition: border-color .2s; width: 220px; }
-  .search-wrap input:focus { border-color: var(--blue); }
 
   .badge-blue { background: #E0EDFF; color: #1B4FCC; }
   .badge-purple { background: #EFE3FF; color: #6D28D9; }
@@ -69,51 +70,16 @@
 
 <div class="filter-bar">
   <div class="filter-inner-wrap">
-    <div class="filter-row">
-      <span class="filter-row-label">Category</span>
-      <div class="filter-group" id="filterCat">
-        <button class="filter-btn active" data-val="all" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
-      </div>
-    </div>
-    <div class="filter-row">
-      <span class="filter-row-label">Type</span>
-      <div class="filter-group">
-        <button class="filter-btn active" data-val="all" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
-        <button class="filter-btn" data-val="Template" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Template</button>
-        <button class="filter-btn" data-val="Course" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Course</button>
-        <button class="filter-btn" data-val="Package" data-group="type" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Package</button>
-      </div>
-    </div>
-    <div class="filter-row">
-      <span class="filter-row-label">Setup</span>
-      <div class="filter-group">
-        <button class="filter-btn active" data-val="all" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
-        <button class="filter-btn" data-val="DIY" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">DIY</button>
-        <button class="filter-btn" data-val="QuickStart" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">QuickStart</button>
-        <button class="filter-btn" data-val="White Glove" data-group="impl" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">White Glove</button>
-      </div>
-    </div>
-    <div class="filter-row">
-      <span class="filter-row-label">Stage</span>
-      <div class="filter-group">
-        <button class="filter-btn active" data-val="all" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
-        <button class="filter-btn" data-val="Lead" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Lead</button>
-        <button class="filter-btn" data-val="Onboarding" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Onboarding</button>
-        <button class="filter-btn" data-val="Ongoing Client" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Ongoing Client</button>
-        <button class="filter-btn" data-val="Business Management" data-group="stage" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">Business Mgmt</button>
-      </div>
-    </div>
-    <div class="filter-row">
-      <span class="filter-row-label">App</span>
-      <div class="filter-group" id="filterApps">
-        <button class="filter-btn active" data-val="all" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>
-      </div>
-    </div>
-    <div class="filter-row search-row">
+    <div class="filter-controls">
+      <select class="filter-select" id="filterCat" onchange="setStoreFilter('cat', this.value)"><option value="all">All Categories</option></select>
+      <select class="filter-select" id="filterType" onchange="setStoreFilter('type', this.value)"><option value="all">All Types</option></select>
+      <select class="filter-select" id="filterImpl" onchange="setStoreFilter('impl', this.value)"><option value="all">All Setup</option></select>
+      <select class="filter-select" id="filterStage" onchange="setStoreFilter('stage', this.value)"><option value="all">All Stages</option></select>
+      <select class="filter-select" id="filterApps" onchange="setStoreFilter('app', this.value)"><option value="all">All Apps</option></select>
+      <button class="filter-clear-btn" onclick="resetFilters()">Clear filters</button>
       <div class="search-wrap">
         <input type="text" id="storeSearch" placeholder="Search products..." oninput="runStoreFilter()">
       </div>
-      <button class="filter-btn" onclick="resetFilters()">Clear all filters</button>
     </div>
   </div>
 </div>
@@ -133,10 +99,8 @@
 // ── GLOBALS — must be in regular script for onclick to work ──
 const storeFilters = { cat: 'all', type: 'all', impl: 'all', stage: 'all', app: 'all' };
 
-window.setStoreFilter = function(group, val, btn) {
+window.setStoreFilter = function(group, val) {
   storeFilters[group] = val;
-  btn.closest('div').querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
   window.runStoreFilter();
 };
 
@@ -168,9 +132,7 @@ window.runStoreFilter = function() {
 
 window.resetFilters = function() {
   Object.keys(storeFilters).forEach(function(k) { storeFilters[k] = 'all'; });
-  document.querySelectorAll('.filter-btn').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.val === 'all');
-  });
+  document.querySelectorAll('.filter-select').forEach(function(sel) { sel.value = 'all'; });
   var s = document.getElementById('storeSearch');
   if (s) s.value = '';
   window.runStoreFilter();
@@ -233,23 +195,37 @@ async function init() {
 }
 
 async function loadCategories() {
-  // Load categories for cat filter
-  const { data: catData } = await supabase.from('categories').select('*').order('sort_order').order('name');
-  const filterCat = document.getElementById('filterCat');
-  if (filterCat) {
-    const cats = catData?.length
-      ? catData.map(c => c.name)
-      : [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
-    filterCat.innerHTML = '<button class="filter-btn active" data-val="all" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>' +
-      cats.map(c => `<button class="filter-btn" data-val="${c}" data-group="cat" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">${c}</button>`).join('');
-  }
-  // Load apps for app filter
-  const { data: appsData } = await supabase.from('apps').select('name').order('sort_order').order('name');
-  const filterApps = document.getElementById('filterApps');
-  if (filterApps && appsData?.length) {
-    filterApps.innerHTML = '<button class="filter-btn active" data-val="all" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">All</button>' +
-      appsData.map(a => `<button class="filter-btn" data-val="${a.name}" data-group="app" onclick="setStoreFilter(this.dataset.group,this.dataset.val,this)">${a.name}</button>`).join('');
-  }
+  // Build every filter dropdown from what's actually present in the loaded, active products —
+  // so an option never shows up unless a product currently uses it.
+  const { data: catData } = await supabase.from('categories').select('name').order('sort_order').order('name');
+
+  const presentCats = new Set(allProducts.map(p => p.category).filter(Boolean));
+  const cats = catData?.length
+    ? catData.map(c => c.name).filter(c => presentCats.has(c))
+    : [...presentCats].sort();
+
+  const types = [...new Set(allProducts.map(p => p.product_type).filter(Boolean))].sort();
+  const impls = [...new Set(allProducts.map(p => p.implementation_type).filter(Boolean))].sort();
+  const stages = [...new Set(allProducts.flatMap(p => p.lifecycle_stages || []))].sort();
+  const apps = [...new Set(allProducts.flatMap(p => p.apps || []))].sort();
+
+  populateFilterSelect('filterCat', 'All Categories', cats);
+  populateFilterSelect('filterType', 'All Types', types);
+  populateFilterSelect('filterImpl', 'All Setup', impls);
+  populateFilterSelect('filterStage', 'All Stages', stages);
+  populateFilterSelect('filterApps', 'All Apps', apps);
+}
+
+function populateFilterSelect(id, allLabel, values) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Hide entirely if nothing to filter by
+  el.classList.toggle('is-empty', values.length === 0);
+  if (!values.length) return;
+  const current = el.value || 'all';
+  el.innerHTML = `<option value="all">${allLabel}</option>` +
+    values.map(v => `<option value="${v}">${v}</option>`).join('');
+  if ([...el.options].some(o => o.value === current)) el.value = current;
 }
 
 async function loadProducts() {
