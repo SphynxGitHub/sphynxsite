@@ -42,13 +42,17 @@ module.exports = async function handler(req, res) {
       mode: isRecurring ? 'subscription' : 'payment',
       success_url: `${origin}/store.html?success=true`,
       cancel_url: `${origin}/store.html?cancelled=true`,
-      client_reference_id: userId || '',
       metadata: {
         product_id: productId || '',
         user_id: userId || '',
       },
       discounts,
     };
+
+    // Prevent Stripe empty string validation error for client_reference_id
+    if (userId && userId.trim() !== '') {
+      sessionConfig.client_reference_id = userId;
+    }
 
     // 4. Attach auto-cancel metadata tag to monthly subscriptions
     if (isRecurring && price.recurring?.interval === 'month') {
