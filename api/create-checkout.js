@@ -1,85 +1,71 @@
 const Stripe = require('stripe');
-const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  const { priceId, productId, userId, discountCode } = req.body;
+
+  if (!priceId) {
+    return res.status(400).json({ error: 'Missing priceId' });
+  }
 
   try {
-    const { priceId, productId, userId, discountCode } = req.body;
+    // 1. Retrieve the price from Stripe to check if it's recurring
+    const price = await stripe.prices.retrieve(priceId);
+    const isRecurring = price.type === 'recurring';
 
-    // Validate discount code if provided
-    let stripeCouponId = null;
-    let discountInfo = null;
+    const origin = req.headers.origin || 'https://sphynxsite.vercel.app';
+
+    // 2. Handle optional discount codes
+    const discounts = [];
     if (discountCode) {
-      const { data: code } = await supabase
-        .from('discount_codes')
-        .select('*')
-        .eq('code', discountCode.toUpperCase())
-        .eq('active', true)
-        .single();
-
-      if (code) {
-        // Check expiry
-        if (code.expires_at && new Date(code.expires_at) < new Date()) {
-          return res.status(400).json({ error: 'This discount code has expired.' });
-        }
-        // Check max uses
-        if (code.max_uses && code.uses >= code.max_uses) {
-          return res.status(400).json({ error: 'This discount code has reached its maximum uses.' });
-        }
-        // Check product restriction
-        if (code.product_ids?.length && !code.product_ids.includes(productId)) {
-          return res.status(400).json({ error: 'This discount code does not apply to this product.' });
-        }
-
-        // Create a Stripe coupon on the fly
-        const couponParams = code.type === 'percentage'
-          ? { percent_off: code.amount, duration: 'once' }
-          : { amount_off: code.amount, currency: 'usd', duration: 'once' };
-
-        const coupon = await stripe.coupons.create(couponParams);
-        stripeCouponId = coupon.id;
-        discountInfo = code;
-      } else {
-        return res.status(400).json({ error: 'Invalid or inactive discount code.' });
+      const couponSearch = await stripe.coupons.list({ limit: 10 });
+      const matchingCoupon = couponSearch.data.find(
+        (c) => c.id.toUpperCase() === discountCode.toUpperCase() && c.valid
+      );
+      if (matchingCoupon) {
+        discounts.push({ coupon: matchingCoupon.id });
       }
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sphynxsite.vercel.app';
-
-    const sessionParams = {
+    // 3. Build Checkout Session configuration
+    const sessionConfig = {
       payment_method_types: ['card'],
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: 'payment',
-      success_url: `${siteUrl}/dashboard.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/store.html`,
-      metadata: { productId, userId: userId || '' },
-      allow_promotion_codes: !stripeCouponId, // allow Stripe codes if no custom code
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: isRecurring ? 'subscription' : 'payment',
+      success_url: `${origin}/store.html?success=true`,
+      cancel_url: `${origin}/store.html?cancelled=true`,
+      client_reference_id: userId || '',
+      metadata: {
+        product_id: productId || '',
+        user_id: userId || '',
+      },
+      discounts,
     };
 
-    if (stripeCouponId) {
-      sessionParams.discounts = [{ coupon: stripeCouponId }];
+    // 4. Attach auto-cancel metadata tag to monthly subscriptions
+    if (isRecurring && price.recurring?.interval === 'month') {
+      sessionConfig.subscription_data = {
+        metadata: {
+          auto_cancel_12m: 'true',
+          product_id: productId || '',
+          user_id: userId || '',
+        },
+      };
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
-
-    // Increment discount code uses
-    if (discountInfo) {
-      await supabase.from('discount_codes')
-        .update({ uses: (discountInfo.uses || 0) + 1 })
-        .eq('id', discountInfo.id);
-    }
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     return res.status(200).json({ url: session.url });
   } catch (err) {
-    console.error('Checkout error:', err);
+    console.error('Checkout creation error:', err);
     return res.status(500).json({ error: err.message });
   }
 };
