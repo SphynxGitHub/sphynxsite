@@ -945,66 +945,77 @@
 
 <!-- REWRITTEN FILTER ENGINE -->
 <script>
-let currentType = 'all';
-let currentCat = 'all';
+let activeType = 'all';
+let activeCat = 'all';
 
-function runCatalogFilter() {
-  const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
+function filter() {
+  const searchInput = document.getElementById('searchInput');
+  const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
   const cards = document.querySelectorAll('.catalog-card');
-  let visibleCount = 0;
+  let visible = 0;
 
   cards.forEach(card => {
     const cardType = card.dataset.type || '';
     const cardCats = card.dataset.cat || '';
-    const textContent = card.textContent.toLowerCase();
+    const text = card.textContent.toLowerCase();
 
-    const matchesType = currentType === 'all' || cardType === currentType;
-    const matchesCat = currentCat === 'all' || cardCats.includes(currentCat);
-    const matchesSearch = !searchVal || textContent.includes(searchVal);
+    const typeMatch = (activeType === 'all') || (cardType === activeType);
+    const catMatch = (activeCat === 'all') || cardCats.toLowerCase().split(' ').includes(activeCat.toLowerCase());
+    const searchMatch = !q || text.includes(q);
 
-    const isVisible = matchesType && matchesCat && matchesSearch;
-    card.classList.toggle('hidden', !isVisible);
-
-    if (isVisible) visibleCount++;
+    const show = typeMatch && catMatch && searchMatch;
+    card.classList.toggle('hidden', !show);
+    if (show) visible++;
   });
 
-  // Handle Section Divider visibility
-  document.querySelectorAll('.section-divider').forEach(divider => {
-    const sectionType = divider.dataset.section;
+  // Handle Section Dividers
+  document.querySelectorAll('.section-divider').forEach(div => {
+    const section = div.dataset.section;
     const hasVisibleCards = [...cards].some(c => 
-      !c.classList.contains('hidden') && c.dataset.type === sectionType
+      !c.classList.contains('hidden') && c.dataset.type === section
     );
-
-    // Section dividers only show when viewing "All" services or when the filtered type matches that specific section
-    const shouldShowDivider = hasVisibleCards && (currentType === 'all' || currentType === sectionType);
-    divider.classList.toggle('hidden', !shouldShowDivider);
+    
+    // Show section dividers only when relevant cards exist for that section
+    const showDivider = hasVisibleCards && (activeType === 'all' || activeType === section);
+    div.classList.toggle('hidden', !showDivider);
   });
 
-  // Toggle empty state
-  document.getElementById('emptyState').classList.toggle('hidden', visibleCount > 0);
+  // Empty state handling
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) {
+    emptyState.classList.toggle('hidden', visible > 0);
+  }
 }
 
-// Attach event listeners for Type Buttons
-document.querySelectorAll('#typeFilters .type-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    document.querySelectorAll('#typeFilters .type-btn').forEach(b => b.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    currentType = e.currentTarget.dataset.type;
-    runCatalogFilter();
+// Attach listeners once DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  // Type filter buttons
+  const typeButtons = document.querySelectorAll('.type-btn');
+  typeButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      typeButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeType = btn.dataset.type || 'all';
+      filter();
+    });
   });
-});
 
-// Attach event listeners for Category Buttons
-document.querySelectorAll('#catFilters .cat-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    document.querySelectorAll('#catFilters .cat-btn').forEach(b => b.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    currentCat = e.currentTarget.dataset.cat;
-    runCatalogFilter();
+  // Category filter buttons
+  const catButtons = document.querySelectorAll('.cat-btn');
+  catButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      catButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat || 'all';
+      filter();
+    });
   });
-});
 
-document.addEventListener('DOMContentLoaded', runCatalogFilter);
+  // Run initial filter
+  filter();
+});
 </script>
 </body>
 </html>
