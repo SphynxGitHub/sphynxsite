@@ -750,7 +750,7 @@ window.saveProduct = async function() {
     // Only sync to Stripe if there's a price and no Kajabi URL
     if (price && !kajabi_url) {
       const stripeRes=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({productId,name,description,price,image_url,recurringInterval:billing_interval,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
+        body:JSON.stringify({productId,name,description,price,image_url,billingInterval:billing_interval,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
       const stripeData=await stripeRes.json();
       if (!stripeData.error) { stripeProductId=stripeData.stripeProductId; stripePriceId=stripeData.stripePriceId; }
     }
@@ -789,8 +789,7 @@ window.syncToStripe = async function(id) {
   showAlert('info','Syncing to Stripe...');
   try {
     const res=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,recurringInterval:p.billing_interval||null,
-        existingStripeProductId:p.stripe_product_id,existingStripePriceId:p.stripe_price_id})});
+     body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,billingInterval:p.billing_interval||null,existingStripeProductId:p.stripe_product_id,existingStripePriceId:p.stripe_price_id})});
     const data=await res.json();
     if (data.error) throw new Error(data.error);
     await supabase.from('products').update({stripe_product_id:data.stripeProductId,stripe_price_id:data.stripePriceId}).eq('id',id);
