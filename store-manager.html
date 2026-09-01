@@ -297,6 +297,16 @@
           <input type="number" id="fPrice" placeholder="147.00" step="0.01" min="0">
         </div>
         <div class="form-group">
+          <label>Billing</label>
+          <select id="fBilling">
+            <option value="">One-time payment</option>
+            <option value="month">Monthly subscription</option>
+            <option value="year">Annual subscription</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
           <label>Sort Order</label>
           <input type="number" id="fSort" placeholder="0" min="0">
         </div>
@@ -616,7 +626,7 @@ function renderProductsTable() {
         </div>
       </td>
       <td><span class="badge badge-blue">${p.category}</span></td>
-      <td class="td-price">${p.price?'$'+(p.price/100).toFixed(2):'Free'}</td>
+      <td class="td-price">${p.price?'$'+(p.price/100).toFixed(2):'Free'}${p.billing_interval?'<span style="color:rgba(255,255,255,.4);font-weight:400">/'+(p.billing_interval==='month'?'mo':'yr')+'</span>':''}</td>
       <td style="color:rgba(255,255,255,.5);font-size:.85rem">${p.lesson_count||0} lessons</td>
       <td><span style="font-size:.7rem;color:rgba(255,255,255,.3);font-family:monospace">${p.stripe_price_id?p.stripe_price_id.slice(0,16)+'...':'—'}</span></td>
       <td><button class="toggle-btn ${p.active?'on':'off'}" onclick="toggleActive('${p.id}',${p.active})" title="Active"></button></td>
@@ -639,6 +649,7 @@ window.openProductModal = function() {
   document.getElementById('fCategory').value='JotForm';
   document.getElementById('fPrice').value='';
   document.getElementById('fSort').value='0';
+  document.getElementById('fBilling').value='';
   document.getElementById('fHideFromStore').checked=false;
   document.getElementById('productModalTitle').textContent='Add Product';
   renderLessonsForm();
@@ -658,6 +669,7 @@ window.editProduct = async function(id) {
   document.getElementById('fDesc').value=p.description||'';
   document.getElementById('fPrice').value=p.price?(p.price/100).toFixed(2):'';
   document.getElementById('fSort').value=p.sort_order||0;
+  document.getElementById('fBilling').value=p.billing_interval||'';
   document.getElementById('fImage').value=p.image_url||'';
   document.getElementById('fKajabiUrl').value=p.kajabi_url||'';
   document.getElementById('fStripeProductId').value=p.stripe_product_id||'';
@@ -729,6 +741,7 @@ window.saveProduct = async function() {
   const image_url=document.getElementById('fImage').value.trim();
   const kajabi_url=document.getElementById('fKajabiUrl').value.trim();
   const sort_order=parseInt(document.getElementById('fSort').value)||0;
+  const billing_interval=document.getElementById('fBilling').value||null;
   const hidden_from_store=document.getElementById('fHideFromStore').checked;
   if (!name) { showAlert('error','Name is required.'); btn.disabled=false; btn.textContent='Save & Sync to Stripe'; return; }
   try {
@@ -737,7 +750,7 @@ window.saveProduct = async function() {
     // Only sync to Stripe if there's a price and no Kajabi URL
     if (price && !kajabi_url) {
       const stripeRes=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({productId,name,description,price,image_url,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
+        body:JSON.stringify({productId,name,description,price,image_url,recurringInterval:billing_interval,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
       const stripeData=await stripeRes.json();
       if (!stripeData.error) { stripeProductId=stripeData.stripeProductId; stripePriceId=stripeData.stripePriceId; }
     }
@@ -747,7 +760,7 @@ window.saveProduct = async function() {
     const apps_used=[...document.querySelectorAll('#fAppsUsed input:checked')].map(cb=>cb.value);
     const video_minutes=parseFloat(document.getElementById('fVideoMinutes')?.value||'0');
     const time_estimate_minutes=parseInt(document.getElementById('fTimeEstimate')?.value||'0')||null;
-    const payload={name,category,description,price,image_url,kajabi_url,sort_order,product_type,implementation_type,lifecycle_stages,apps:apps_used,video_minutes,time_estimate_minutes,hidden_from_store,
+    const payload={name,category,description,price,image_url,kajabi_url,sort_order,billing_interval,product_type,implementation_type,lifecycle_stages,apps:apps_used,video_minutes,time_estimate_minutes,hidden_from_store,
       stripe_product_id:stripeProductId,stripe_price_id:stripePriceId,
       lesson_count:editingLessons.length,active:true};
     let savedId=productId;
@@ -776,7 +789,7 @@ window.syncToStripe = async function(id) {
   showAlert('info','Syncing to Stripe...');
   try {
     const res=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,
+      body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,recurringInterval:p.billing_interval||null,
         existingStripeProductId:p.stripe_product_id,existingStripePriceId:p.stripe_price_id})});
     const data=await res.json();
     if (data.error) throw new Error(data.error);

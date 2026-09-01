@@ -23,6 +23,13 @@ module.exports = async function handler(req, res) {
     }
     const isCoaching = (product?.category || '').toLowerCase().includes('coach');
 
+    // Ask Stripe whether this price is recurring — if so, Checkout must run in
+    // 'subscription' mode instead of 'payment'. This makes maintenance-plan
+    // subscriptions (or any future recurring product) work automatically,
+    // with no extra flags needed from the caller.
+    const priceObj = await stripe.prices.retrieve(priceId);
+    const isSubscription = priceObj.type === 'recurring';
+
     // Validate discount code if provided
     let stripeCouponId = null;
     let discountInfo = null;
@@ -72,7 +79,7 @@ module.exports = async function handler(req, res) {
     const sessionParams = {
       payment_method_types: ['card'],
       line_items: [lineItem],
-      mode: 'payment',
+      mode: isSubscription ? 'subscription' : 'payment',
       success_url: isCoaching
         ? `${siteUrl}/coaching-thank-you.html?session_id={CHECKOUT_SESSION_ID}`
         : `${siteUrl}/dashboard.html?session_id={CHECKOUT_SESSION_ID}`,
