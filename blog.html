@@ -11,6 +11,7 @@
   .blog-card { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; display:grid; grid-template-columns:260px 1fr; transition:transform .3s,box-shadow .3s; text-decoration:none; color:inherit; }
   .blog-card:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(11,31,58,.1); }
   .blog-card-img { width:100%; height:100%; object-fit:cover; min-height:180px; background:var(--bg); }
+  .blog-card-img-placeholder { width:100%; height:100%; min-height:180px; background:linear-gradient(135deg,var(--blue-light),var(--accent-light)); display:flex; align-items:center; justify-content:center; }
   .blog-card-body { padding:1.75rem; }
   .blog-tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
   .blog-tag { background:var(--blue-light); color:var(--blue); font-size:.72rem; font-weight:700; padding:.25rem .65rem; border-radius:100px; text-transform:uppercase; letter-spacing:.06em; }
@@ -19,18 +20,19 @@
   .blog-excerpt { font-size:.88rem; color:var(--muted); line-height:1.65; }
   .read-more { display:inline-block; margin-top:1rem; font-size:.85rem; font-weight:700; color:var(--blue); text-decoration:none; }
   .read-more:hover { text-decoration:underline; }
+  .blog-empty { text-align:center; padding:4rem 2rem; color:var(--muted); }
 
   .blog-sidebar { position:sticky; top:90px; height:fit-content; }
   .sidebar-widget { background:white; border:1px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem; }
   .sidebar-widget h3 { font-size:.85rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; }
   .category-list { list-style:none; display:flex; flex-direction:column; gap:.4rem; }
-  .category-list li a { font-size:.88rem; color:var(--muted); text-decoration:none; padding:.3rem 0; display:block; border-bottom:1px solid var(--bg); transition:color .2s; }
-  .category-list li a:hover { color:var(--navy); }
+  .category-list li a { font-size:.88rem; color:var(--muted); text-decoration:none; padding:.3rem 0; display:block; border-bottom:1px solid var(--bg); transition:color .2s; cursor:pointer; }
+  .category-list li a:hover, .category-list li a.active { color:var(--navy); font-weight:600; }
   .cta-widget { background:var(--navy); color:white; border-radius:14px; padding:1.75rem; margin-bottom:1.5rem; text-align:center; }
   .cta-widget h3 { font-family:'DM Serif Display',serif; font-size:1.2rem; color:white; margin-bottom:.75rem; }
   .cta-widget p { font-size:.85rem; color:rgba(255,255,255,.65); margin-bottom:1.25rem; line-height:1.6; }
 
-  @media(max-width:900px){ .blog-layout { grid-template-columns:1fr; } .blog-card { grid-template-columns:1fr; } .blog-card-img { height:200px; } .blog-sidebar { position:static; } }
+  @media(max-width:900px){ .blog-layout { grid-template-columns:1fr; } .blog-card { grid-template-columns:1fr; } .blog-card-img,.blog-card-img-placeholder { height:200px; } .blog-sidebar { position:static; } }
 </style>
 <script src="/includes.js"></script>
 </head>
@@ -46,23 +48,9 @@
 </div>
 
 <div class="blog-layout">
-  <main class="blog-grid">
-
-    
-
-    <a class="blog-card" href="https://www.sphynxautomation.com/blog/greminders-the-perfect-piece-of-tech-for-new-advisors" target="_blank">
-      <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/blogs/2147484931/images/577f4d7-524f-f156-833-584b6262cd0_greminderslogo.jpg" alt="GReminders for advisors" class="blog-card-img">
-      <div class="blog-card-body">
-        <div class="blog-tags"><span class="blog-tag">Scheduling</span><span class="blog-tag">Software Review</span><span class="blog-tag">Fintech</span></div>
-        <h2>GReminders: The Perfect Piece of Tech for New Advisors</h2>
-        <div class="blog-meta">Oct 18, 2024 · By Anthony Schorling</div>
-        <div class="blog-excerpt">One of the biggest challenges for advisors starting their own firm is figuring out the right pieces of tech to add to their tech stack. GReminders solves a critical piece of that puzzle...</div>
-        <span class="read-more">Continue Reading →</span>
-      </div>
-    </a>
-
-    <div style="text-align:center;padding:1.5rem 0;">
-      <a href="https://www.sphynxautomation.com/blog" target="_blank" class="btn-outline">View All Posts on Sphynx.com →</a>
+  <main class="blog-grid" id="blogGrid">
+    <div class="blog-empty" id="blogLoading">
+      <p>Loading posts...</p>
     </div>
   </main>
 
@@ -74,17 +62,8 @@
     </div>
     <div class="sidebar-widget">
       <h3>Categories</h3>
-      <ul class="category-list">
-        <li><a href="https://www.sphynxautomation.com/blog?tag=zapier" target="_blank">Zapier</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=ai" target="_blank">AI &amp; New Tools</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=wealthbox" target="_blank">Wealthbox</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=jotform" target="_blank">JotForm</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=general+automation" target="_blank">General Automation</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=new+feature" target="_blank">New Features</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=software+review" target="_blank">Software Reviews</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=financial+advisors" target="_blank">Financial Advisors</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=scheduling" target="_blank">Scheduling</a></li>
-        <li><a href="https://www.sphynxautomation.com/blog?tag=workflows" target="_blank">Workflows</a></li>
+      <ul class="category-list" id="categoryList">
+        <li><a data-tag="all" class="active">All Posts</a></li>
       </ul>
     </div>
     <div class="sidebar-widget">
@@ -96,5 +75,76 @@
 </div>
 
 <div id="site-footer"></div>
+
+<script type="module">
+import { supabase } from '/lib/supabase.js';
+
+let allPosts = [];
+let activeTag = 'all';
+
+async function init() {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('published', true)
+    .order('published_at', { ascending: false });
+
+  const grid = document.getElementById('blogGrid');
+
+  if (error) {
+    grid.innerHTML = `<div class="blog-empty"><h3 style="color:var(--navy);margin-bottom:.5rem">Could not load posts</h3><p style="font-family:monospace;font-size:.85rem">${error.message}</p></div>`;
+    return;
+  }
+
+  allPosts = data || [];
+  buildCategorySidebar();
+  render();
+}
+
+function buildCategorySidebar() {
+  const tags = [...new Set(allPosts.flatMap(p => p.tags || []))].sort();
+  const list = document.getElementById('categoryList');
+  list.innerHTML = '<li><a data-tag="all" class="active">All Posts</a></li>' +
+    tags.map(t => `<li><a data-tag="${t}">${t}</a></li>`).join('');
+  list.addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-tag]');
+    if (!a) return;
+    activeTag = a.dataset.tag;
+    list.querySelectorAll('a').forEach(el => el.classList.toggle('active', el === a));
+    render();
+  });
+}
+
+function render() {
+  const grid = document.getElementById('blogGrid');
+  const posts = activeTag === 'all' ? allPosts : allPosts.filter(p => (p.tags || []).includes(activeTag));
+
+  if (!posts.length) {
+    grid.innerHTML = `<div class="blog-empty"><h3 style="color:var(--navy);margin-bottom:.5rem">No posts yet</h3><p>Check back soon, or add one in the Store Manager.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = posts.map(p => `
+    <a class="blog-card" href="/post.html?slug=${encodeURIComponent(p.slug)}">
+      ${p.cover_image_url
+        ? `<img src="${p.cover_image_url}" alt="${p.title}" class="blog-card-img">`
+        : `<div class="blog-card-img-placeholder"></div>`}
+      <div class="blog-card-body">
+        <div class="blog-tags">${(p.tags || []).map(t => `<span class="blog-tag">${t}</span>`).join('')}</div>
+        <h2>${p.title}</h2>
+        <div class="blog-meta">${formatDate(p.published_at)}${p.author ? ' · By ' + p.author : ''}</div>
+        <div class="blog-excerpt">${p.excerpt || ''}</div>
+        <span class="read-more">Continue Reading →</span>
+      </div>
+    </a>`).join('');
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+init();
+</script>
 
 </body></html>

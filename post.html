@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Blog | Sphynx Automation</title>
+<meta id="pageDesc" name="description" content="">
+<style>
+  .post-wrap { max-width:760px; margin:0 auto; padding:4rem 2rem 5rem; }
+  .post-back { font-size:.85rem; font-weight:600; color:var(--blue); text-decoration:none; display:inline-flex; align-items:center; gap:.4rem; margin-bottom:2rem; }
+  .post-back:hover { text-decoration:underline; }
+  .post-tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1.25rem; }
+  .post-tag { background:var(--blue-light); color:var(--blue); font-size:.72rem; font-weight:700; padding:.25rem .65rem; border-radius:100px; text-transform:uppercase; letter-spacing:.06em; }
+  .post-title { font-family:'DM Serif Display',serif; font-size:clamp(1.9rem,4vw,2.6rem); line-height:1.2; color:var(--navy); margin-bottom:1rem; }
+  .post-meta { font-size:.88rem; color:var(--muted); margin-bottom:2.5rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+  .post-cover { width:100%; border-radius:16px; margin-bottom:2.5rem; display:block; }
+  .post-content { font-size:1.02rem; color:var(--text); line-height:1.85; }
+  .post-content p { margin-bottom:1.25rem; }
+  .post-content h2 { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--navy); margin:2rem 0 1rem; }
+  .post-content h3 { font-size:1.15rem; font-weight:700; color:var(--navy); margin:1.75rem 0 .75rem; }
+  .post-content ul, .post-content ol { margin:0 0 1.25rem 1.5rem; }
+  .post-content li { margin-bottom:.5rem; }
+  .post-content a { color:var(--blue); }
+  .post-content img { max-width:100%; border-radius:10px; margin:1.5rem 0; }
+  .post-cta { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:2rem; margin-top:3rem; text-align:center; }
+  .post-cta h3 { font-family:'DM Serif Display',serif; font-size:1.2rem; color:var(--navy); margin-bottom:.6rem; }
+  .post-cta p { font-size:.9rem; color:var(--muted); margin-bottom:1.25rem; }
+  .post-empty { text-align:center; padding:5rem 2rem; color:var(--muted); }
+</style>
+<script src="/includes.js"></script>
+</head>
+<body>
+<div id="site-nav"></div>
+
+<div class="post-wrap" id="postWrap">
+  <div class="post-empty" id="postLoading"><p>Loading post...</p></div>
+</div>
+
+<div id="site-footer"></div>
+
+<script type="module">
+import { supabase } from '/lib/supabase.js';
+
+const params = new URLSearchParams(window.location.search);
+const slug = params.get('slug');
+const wrap = document.getElementById('postWrap');
+
+async function init() {
+  if (!slug) {
+    wrap.innerHTML = `<div class="post-empty"><h2 style="color:var(--navy);margin-bottom:.5rem">No post specified</h2><p><a href="/blog.html" style="color:var(--blue)">← Back to the blog</a></p></div>`;
+    return;
+  }
+
+  const { data: post, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', true)
+    .single();
+
+  if (error || !post) {
+    wrap.innerHTML = `<div class="post-empty"><h2 style="color:var(--navy);margin-bottom:.5rem">Post not found</h2><p><a href="/blog.html" style="color:var(--blue)">← Back to the blog</a></p></div>`;
+    return;
+  }
+
+  document.getElementById('pageTitle').textContent = `${post.title} | Sphynx Automation`;
+  document.getElementById('pageDesc').setAttribute('content', post.excerpt || '');
+
+  wrap.innerHTML = `
+    <a href="/blog.html" class="post-back">← Back to the blog</a>
+    <div class="post-tags">${(post.tags || []).map(t => `<span class="post-tag">${t}</span>`).join('')}</div>
+    <h1 class="post-title">${post.title}</h1>
+    <div class="post-meta">${formatDate(post.published_at)}${post.author ? ' · By ' + post.author : ''}</div>
+    ${post.cover_image_url ? `<img src="${post.cover_image_url}" alt="${post.title}" class="post-cover">` : ''}
+    <div class="post-content">${post.content || ''}</div>
+    <div class="post-cta">
+      <h3>Ready to automate your practice?</h3>
+      <p>Book a free 20-minute call and we'll help you find the right fit.</p>
+      <a href="/contact.html" class="btn-primary">Book a Free Call →</a>
+    </div>
+  `;
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+init();
+</script>
+
+</body></html>

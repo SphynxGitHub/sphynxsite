@@ -7,51 +7,6 @@
 <meta name="description" content="Browse every automation service, QuickStart project, and DIY template Sphynx offers — filterable by type, category, and tool.">
 <script src="/includes.js"></script>
 <style>
-  /* ===== SPHYNX AUTOMATION — SHARED STYLES ===== */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --navy: #0b1f3a;
-    --blue: #1a56db;
-    --blue-light: #e8f0fe;
-    --accent: #00c2a8;
-    --accent-light: #e0faf7;
-    --text: #0b1f3a;
-    --muted: #5a6a7e;
-    --border: #dce4ef;
-    --bg: #f7f9fc;
-    --white: #ffffff;
-  }
-
-  html { scroll-behavior: smooth; background: #f7f9fc; }
-  body { font-family: 'Outfit', sans-serif; color: var(--text); background: transparent; line-height: 1.6; overflow-x: hidden; position: relative; z-index: 1; }
-
-  /* BUTTONS */
-  .btn-primary { background: var(--accent); color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0.85rem 1.75rem; border-radius: 10px; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; display: inline-block; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,194,168,0.35); }
-  .btn-outline { background: transparent; color: var(--blue); font-weight: 600; font-size: 0.95rem; padding: 0.8rem 1.6rem; border-radius: 10px; border: 2px solid var(--blue); text-decoration: none; transition: background 0.2s, color 0.2s; display: inline-block; }
-  .btn-outline:hover { background: var(--blue); color: white; }
-  .btn-white { background: white; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0.85rem 1.75rem; border-radius: 10px; text-decoration: none; transition: transform 0.2s; display: inline-block; }
-  .btn-white:hover { transform: translateY(-2px); }
-  .btn { display: inline-block; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .95rem; padding: .8rem 1.6rem; border-radius: 10px; border: none; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s, background .2s; text-align: center; }
-
-  /* SECTION UTILITIES */
-  section { padding: 5rem 2rem; position: relative; z-index: 1; }
-  .section-inner { max-width: 1100px; margin: 0 auto; }
-  .section-tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.75rem; }
-  .section-heading { font-family: 'DM Serif Display', serif; font-size: clamp(1.9rem, 3.5vw, 2.8rem); line-height: 1.2; color: var(--navy); margin-bottom: 1rem; }
-  .section-sub { font-size: 1.05rem; color: var(--muted); max-width: 620px; line-height: 1.7; }
-  .text-center { text-align: center; }
-  .text-center .section-sub { margin: 0 auto; }
-
-  /* PAGE HERO */
-  .page-hero { background: var(--navy); color: white; padding: 5rem 2rem 4rem; position: relative; overflow: hidden; z-index: 1; }
-  .hero-bg-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; } 
-  .page-hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
-  .page-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; color: white; margin-bottom: 1rem; }
-  .page-hero p { font-size: 1.1rem; color: rgba(255,255,255,0.7); max-width: 600px; line-height: 1.7; margin-bottom: 2rem; }
-  .page-hero .section-tag { color: var(--accent); }
-
   /* FILTER BAR */
   .catalog-controls { background: white; border-bottom: 1px solid var(--border); padding: 1.1rem 2rem; position: sticky; top: 80px; z-index: 50; }
   .catalog-controls-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
@@ -64,12 +19,6 @@
   .fc.type-qs.active { background: #7c3aed; border-color: #7c3aed; color: white; }
   .fc.type-diy.active { background: var(--accent); border-color: var(--accent); color: var(--navy); }
 
-  .fc.cat-btn.active {
-    background: var(--accent-light) !important;
-    border-color: var(--accent) !important;
-    color: #0a6b5c !important;
-  }
-
   .fc-select { appearance: none; -webkit-appearance: none; background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23808fa8'/%3E%3C/svg%3E") no-repeat right .75rem center; border: 1.5px solid var(--border); color: var(--navy); font-family: 'Outfit', sans-serif; font-size: .78rem; font-weight: 700; padding: .4rem 1.8rem .4rem .85rem; border-radius: 100px; cursor: pointer; max-width: 170px; }
   .fc-select:hover { border-color: var(--blue); }
 
@@ -78,7 +27,7 @@
   .search-wrap input:focus { border-color: var(--blue); }
 
   /* CATALOG GRID */
-  .catalog-wrap { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 5rem; position: relative; z-index: 1; }
+  .catalog-wrap { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 5rem; }
   .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
   .catalog-card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; position: relative; cursor: pointer; }
   .catalog-card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(11,31,58,.1); }
@@ -97,7 +46,6 @@
   .icon-navy { background: #e8ecf3; } .icon-navy i { color: var(--navy); }
   .icon-purple { background: #f0ebff; } .icon-purple i { color: #7c3aed; }
   .icon-teal { background: var(--accent-light); } .icon-teal i { color: #0a6b5c; }
-  .icon-blue { background: var(--blue-light); } .icon-blue i { color: var(--blue); }
   .type-badge { font-size: .68rem; font-weight: 800; padding: .28rem .7rem; border-radius: 100px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
   .badge-wg { background: #e8ecf3; color: var(--navy); }
   .badge-qs { background: #f0ebff; color: #7c3aed; }
@@ -133,51 +81,11 @@
   .legend-item { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: var(--muted); }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-  /* SAMPLE SERVICES (ported from white-glove.html) */
-  .samples-section { padding: 5rem 2rem; background: var(--bg); position: relative; z-index: 1; }
-  .samples-inner { max-width: 1100px; margin: 0 auto; }
-  .samples-filter { display: flex; gap: .5rem; flex-wrap: wrap; margin: 2rem 0 2.5rem; }
-  .filter-chip { background: white; border: 1.5px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: .35rem .9rem; border-radius: 100px; cursor: pointer; transition: all .2s; }
-  .filter-chip.active { background: var(--navy); border-color: var(--navy); color: white; }
-  .filter-chip:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
-  .samples-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
-  .sample-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: transform .25s, box-shadow .25s; }
-  .sample-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(11,31,58,.09); }
-  .sample-card.hidden { display: none; }
-  .sample-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
-  .sample-icon i { width: 22px; height: 22px; }
-  .sample-card h3 { font-size: .98rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
-  .sample-card p { font-size: .85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1rem; }
-  .sample-tools { display: flex; flex-wrap: wrap; gap: .4rem; }
-  .sample-cat { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: .5rem; }
-  @media(max-width:900px){ .samples-grid { grid-template-columns: 1fr 1fr; } }
-  @media(max-width:560px){ .samples-grid { grid-template-columns: 1fr; } }
-
-  /* FOOTER */
-  footer { background: #060f1e; color: rgba(255,255,255,0.5); padding: 3rem 2rem; position: relative; z-index: 1; }
-  .footer-inner { max-width: 1100px; margin: 0 auto; }
-  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 2rem; }
-  .footer-brand img { height: 32px; margin-bottom: 1rem; filter: brightness(0) invert(1); }
-  .footer-brand p { font-size: 0.85rem; line-height: 1.65; max-width: 260px; }
-  .footer-col h4 { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 1rem; }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-  .footer-col ul a { font-size: 0.88rem; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
-  .footer-col ul a:hover { color: white; }
-  .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-  .footer-copy { font-size: 0.82rem; }
-  .footer-social { display: flex; gap: 1.25rem; list-style: none; }
-  .footer-social a { font-size: 0.82rem; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
-  .footer-social a:hover { color: white; }
-
   @media(max-width:768px){
     .catalog-grid { grid-template-columns:1fr; }
     .filter-divider { display:none; }
     .search-wrap { width:100%; }
     .search-wrap input { width:100%; }
-    .footer-top { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 600px) {
-    .footer-top { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -230,110 +138,6 @@
     </div>
   </div>
 </div>
-
-<!-- SAMPLE SERVICES (ported from white-glove.html) -->
-<section class="samples-section">
-  <div class="samples-inner">
-    <div class="section-tag">Sample Services</div>
-    <h2 class="section-heading">What we build for advisors</h2>
-    <p class="section-sub">Every White Glove engagement is custom — but here are some of the most common workflows we implement. Filter by area to find what's most relevant to your practice.</p>
-    <div class="samples-filter">
-      <button class="filter-chip active" data-cat="all">All</button>
-      <button class="filter-chip" data-cat="onboarding">Client Onboarding</button>
-      <button class="filter-chip" data-cat="crm">CRM</button>
-      <button class="filter-chip" data-cat="meetings">Meetings</button>
-      <button class="filter-chip" data-cat="email">Email</button>
-      <button class="filter-chip" data-cat="compliance">Compliance</button>
-      <button class="filter-chip" data-cat="billing">Billing</button>
-    </div>
-    <div class="samples-grid" id="samplesGrid">
-      <div class="sample-card" data-cat="onboarding">
-        <div class="sample-icon icon-teal"><i data-lucide="user-plus"></i></div>
-        <div class="sample-cat">Client Onboarding</div>
-        <h3>New Client Onboarding Flow</h3>
-        <p>Intake form submission triggers CRM contact creation, welcome email, task assignment, and calendar invite — all without a single manual step.</p>
-        <div class="sample-tools"><span class="tool-tag">JotForm</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span><span class="tool-tag">Calendly</span></div>
-      </div>
-      <div class="sample-card" data-cat="onboarding">
-        <div class="sample-icon icon-blue"><i data-lucide="file-signature"></i></div>
-        <div class="sample-cat">Client Onboarding</div>
-        <h3>Digital Paperwork &amp; E-sign</h3>
-        <p>Replace PDF packets with smart digital forms. Completed agreements automatically file to the right folder and notify the advisor for review.</p>
-        <div class="sample-tools"><span class="tool-tag">PreciseFP</span><span class="tool-tag">JotForm</span><span class="tool-tag">Google Drive</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="onboarding compliance">
-        <div class="sample-icon icon-navy"><i data-lucide="folder-check"></i></div>
-        <div class="sample-cat">Onboarding · Compliance</div>
-        <h3>Document Collection Tracker</h3>
-        <p>Client receives a customized document checklist. As files are uploaded, the advisor is notified and a compliance checklist updates automatically.</p>
-        <div class="sample-tools"><span class="tool-tag">JotForm</span><span class="tool-tag">Google Drive</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="crm">
-        <div class="sample-icon icon-blue"><i data-lucide="database"></i></div>
-        <div class="sample-cat">CRM</div>
-        <h3>CRM Auto-Population</h3>
-        <p>Every new lead, form submission, or scheduled appointment automatically creates or updates a contact in your CRM — no manual data entry.</p>
-        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Redtail</span><span class="tool-tag">Zapier</span><span class="tool-tag">Calendly</span></div>
-      </div>
-      <div class="sample-card" data-cat="crm meetings">
-        <div class="sample-icon icon-teal"><i data-lucide="clipboard-check"></i></div>
-        <div class="sample-cat">CRM · Meetings</div>
-        <h3>Meeting Note Filing</h3>
-        <p>After a meeting, notes are automatically filed to the correct CRM contact and a follow-up task is created — zero manual input required.</p>
-        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="meetings">
-        <div class="sample-icon icon-purple"><i data-lucide="calendar-clock"></i></div>
-        <div class="sample-cat">Meetings</div>
-        <h3>Meeting Prep Automation</h3>
-        <p>24 hours before each appointment, advisor receives a prep summary pulled from the CRM. Client gets a reminder with any outstanding items.</p>
-        <div class="sample-tools"><span class="tool-tag">Calendly</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span><span class="tool-tag">Gmail</span></div>
-      </div>
-      <div class="sample-card" data-cat="meetings">
-        <div class="sample-icon icon-navy"><i data-lucide="send"></i></div>
-        <div class="sample-cat">Meetings</div>
-        <h3>Post-Meeting Follow-up</h3>
-        <p>After a meeting ends, a personalized follow-up email is sent to the client and tasks are logged in the CRM automatically.</p>
-        <div class="sample-tools"><span class="tool-tag">Calendly</span><span class="tool-tag">Gmail</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="email">
-        <div class="sample-icon icon-teal"><i data-lucide="mail"></i></div>
-        <div class="sample-cat">Email</div>
-        <h3>Lifecycle Email Campaigns</h3>
-        <p>Prospects and clients receive relevant email sequences based on their lifecycle stage — all triggered automatically from your CRM.</p>
-        <div class="sample-tools"><span class="tool-tag">Mailchimp</span><span class="tool-tag">ActiveCampaign</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="email crm">
-        <div class="sample-icon icon-blue"><i data-lucide="bell"></i></div>
-        <div class="sample-cat">Email · CRM</div>
-        <h3>Birthday &amp; Anniversary Reminders</h3>
-        <p>CRM triggers automated personal emails on client birthdays and anniversaries. Advisor gets a heads-up so they can add a personal touch.</p>
-        <div class="sample-tools"><span class="tool-tag">Wealthbox</span><span class="tool-tag">Mailchimp</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="compliance">
-        <div class="sample-icon icon-navy"><i data-lucide="shield-check"></i></div>
-        <div class="sample-cat">Compliance</div>
-        <h3>Annual Review Workflow</h3>
-        <p>CRM triggers a review workflow 30 days before each client's anniversary. Scheduling link sent, prep tasks created, post-review follow-up queued.</p>
-        <div class="sample-tools"><span class="tool-tag">Redtail</span><span class="tool-tag">Calendly</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="compliance">
-        <div class="sample-icon icon-purple"><i data-lucide="check-square"></i></div>
-        <div class="sample-cat">Compliance</div>
-        <h3>Compliance Checklist Automation</h3>
-        <p>Required compliance tasks for each client are automatically created and tracked in your workflow tool. Nothing falls through the cracks.</p>
-        <div class="sample-tools"><span class="tool-tag">Process Street</span><span class="tool-tag">Hubly</span><span class="tool-tag">Zapier</span></div>
-      </div>
-      <div class="sample-card" data-cat="billing">
-        <div class="sample-icon icon-teal"><i data-lucide="credit-card"></i></div>
-        <div class="sample-cat">Billing</div>
-        <h3>Billing &amp; Fee Setup</h3>
-        <p>New client agreements trigger fee setup in AdvicePay. Payment confirmations sync back to CRM and trigger the next onboarding step automatically.</p>
-        <div class="sample-tools"><span class="tool-tag">AdvicePay</span><span class="tool-tag">Wealthbox</span><span class="tool-tag">Zapier</span></div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- CTA STRIP -->
 <section style="background:var(--navy);padding:4rem 2rem;text-align:center">
@@ -528,7 +332,7 @@ window.checkout = async function(btn) {
   }
 };
 
-// ── CATALOG FILTERS ────────────────────────────────────────
+// ── FILTERS ─────────────────────────────────────────────────
 function filter() {
   const q = (document.getElementById('searchInput').value || '').toLowerCase();
   const cat = (document.getElementById('filterCat').value || 'all').toLowerCase();
@@ -570,19 +374,6 @@ document.getElementById('typeFilterGroup').addEventListener('click', (e) => {
   btn.classList.add('active');
   activeType = btn.dataset.type;
   filter();
-});
-
-// ── SAMPLE SERVICES FILTER (separate chip group, own state) ─
-document.querySelector('.samples-filter').addEventListener('click', (e) => {
-  const chip = e.target.closest('.filter-chip');
-  if (!chip) return;
-  document.querySelectorAll('.samples-filter .filter-chip').forEach(c => c.classList.remove('active'));
-  chip.classList.add('active');
-  const cat = chip.dataset.cat;
-  document.querySelectorAll('#samplesGrid .sample-card').forEach(card => {
-    const cardCats = (card.dataset.cat || '').split(' ');
-    card.classList.toggle('hidden', cat !== 'all' && !cardCats.includes(cat));
-  });
 });
 
 init();

@@ -122,6 +122,7 @@
     <button class="tab-btn" onclick="switchTab('customers')">Customers</button>
     <button class="tab-btn" onclick="switchTab('categories')">Categories</button>
     <button class="tab-btn" onclick="switchTab('apps')">Apps</button>
+    <button class="tab-btn" onclick="switchTab('blog')">Blog Posts</button>
     <button class="tab-btn" onclick="switchTab('discounts')">Discount Codes</button>
     <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
     <button class="tab-btn" onclick="switchTab('preview')">Preview</button>
@@ -220,6 +221,20 @@
       <table class="products-table">
         <thead><tr><th>Name</th><th>Slug</th><th>Description</th><th>Product Count</th><th>Actions</th></tr></thead>
         <tbody id="categoriesTableBody"><tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BLOG POSTS TAB -->
+  <div id="tab-blog" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">Manage posts shown on the blog. Each post gets its own page automatically at /post.html?slug=your-slug.</p>
+      <button class="btn btn-primary" onclick="openBlogModal()">+ New Post</button>
+    </div>
+    <div class="table-wrap">
+      <table class="products-table">
+        <thead><tr><th>Title</th><th>Slug</th><th>Tags</th><th>Published</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="blogTableBody"><tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -570,7 +585,7 @@ if (sessionStorage.getItem('mgr_auth')==='1') {
 let products=[], sharedLessons=[], editingLessons=[], discountProductFilter=[];
 
 async function initManager() {
-  await Promise.all([loadProducts(), loadSharedLessons(), loadCustomers(), loadDiscounts(), loadAnalytics()]);
+  await Promise.all([loadProducts(), loadSharedLessons(), loadCustomers(), loadDiscounts(), loadAnalytics(), loadBlogPosts()]);
   await loadCategories();
   await loadApps();
   buildManagerCatFilters();
@@ -580,7 +595,7 @@ async function initManager() {
 
 // ── TABS ──────────────────────────────────────────────────────
 window.switchTab = function(tab) {
-  ['products','lessons','customers','categories','apps','discounts','analytics','preview'].forEach(t => {
+  ['products','lessons','customers','categories','apps','samples','blog','discounts','analytics','preview'].forEach(t => {
     const el = document.getElementById('tab-'+t);
     if (el) el.style.display = t===tab?'block':'none';
   });
@@ -750,7 +765,7 @@ window.saveProduct = async function() {
     // Only sync to Stripe if there's a price and no Kajabi URL
     if (price && !kajabi_url) {
       const stripeRes=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({productId,name,description,price,image_url,billingInterval:billing_interval,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
+        body:JSON.stringify({productId,name,description,price,image_url,recurringInterval:billing_interval,existingStripeProductId:stripeProductId,existingStripePriceId:stripePriceId})});
       const stripeData=await stripeRes.json();
       if (!stripeData.error) { stripeProductId=stripeData.stripeProductId; stripePriceId=stripeData.stripePriceId; }
     }
@@ -789,7 +804,8 @@ window.syncToStripe = async function(id) {
   showAlert('info','Syncing to Stripe...');
   try {
     const res=await fetch('/api/sync-product',{method:'POST',headers:{'Content-Type':'application/json'},
-     body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,billingInterval:p.billing_interval||null,existingStripeProductId:p.stripe_product_id,existingStripePriceId:p.stripe_price_id})});
+      body:JSON.stringify({productId:p.id,name:p.name,description:p.description,price:p.price,image_url:p.image_url,recurringInterval:p.billing_interval||null,
+        existingStripeProductId:p.stripe_product_id,existingStripePriceId:p.stripe_price_id})});
     const data=await res.json();
     if (data.error) throw new Error(data.error);
     await supabase.from('products').update({stripe_product_id:data.stripeProductId,stripe_price_id:data.stripePriceId}).eq('id',id);
@@ -1292,6 +1308,114 @@ window.deleteApp = async function(id, name) {
   showAlert('success', `App "${name}" deleted.`);
 };
 
+// ── BLOG POSTS ───────────────────────────────────────────────
+let blogPosts = [];
+
+async function loadBlogPosts() {
+  const { data } = await supabase.from('blog_posts').select('*').order('published_at', { ascending: false });
+  blogPosts = data || [];
+  renderBlogTable();
+}
+
+function renderBlogTable() {
+  const tbody = document.getElementById('blogTableBody');
+  if (!tbody) return;
+  if (!blogPosts.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No posts yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = blogPosts.map(p => `
+    <tr>
+      <td style="color:white;font-weight:600">${p.title}</td>
+      <td style="color:rgba(255,255,255,.4);font-family:monospace;font-size:.8rem">${p.slug}</td>
+      <td style="color:rgba(255,255,255,.5);font-size:.82rem">${(p.tags || []).join(', ')}</td>
+      <td style="color:rgba(255,255,255,.4);font-size:.82rem">${p.published_at ? new Date(p.published_at).toLocaleDateString() : '—'}</td>
+      <td><button class="toggle-btn ${p.published ? 'on' : 'off'}" onclick="togglePostPublished('${p.id}',${!!p.published})" title="Published"></button></td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="editBlogPost('${p.id}')">Edit</button>
+          <a class="action-btn" href="/post.html?slug=${p.slug}" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center">View</a>
+          <button class="action-btn danger" onclick="deleteBlogPost('${p.id}','${escHtml(p.title)}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+window.openBlogModal = function() {
+  document.getElementById('editBlogId').value = '';
+  ['bTitle','bSlug','bExcerpt','bCoverImage','bTags','bAuthor','bContent'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bPublished').checked = true;
+  document.getElementById('blogStatus').textContent = '';
+  document.getElementById('blogModalTitle').textContent = 'New Post';
+  document.getElementById('blogModal').classList.add('open');
+};
+
+window.closeBlogModal = function() { document.getElementById('blogModal').classList.remove('open'); };
+
+window.autofillPostSlug = function() {
+  const title = document.getElementById('bTitle').value;
+  document.getElementById('bSlug').value = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+};
+
+window.editBlogPost = function(id) {
+  const p = blogPosts.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('editBlogId').value = p.id;
+  document.getElementById('bTitle').value = p.title || '';
+  document.getElementById('bSlug').value = p.slug || '';
+  document.getElementById('bExcerpt').value = p.excerpt || '';
+  document.getElementById('bCoverImage').value = p.cover_image_url || '';
+  document.getElementById('bTags').value = (p.tags || []).join(', ');
+  document.getElementById('bAuthor').value = p.author || '';
+  document.getElementById('bContent').value = p.content || '';
+  document.getElementById('bPublished').checked = p.published !== false;
+  document.getElementById('blogStatus').textContent = '';
+  document.getElementById('blogModalTitle').textContent = 'Edit Post';
+  document.getElementById('blogModal').classList.add('open');
+};
+
+window.saveBlogPost = async function() {
+  const id = document.getElementById('editBlogId').value;
+  const title = document.getElementById('bTitle').value.trim();
+  const slug = document.getElementById('bSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-');
+  const excerpt = document.getElementById('bExcerpt').value.trim();
+  const cover_image_url = document.getElementById('bCoverImage').value.trim();
+  const tags = document.getElementById('bTags').value.split(',').map(t => t.trim()).filter(Boolean);
+  const author = document.getElementById('bAuthor').value.trim();
+  const content = document.getElementById('bContent').value;
+  const published = document.getElementById('bPublished').checked;
+  const st = document.getElementById('blogStatus');
+  if (!title || !slug) { st.innerHTML = '<span style="color:#fca5a5">Title and slug are required.</span>'; return; }
+  const payload = { title, slug, excerpt, cover_image_url, tags, author, content, published };
+  let error;
+  if (id) {
+    ({ error } = await supabase.from('blog_posts').update(payload).eq('id', id));
+  } else {
+    payload.published_at = new Date().toISOString();
+    ({ error } = await supabase.from('blog_posts').insert(payload));
+  }
+  if (error) {
+    if (error.message?.includes('duplicate')) st.innerHTML = '<span style="color:#fca5a5">That slug is already in use — pick another.</span>';
+    else st.innerHTML = `<span style="color:#fca5a5">${error.message}</span>`;
+    return;
+  }
+  closeBlogModal();
+  await loadBlogPosts();
+  showAlert('success', `✓ Post "${title}" saved.`);
+};
+
+window.togglePostPublished = async function(id, current) {
+  await supabase.from('blog_posts').update({ published: !current }).eq('id', id);
+  await loadBlogPosts();
+};
+
+window.deleteBlogPost = async function(id, title) {
+  if (!confirm(`Delete "${title}"? This can't be undone.`)) return;
+  await supabase.from('blog_posts').delete().eq('id', id);
+  await loadBlogPosts();
+  showAlert('success', `Post "${title}" deleted.`);
+};
+
 // ── CATEGORIES ───────────────────────────────────────────────
 let categories = [];
 
@@ -1513,6 +1637,59 @@ function escHtml(str) {
         <button class="btn btn-primary" onclick="saveCategory()">Save Category</button>
       </div>
       <div id="catStatus" style="margin-top:.75rem;font-size:.83rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHITE GLOVE SAMPLE MODAL -->
+<!-- BLOG POST MODAL -->
+<div class="modal-overlay" id="blogModal">
+  <div class="modal" style="max-width:680px;background:#0d1f3a;border:1px solid rgba(255,255,255,.1);max-height:90vh;overflow-y:auto">
+    <div class="modal-header">
+      <h2 style="color:white" id="blogModalTitle">New Post</h2>
+      <button class="modal-close" onclick="closeBlogModal()" style="color:rgba(255,255,255,.5)">✕</button>
+    </div>
+    <div class="form-card" style="background:transparent;border:none;padding:0">
+      <input type="hidden" id="editBlogId">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="bTitle" placeholder="Post title" oninput="autofillPostSlug()">
+      </div>
+      <div class="form-group">
+        <label>Slug <span style="color:rgba(255,255,255,.3);font-weight:400">(used in the URL — auto-filled, editable)</span></label>
+        <input type="text" id="bSlug" placeholder="post-title">
+      </div>
+      <div class="form-group">
+        <label>Excerpt <span style="color:rgba(255,255,255,.3);font-weight:400">(shown on the blog index card)</span></label>
+        <textarea id="bExcerpt" placeholder="One or two sentence summary..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cover Image URL</label>
+          <input type="url" id="bCoverImage" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Author</label>
+          <input type="text" id="bAuthor" placeholder="e.g. Arielle Minicozzi">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tags <span style="color:rgba(255,255,255,.3);font-weight:400">(comma-separated — powers the sidebar categories)</span></label>
+        <input type="text" id="bTags" placeholder="Zapier, Scheduling, Software Review">
+      </div>
+      <div class="form-group">
+        <label>Content <span style="color:rgba(255,255,255,.3);font-weight:400">(HTML ok — renders on the post page)</span></label>
+        <textarea id="bContent" placeholder="Full post content..." style="min-height:220px"></textarea>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:.6rem">
+        <input type="checkbox" id="bPublished" style="accent-color:var(--accent)" checked>
+        <label for="bPublished" style="margin:0;cursor:pointer">Published <span style="color:rgba(255,255,255,.3);font-weight:400">(uncheck to save as a draft, hidden from the blog)</span></label>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem">
+        <button class="btn btn-outline" onclick="closeBlogModal()" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">Cancel</button>
+        <button class="btn btn-primary" onclick="saveBlogPost()">Save Post</button>
+      </div>
+      <div id="blogStatus" style="margin-top:.75rem;font-size:.83rem"></div>
     </div>
   </div>
 </div>
