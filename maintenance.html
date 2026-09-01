@@ -267,16 +267,24 @@ async function loadMaintenanceProducts() {
     console.error('Could not load maintenance plans:', e);
   }
 
-  document.querySelectorAll('.plan-card').forEach((card, i) => {
+  document.querySelectorAll('.plan-card').forEach((card) => {
     const btn = card.querySelector('button');
-    const product = maintenanceProducts[i];
+    const tierNum = card.dataset.tier; // Reads data-tier="1", "2", "3", or "4"
+
+    // Find the product matching tier number or tier name
+    const product = maintenanceProducts.find(p => {
+      const name = (p.name || '').toLowerCase();
+      return name.includes(`tier ${tierNum}`) || name.includes(`tier${tierNum}`);
+    });
+
     if (product?.stripe_price_id) {
       btn.disabled = false;
       btn.textContent = 'Get Started';
       btn.dataset.priceId = product.stripe_price_id;
       btn.dataset.productId = product.id;
+      btn.onclick = () => window.startMaintenanceCheckout(btn);
     } else {
-      // Fall back to the signup form until this tier's product is created in Store Manager.
+      // Fallback if product is not found or missing Stripe price ID
       btn.disabled = false;
       btn.textContent = 'Get Started';
       btn.onclick = () => { window.open('https://portal.sphynxautomation.com/public/form/view/65a23c1439c234003aa5a63e', '_blank'); };
@@ -287,7 +295,7 @@ async function loadMaintenanceProducts() {
 window.startMaintenanceCheckout = async function(btn) {
   const priceId = btn.dataset.priceId;
   const productId = btn.dataset.productId;
-  if (!priceId) return; // handled by the fallback onclick set above
+  if (!priceId) return;
   const originalText = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Loading...';
