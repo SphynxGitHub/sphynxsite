@@ -9,6 +9,7 @@ module.exports = async function handler(req, res) {
     productId, name, description, price, image_url,
     existingStripeProductId, existingStripePriceId,
     toggleActive, deleteProduct, active,
+    billingInterval, // Pass 'month', 'year', or 'one_time' (or derive from product_type)
   } = req.body;
 
   try {
@@ -27,9 +28,13 @@ module.exports = async function handler(req, res) {
 
     const productData = {
       name,
-      description,
       images: image_url ? [image_url] : [],
     };
+
+    // Prevent Stripe empty string validation error
+    if (description && description.trim() !== '') {
+      productData.description = description;
+    }
 
     if (stripeProductId) {
       await stripe.products.update(stripeProductId, productData);
@@ -38,20 +43,38 @@ module.exports = async function handler(req, res) {
       stripeProductId = product.id;
     }
 
+    // Check existing price details
     if (stripePriceId) {
       const existingPrice = await stripe.prices.retrieve(stripePriceId);
-      if (existingPrice.unit_amount !== price) {
+      const isExistingRecurring = existingPrice.type === 'recurring';
+      const existingInterval = existingPrice.recurring?.interval;
+      const targetRecurring = billingInterval && billingInterval !== 'one_time';
+
+      // Archive price if unit_amount OR billing type/interval changes
+      const priceMismatch = existingPrice.unit_amount !== price;
+      const typeMismatch = isExistingRecurring !== targetRecurring;
+      const intervalMismatch = targetRecurring && existingInterval !== billingInterval;
+
+      if (priceMismatch || typeMismatch || intervalMismatch) {
         await stripe.prices.update(stripePriceId, { active: false });
         stripePriceId = null;
       }
     }
 
+    // Create a new price if needed
     if (!stripePriceId) {
-      const newPrice = await stripe.prices.create({
+      const priceConfig = {
         product: stripeProductId,
         unit_amount: price,
         currency: 'usd',
-      });
+      };
+
+      // Add recurring parameter for subscriptions
+      if (billingInterval && billingInterval !== 'one_time') {
+        priceConfig.recurring = { interval: billingInterval }; // e.g., 'month' or 'year'
+      }
+
+      const newPrice = await stripe.prices.create(priceConfig);
       stripePriceId = newPrice.id;
     }
 
