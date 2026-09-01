@@ -1,64 +1,102 @@
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// Buffer raw request body for Stripe signature validation
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+async function buffer(readable) {
+  const chunks = [];
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
+}
+
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  if (req.method !== 'POST') return res.status(405).send('Method Method Not Allowed');
 
-  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-
+  const buf = await buffer(req);
   const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    console.error('Webhook signature error:', err.message);
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const { userId, productId } = session.metadata;
-    const amountPaid = session.amount_total;
-    const customerEmail = session.customer_email || session.customer_details?.email;
-
-    try {
-      await supabase.from('purchases').insert({
-        user_id: userId,
-        product_id: productId,
-        amount_paid: amountPaid,
-        stripe_session_id: session.id,
-        purchased_at: new Date().toISOString(),
-      });
-
-      const { data: product } = await supabase
-        .from('products')
-        .select('name, category')
-        .eq('id', productId)
-        .single();
-
-      if (process.env.ZAPIER_WEBHOOK_URL) {
-        await fetch(process.env.ZAPIER_WEBHOOK_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: customerEmail,
-            userId,
-            productId,
-            productName: product?.name || 'Your Purchase',
-            courseUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/course.html?id=${productId}`,
-            loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/login.html`,
-          }),
-        });
-      }
-    } catch (err) {
-      console.error('Error recording purchase:', err);
+    if (webhookSecret) {
+      event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+    } else {
+      event = JSON.parse(buf.toString());
     }
+  } catch (err) {
+    console.error(`Webhook signature verification failed: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  return res.status(200).json({ received: true });
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const productId = session.metadata?.product_id;
+        const userId = session.metadata?.user_id || session.client_reference_id;
+        const amountPaid = session.amount_total || 0;
+
+        if (userId && productId) {
+          // Record purchase in Supabase
+          await supabase.from('purchases').insert({
+            user_id: userId,
+            product_id: productId,
+            amount_paid: amountPaid,
+            stripe_checkout_id: session.id,
+          });
+        }
+        break;
+      }
+
+      case 'invoice.payment_succeeded': {
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription;
+
+        if (subscriptionId) {
+          // Fetch subscription details
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+          // Check if subscription has the 12-month auto-cancel marker
+          if (subscription.metadata?.auto_cancel_12m === 'true') {
+            // Count total successfully paid invoices for this subscription
+            const paidInvoices = await stripe.invoices.list({
+              subscription: subscriptionId,
+              status: 'paid',
+            });
+
+            // If 12 payments have been collected, mark to cancel at end of 12th month
+            if (paidInvoices.data.length >= 12) {
+              await stripe.subscriptions.update(subscriptionId, {
+                cancel_at_period_end: true,
+              });
+              console.log(`Subscription ${subscriptionId} scheduled for cancellation after 12 payments.`);
+            }
+          }
+        }
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    return res.status(200).json({ received: true });
+  } catch (err) {
+    console.error('Webhook processing error:', err);
+    return res.status(500).json({ error: err.message });
+  }
 };
