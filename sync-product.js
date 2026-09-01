@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     productId, name, description, price, image_url,
     existingStripeProductId, existingStripePriceId,
     toggleActive, deleteProduct, active,
-    recurringInterval, // 'month' | 'year' | undefined/null for one-time
+    billingInterval, // e.g. 'month' for a recurring subscription price; omit/blank for one-time
   } = req.body;
 
   try {
@@ -39,17 +39,11 @@ module.exports = async function handler(req, res) {
       stripeProductId = product.id;
     }
 
-    // Check whether the existing price still matches (amount + billing type). If not, retire it
-    // and create a fresh one — Stripe prices are immutable once created.
     if (stripePriceId) {
       const existingPrice = await stripe.prices.retrieve(stripePriceId);
-      const wantsRecurring = !!recurringInterval;
-      const isRecurring = existingPrice.type === 'recurring';
-      const intervalMatches = isRecurring && existingPrice.recurring?.interval === recurringInterval;
-      const amountMatches = existingPrice.unit_amount === price;
-      const billingMatches = wantsRecurring ? (isRecurring && intervalMatches) : !isRecurring;
-
-      if (!amountMatches || !billingMatches) {
+      const currentInterval = existingPrice.recurring?.interval || null;
+      const wantedInterval = billingInterval || null;
+      if (existingPrice.unit_amount !== price || currentInterval !== wantedInterval) {
         await stripe.prices.update(stripePriceId, { active: false });
         stripePriceId = null;
       }
@@ -61,8 +55,8 @@ module.exports = async function handler(req, res) {
         unit_amount: price,
         currency: 'usd',
       };
-      if (recurringInterval) {
-        priceParams.recurring = { interval: recurringInterval };
+      if (billingInterval) {
+        priceParams.recurring = { interval: billingInterval };
       }
       const newPrice = await stripe.prices.create(priceParams);
       stripePriceId = newPrice.id;

@@ -26,6 +26,52 @@ module.exports = async function handler(req, res) {
     const amountPaid = session.amount_total;
     const customerEmail = session.customer_email || session.customer_details?.email;
 
+    // ── Maintenance plan subscription ─────────────────────────
+    if (meta.type === 'maintenance_subscription') {
+      let planName = 'Maintenance Plan';
+      try {
+        const { data: p } = await supabase.from('products').select('name').eq('id', meta.productId).single();
+        planName = p?.name || planName;
+      } catch (e) {
+        console.error('Could not look up maintenance plan name:', e.message);
+      }
+
+      // Optional record-keeping — safe no-op if you haven't created this table yet.
+      try {
+        await supabase.from('subscriptions').insert({
+          email: customerEmail,
+          product_id: meta.productId,
+          plan_name: planName,
+          stripe_subscription_id: session.subscription,
+          stripe_session_id: session.id,
+          started_at: new Date().toISOString(),
+        });
+      } catch (e) {
+        console.error('subscriptions insert skipped:', e.message);
+      }
+
+      try {
+        if (process.env.ZAPIER_WEBHOOK_URL) {
+          await fetch(process.env.ZAPIER_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'maintenance_subscription_purchase',
+              email: customerEmail,
+              planName,
+              amountPaid,
+              stripeSubscriptionId: session.subscription,
+              sessionId: session.id,
+            }),
+          });
+        }
+      } catch (err) {
+        console.error('Error sending maintenance plan notification:', err);
+      }
+
+      return res.status(200).json({ received: true });
+    }
+
     // ── Prepaid coaching block ────────────────────────────────
     if (meta.type === 'coaching_prepaid') {
       let hoursPurchased = 5;

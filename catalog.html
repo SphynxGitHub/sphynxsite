@@ -8,7 +8,7 @@
 <script src="/includes.js"></script>
 <style>
   /* FILTER BAR */
-  .catalog-controls { background:white; border-bottom:1px solid var(--border); padding:1.1rem 2rem; position:sticky; top:80px; z-index:50; }
+  .catalog-controls { background:white; border-bottom:1px solid var(--border); padding:1.1rem 2rem; }
   .catalog-controls-inner { max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; }
   .filter-group { display:flex; gap:.4rem; flex-wrap:wrap; }
   .filter-divider { width:1px; height:28px; background:var(--border); margin:0 .25rem; align-self:center; }
@@ -29,8 +29,9 @@
   /* CATALOG GRID */
   .catalog-wrap { max-width:1200px; margin:0 auto; padding:3rem 2rem 5rem; }
   .catalog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.25rem; }
-  .catalog-card { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition:transform .25s,box-shadow .25s; position:relative; }
+  .catalog-card { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition:transform .25s,box-shadow .25s; position:relative; cursor:pointer; }
   .catalog-card:hover { transform:translateY(-4px); box-shadow:0 10px 32px rgba(11,31,58,.1); }
+  .catalog-card:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
   .catalog-card.hidden { display:none; }
 
   .type-stripe { height:4px; width:100%; }
@@ -79,6 +80,13 @@
   .legend { display:flex; gap:1.25rem; flex-wrap:wrap; margin-bottom:2rem; }
   .legend-item { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--muted); }
   .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  /* SAMPLE SERVICES */
+  .sample-services { background:var(--bg); }
+  .sample-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.25rem; margin-top:2.5rem; }
+  .sample-card { background:white; border:1px solid var(--border); border-radius:14px; padding:1.5rem; }
+  .sample-card h4 { font-size:.95rem; font-weight:700; color:var(--navy); margin-bottom:.5rem; }
+  .sample-card p { font-size:.85rem; color:var(--muted); line-height:1.6; }
 
   @media(max-width:768px){
     .catalog-grid { grid-template-columns:1fr; }
@@ -137,6 +145,18 @@
     </div>
   </div>
 </div>
+
+<!-- SAMPLE SERVICES (moved here from the White Glove page) -->
+<section class="sample-services">
+  <div class="section-inner">
+    <div class="section-tag">A Few Examples</div>
+    <h2 class="section-heading">Sample services</h2>
+    <p class="section-sub">A look at the kinds of White Glove builds we take on most often.</p>
+    <div class="sample-grid" id="sampleServicesGrid">
+      <!-- populated once white-glove.html content is available -->
+    </div>
+  </div>
+</section>
 
 <!-- CTA STRIP -->
 <section style="background:var(--navy);padding:4rem 2rem;text-align:center">
@@ -281,7 +301,7 @@ function cardHtml(p, meta) {
   }
 
   return `
-    <div class="catalog-card" data-type="${meta.key}" data-cat="${(p.category || '').toLowerCase()}" data-apps="${(p.apps || []).join(',').toLowerCase()}" data-search="${search}">
+    <div class="catalog-card" tabindex="0" role="link" aria-label="${p.name}" data-type="${meta.key}" data-cat="${(p.category || '').toLowerCase()}" data-apps="${(p.apps || []).join(',').toLowerCase()}" data-search="${search}" onclick="handleCardClick(this, event)" onkeydown="if(event.key==='Enter')handleCardClick(this, event)">
       <div class="type-stripe ${meta.stripe}"></div>
       <div class="cc-body">
         <div class="cc-top">
@@ -299,6 +319,15 @@ function cardHtml(p, meta) {
       </div>
     </div>`;
 }
+
+// Clicking anywhere on the card opens the same sales page / action as its CTA —
+// we just delegate to the CTA control itself so checkout, "Open", "Get Estimate", etc.
+// all keep working exactly as they already do.
+window.handleCardClick = function(card, evt) {
+  if (evt.target.closest('.cc-cta')) return; // the real control is handling its own click
+  const cta = card.querySelector('.cc-cta');
+  if (cta) cta.click();
+};
 
 window.checkout = async function(btn) {
   const priceId = btn.dataset.price;

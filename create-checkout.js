@@ -14,21 +14,21 @@ module.exports = async function handler(req, res) {
   try {
     const { priceId, productId, userId, discountCode } = req.body;
 
-    // Look up the product to see if this is a coaching prepaid block —
-    // those get adjustable quantity (buy 5+ hours) and a different post-checkout flow.
+    // Look up the product to see if this is a coaching prepaid block or a maintenance plan —
+    // those get special line-item behavior and their own post-checkout redirects.
     let product = null;
     if (productId) {
       const { data } = await supabase.from('products').select('category,name').eq('id', productId).single();
       product = data || null;
     }
-    const isCoaching = (product?.category || '').toLowerCase().includes('coach');
+    const category = (product?.category || '').toLowerCase();
+    const isCoaching = category.includes('coach');
+    const isMaintenance = category.includes('maintenance');
 
-    // Ask Stripe whether this price is recurring — if so, Checkout must run in
-    // 'subscription' mode instead of 'payment'. This makes maintenance-plan
-    // subscriptions (or any future recurring product) work automatically,
-    // with no extra flags needed from the caller.
+    // A price being recurring (set up via the Billing Interval field in Store Manager) is what
+    // actually determines subscription vs one-time — not a guess based on category.
     const priceObj = await stripe.prices.retrieve(priceId);
-    const isSubscription = priceObj.type === 'recurring';
+    const isSubscription = !!priceObj.recurring;
 
     // Validate discount code if provided
     let stripeCouponId = null;
@@ -70,21 +70,33 @@ module.exports = async function handler(req, res) {
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sphynxsite.vercel.app';
 
-    const lineItem = { price: priceId, quantity: isCoaching ? 5 : 1 };
-    if (isCoaching) {
+    const lineItem = { price: priceId, quantity: isCoaching && !isSubscription ? 5 : 1 };
+    if (isCoaching && !isSubscription) {
       // Lets the buyer add extra hours at checkout, all at the same discounted per-hour rate.
       lineItem.adjustable_quantity = { enabled: true, minimum: 5, maximum: 40 };
+    }
+
+    let successUrl = `${siteUrl}/dashboard.html?session_id={CHECKOUT_SESSION_ID}`;
+    let cancelUrl = `${siteUrl}/store.html`;
+    let type = 'digital_product';
+
+    if (isSubscription || isMaintenance) {
+      successUrl = `${siteUrl}/maintenance-thank-you.html?session_id={CHECKOUT_SESSION_ID}`;
+      cancelUrl = `${siteUrl}/maintenance.html`;
+      type = 'maintenance_subscription';
+    } else if (isCoaching) {
+      successUrl = `${siteUrl}/coaching-thank-you.html?session_id={CHECKOUT_SESSION_ID}`;
+      cancelUrl = `${siteUrl}/coaching.html`;
+      type = 'coaching_prepaid';
     }
 
     const sessionParams = {
       payment_method_types: ['card'],
       line_items: [lineItem],
       mode: isSubscription ? 'subscription' : 'payment',
-      success_url: isCoaching
-        ? `${siteUrl}/coaching-thank-you.html?session_id={CHECKOUT_SESSION_ID}`
-        : `${siteUrl}/dashboard.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: isCoaching ? `${siteUrl}/coaching.html` : `${siteUrl}/store.html`,
-      metadata: { productId, userId: userId || '', type: isCoaching ? 'coaching_prepaid' : 'digital_product' },
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: { productId, userId: userId || '', type },
       allow_promotion_codes: !stripeCouponId, // allow Stripe codes if no custom code
     };
 
