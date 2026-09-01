@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="store.css">
 <style>
-  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: .9rem 2rem; position: sticky; top: 64px; z-index: 50; }
+  .filter-bar { background: white; border-bottom: 1px solid var(--border); padding: .9rem 2rem; position: sticky; top: 80px; z-index: 50; }
   .filter-inner-wrap { max-width: 1200px; margin: 0 auto; }
   .filter-controls { display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; }
   .filter-select { appearance: none; -webkit-appearance: none; background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23808fa8'/%3E%3C/svg%3E") no-repeat right .8rem center; border: 1.5px solid var(--border); color: var(--navy); font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 600; padding: .5rem 1.9rem .5rem .9rem; border-radius: 100px; cursor: pointer; transition: all .2s; max-width: 160px; }
@@ -233,6 +233,7 @@ async function loadProducts() {
     .from('products')
     .select('*')
     .eq('active', true)
+    .or('hidden_from_store.is.null,hidden_from_store.eq.false')
     .order('category')
     .order('sort_order');
 

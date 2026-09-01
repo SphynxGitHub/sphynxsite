@@ -25,6 +25,7 @@
   .products-table th{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:.75rem 1rem;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
   .products-table td{padding:.9rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
   .products-table tr:hover td{background:rgba(255,255,255,.03)}
+  .products-table tr.is-hidden td{opacity:.55}
   .product-name-cell{display:flex;align-items:center;gap:.85rem}
   .product-thumb{width:48px;height:36px;border-radius:6px;object-fit:cover;background:rgba(255,255,255,.1);flex-shrink:0}
   .product-thumb-placeholder{width:48px;height:36px;border-radius:6px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -42,6 +43,8 @@
   .toggle-btn::after{content:'';position:absolute;top:3px;width:18px;height:18px;border-radius:50%;background:white;transition:left .2s}
   .toggle-btn.on::after{left:21px}
   .toggle-btn.off::after{left:3px}
+  .toggle-btn.hide-toggle.on{background:#f59e0b}
+  .hidden-badge{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);padding:.15rem .5rem;border-radius:100px;margin-left:.5rem;white-space:nowrap}
   .table-wrap{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;overflow-x:auto}
   .form-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem}
   .form-card .form-group label{color:rgba(255,255,255,.7)}
@@ -146,6 +149,12 @@
           <option value="QuickStart">QuickStart</option>
           <option value="White Glove">White Glove</option>
         </select>
+        <select id="filterVisibility" onchange="filterProducts()"
+          style="padding:.55rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:white;font-family:'Outfit',sans-serif;font-size:.82rem;outline:none">
+          <option value="">All visibility</option>
+          <option value="visible">Visible on store</option>
+          <option value="hidden">Hidden from store</option>
+        </select>
       </div>
       <div style="display:flex;gap:.4rem;flex-wrap:wrap" id="managerCatFilters">
         <button class="action-btn active" data-cat="all" onclick="setManagerCat(this)" style="background:rgba(255,255,255,.15);color:white">All</button>
@@ -153,8 +162,8 @@
     </div>
     <div class="table-wrap">
       <table class="products-table">
-        <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Lessons</th><th>Stripe</th><th>Active</th><th>Actions</th></tr></thead>
-        <tbody id="productsTableBody"><tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
+        <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Lessons</th><th>Stripe</th><th>Active</th><th>Store Visibility</th><th>Actions</th></tr></thead>
+        <tbody id="productsTableBody"><tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -352,6 +361,15 @@
           <label>Stripe Price ID <span style="color:rgba(255,255,255,.3);font-weight:400">(auto-filled)</span></label>
           <input type="text" id="fStripePriceId" placeholder="price_..." readonly style="opacity:.6">
         </div>
+      </div>
+
+      <div class="form-section-title">Store Visibility</div>
+      <div class="form-group" style="display:flex;align-items:flex-start;gap:.7rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:.9rem 1rem">
+        <input type="checkbox" id="fHideFromStore" style="accent-color:#f59e0b;margin-top:.2rem">
+        <label for="fHideFromStore" style="margin:0;color:rgba(255,255,255,.8);font-weight:600;cursor:pointer">
+          Hide from Store
+          <div style="font-size:.78rem;color:rgba(255,255,255,.4);font-weight:400;margin-top:.2rem">The product still exists in Stripe and can be sold via a direct checkout link, assigned manually to a customer, or used elsewhere (like the coaching page) — it just won't appear in the public store grid.</div>
+        </label>
       </div>
 
       <div class="form-section-title">Lessons</div>
@@ -582,17 +600,17 @@ async function loadProducts() {
 function renderProductsTable() {
   const tbody = document.getElementById('productsTableBody');
   if (!products.length) {
-    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No products yet.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">No products yet.</td></tr>`;
     return;
   }
   tbody.innerHTML = products.map(p=>`
-    <tr>
+    <tr class="${p.hidden_from_store?'is-hidden':''}">
       <td>
         <div class="product-name-cell">
           ${p.image_url?`<img class="product-thumb" src="${p.image_url}" alt="">`:
             `<div class="product-thumb-placeholder"><i data-lucide="package" style="width:18px;height:18px;color:rgba(255,255,255,.4)"></i></div>`}
           <div>
-            <div class="td-name">${p.name}</div>
+            <div class="td-name">${p.name}${p.hidden_from_store?'<span class="hidden-badge">Hidden</span>':''}</div>
             <div class="td-sub">${p.kajabi_url?'Links to Kajabi':'Stripe checkout'}</div>
           </div>
         </div>
@@ -601,7 +619,8 @@ function renderProductsTable() {
       <td class="td-price">${p.price?'$'+(p.price/100).toFixed(2):'Free'}</td>
       <td style="color:rgba(255,255,255,.5);font-size:.85rem">${p.lesson_count||0} lessons</td>
       <td><span style="font-size:.7rem;color:rgba(255,255,255,.3);font-family:monospace">${p.stripe_price_id?p.stripe_price_id.slice(0,16)+'...':'—'}</span></td>
-      <td><button class="toggle-btn ${p.active?'on':'off'}" onclick="toggleActive('${p.id}',${p.active})"></button></td>
+      <td><button class="toggle-btn ${p.active?'on':'off'}" onclick="toggleActive('${p.id}',${p.active})" title="Active"></button></td>
+      <td><button class="toggle-btn hide-toggle ${p.hidden_from_store?'on':'off'}" onclick="toggleHidden('${p.id}',${!!p.hidden_from_store})" title="Hide from store"></button></td>
       <td>
         <div class="action-btns">
           <button class="action-btn" onclick="editProduct('${p.id}')">Edit</button>
@@ -620,6 +639,7 @@ window.openProductModal = function() {
   document.getElementById('fCategory').value='JotForm';
   document.getElementById('fPrice').value='';
   document.getElementById('fSort').value='0';
+  document.getElementById('fHideFromStore').checked=false;
   document.getElementById('productModalTitle').textContent='Add Product';
   renderLessonsForm();
   document.getElementById('productModal').classList.add('open');
@@ -646,6 +666,7 @@ window.editProduct = async function(id) {
   document.getElementById('fImplType').value=p.implementation_type||'';
   document.getElementById('fVideoMinutes').value=p.video_minutes||'';
   document.getElementById('fTimeEstimate').value=p.time_estimate_minutes||'';
+  document.getElementById('fHideFromStore').checked=!!p.hidden_from_store;
   // Set lifecycle checkboxes
   document.querySelectorAll('#fLifecycleStages input').forEach(cb=>{
     cb.checked=(p.lifecycle_stages||[]).includes(cb.value);
@@ -708,6 +729,7 @@ window.saveProduct = async function() {
   const image_url=document.getElementById('fImage').value.trim();
   const kajabi_url=document.getElementById('fKajabiUrl').value.trim();
   const sort_order=parseInt(document.getElementById('fSort').value)||0;
+  const hidden_from_store=document.getElementById('fHideFromStore').checked;
   if (!name) { showAlert('error','Name is required.'); btn.disabled=false; btn.textContent='Save & Sync to Stripe'; return; }
   try {
     let stripeProductId=document.getElementById('fStripeProductId').value;
@@ -725,7 +747,7 @@ window.saveProduct = async function() {
     const apps_used=[...document.querySelectorAll('#fAppsUsed input:checked')].map(cb=>cb.value);
     const video_minutes=parseFloat(document.getElementById('fVideoMinutes')?.value||'0');
     const time_estimate_minutes=parseInt(document.getElementById('fTimeEstimate')?.value||'0')||null;
-    const payload={name,category,description,price,image_url,kajabi_url,sort_order,product_type,implementation_type,lifecycle_stages,apps:apps_used,video_minutes,time_estimate_minutes,
+    const payload={name,category,description,price,image_url,kajabi_url,sort_order,product_type,implementation_type,lifecycle_stages,apps:apps_used,video_minutes,time_estimate_minutes,hidden_from_store,
       stripe_product_id:stripeProductId,stripe_price_id:stripePriceId,
       lesson_count:editingLessons.length,active:true};
     let savedId=productId;
@@ -766,6 +788,11 @@ window.syncToStripe = async function(id) {
 
 window.toggleActive = async function(id,current) {
   await supabase.from('products').update({active:!current}).eq('id',id);
+  await loadProducts();
+};
+
+window.toggleHidden = async function(id,current) {
+  await supabase.from('products').update({hidden_from_store:!current}).eq('id',id);
   await loadProducts();
 };
 
@@ -1091,17 +1118,20 @@ window.filterProducts = function() {
   const q = (document.getElementById('productSearch')?.value || '').toLowerCase();
   const type = document.getElementById('filterType')?.value || '';
   const impl = document.getElementById('filterImpl')?.value || '';
+  const visibility = document.getElementById('filterVisibility')?.value || '';
   const rows = document.querySelectorAll('#productsTableBody tr');
   rows.forEach(row => {
     const text = row.textContent.toLowerCase();
     const cat = row.dataset.cat || '';
     const ptype = row.dataset.type || '';
     const pimpl = row.dataset.impl || '';
+    const isHidden = row.dataset.hidden === 'true';
     const matchQ = !q || text.includes(q);
     const matchCat = managerActiveCat === 'all' || cat === managerActiveCat;
     const matchType = !type || ptype === type;
     const matchImpl = !impl || pimpl === impl;
-    row.style.display = matchQ && matchCat && matchType && matchImpl ? '' : 'none';
+    const matchVisibility = !visibility || (visibility === 'hidden' ? isHidden : !isHidden);
+    row.style.display = matchQ && matchCat && matchType && matchImpl && matchVisibility ? '' : 'none';
   });
 };
 
@@ -1133,6 +1163,7 @@ function addRowDataAttrs() {
       row.dataset.cat = p.category || '';
       row.dataset.type = p.product_type || '';
       row.dataset.impl = p.implementation_type || '';
+      row.dataset.hidden = p.hidden_from_store ? 'true' : 'false';
     }
   });
 }
